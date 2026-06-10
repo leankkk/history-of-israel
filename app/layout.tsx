@@ -10,8 +10,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Génesis: La Nación · 1948',
+  description:
+    'Juego de estrategia histórica al estilo Plague Inc: construye el Estado de Israel desde 1948, acumula influencia, mejora tu nación y sobrevive a las guerras hasta la era de la Nación Startup.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -38,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} bg-background`}>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
