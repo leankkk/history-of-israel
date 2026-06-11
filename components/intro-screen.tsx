@@ -19,10 +19,11 @@ export function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
             Génesis: La Nación
           </h1>
           <p className="text-pretty leading-relaxed text-muted-foreground">
-            Acabas de declarar la independencia. Desde un pequeño territorio
-            rodeado de adversarios, deberás construir un Estado capaz de
-            sobrevivir a la historia: la Guerra de Independencia, los Seis Días,
-            Yom Kipur y el camino hacia la Nación Startup del año 2000.
+            Acabas de declarar la independencia. En cada momento clave de la
+            historia tomarás una decisión, y cada decisión te llevará por un
+            camino distinto: la Guerra de Independencia, los Seis Días, Yom
+            Kipur, Camp David y el rumbo hacia el año 2000. Ningún camino es
+            igual a otro.
           </p>
         </div>
 
@@ -45,16 +46,17 @@ export function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
 
         <div className="space-y-2 text-pretty text-sm leading-relaxed text-muted-foreground">
           <p>
-            El tiempo avanza solo y generas{" "}
-            <span className="font-medium text-accent">Influencia</span>. Inviértela
-            en mejoras para subir tus estadísticas{" "}
-            <span className="font-medium text-foreground">antes</span> de que llegue
-            cada guerra. Si no estás preparado, la nación sufrirá.
+            Cada decisión modifica tus cuatro{" "}
+            <span className="font-medium text-foreground">estadísticas</span> y
+            desbloquea o cierra caminos futuros. Tus elecciones determinan tu{" "}
+            <span className="font-medium text-accent">legado final</span>: una
+            potencia militar, una nación tecnológica, un líder de la paz... o algo
+            completamente tuyo.
           </p>
         </div>
 
         <Button size="lg" onClick={onIniciar} className="w-full sm:w-auto">
-          Fundar el Estado
+          Comenzar la historia
         </Button>
       </div>
     </main>

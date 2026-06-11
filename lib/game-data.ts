@@ -1,5 +1,7 @@
-// Tipos y datos del juego "Génesis: 1948"
-// Estilo Plague Inc invertido: construyes el Estado de Israel a lo largo del tiempo.
+// Tipos y datos del juego "Génesis: La Nación"
+// Estilo "elige tu propia aventura": un árbol de decisiones ramificado.
+// Cada decisión modifica las estadísticas y te lleva por un camino distinto,
+// de modo que cada partida es única.
 
 export type Categoria = "militar" | "economia" | "diplomacia" | "sociedad"
 
@@ -10,369 +12,467 @@ export interface Stats {
   sociedad: number
 }
 
-export interface Mejora {
+export type TipoFinal = "militar" | "startup" | "paz" | "equilibrio" | "fracaso"
+
+export interface Opcion {
   id: string
-  nombre: string
-  descripcion: string
-  categoria: Categoria
-  costo: number
+  texto: string
+  detalle: string
   efectos: Partial<Stats>
-  // ingresoBonus: influencia extra por segundo que otorga
-  ingresoBonus?: number
-  requiere?: string[]
-  anioMin?: number
+  // Requisito opcional: para elegir esta opción necesitas cierta estadística
+  requiere?: { stat: Categoria; min: number }
+  // Nodo siguiente al que lleva esta decisión
+  siguiente: string
 }
 
-export interface EventoHistorico {
+export interface NodoHistoria {
   id: string
   anio: number
+  era: string
   titulo: string
-  descripcion: string
-  // Estadística clave que se evalúa para superar el evento
-  statClave: Categoria
-  // Umbral necesario para "ganar" cómodamente
-  umbral: number
-  // Recompensa de influencia al superarlo
-  recompensa: number
+  texto: string
+  // Si tiene opciones, es un nodo de decisión.
+  opciones?: Opcion[]
+  // Si es un final, define el desenlace.
+  final?: {
+    tipo: TipoFinal
+    titulo: string
+    texto: string
+  }
 }
 
-export interface Era {
-  anioInicio: number
-  nombre: string
-  descripcion: string
-}
-
-export const ERAS: Era[] = [
-  {
-    anioInicio: 1945,
-    nombre: "Camino a la Independencia",
-    descripcion: "Organiza las instituciones y la defensa antes de declarar el Estado.",
-  },
-  {
-    anioInicio: 1948,
-    nombre: "Fundación",
-    descripcion: "La Declaración de Independencia. Un Estado nace y debe sobrevivir su primer día.",
-  },
-  {
-    anioInicio: 1956,
-    nombre: "Consolidación",
-    descripcion: "Crisis de Suez y los primeros años de construcción nacional.",
-  },
-  {
-    anioInicio: 1967,
-    nombre: "Los Seis Días",
-    descripcion: "Una guerra relámpago redefine las fronteras de la región.",
-  },
-  {
-    anioInicio: 1973,
-    nombre: "Yom Kipur",
-    descripcion: "Un ataque sorpresa en el día más sagrado pone todo a prueba.",
-  },
-  {
-    anioInicio: 1979,
-    nombre: "Diplomacia",
-    descripcion: "Los Acuerdos de Camp David abren una nueva era de tratados.",
-  },
-  {
-    anioInicio: 1990,
-    nombre: "Modernización",
-    descripcion: "Inmigración masiva y el inicio del milagro tecnológico.",
-  },
-  {
-    anioInicio: 2000,
-    nombre: "Nación Startup",
-    descripcion: "El cambio de milenio convierte al país en una potencia de innovación.",
-  },
-]
-
-export const MEJORAS: Mejora[] = [
-  // MILITAR
-  {
-    id: "haganah",
-    nombre: "Haganá",
-    descripcion: "Organiza las milicias de defensa en un ejército regular.",
-    categoria: "militar",
-    costo: 15,
-    efectos: { militar: 8 },
-  },
-  {
-    id: "tzahal",
-    nombre: "Fuerzas de Defensa (Tzahal)",
-    descripcion: "Unifica las fuerzas armadas bajo un mando nacional.",
-    categoria: "militar",
-    costo: 60,
-    efectos: { militar: 14, sociedad: 4 },
-    requiere: ["haganah"],
-  },
-  {
-    id: "fuerza-aerea",
-    nombre: "Fuerza Aérea",
-    descripcion: "Cazas y pilotos de élite para dominar los cielos.",
-    categoria: "militar",
-    costo: 140,
-    efectos: { militar: 20 },
-    requiere: ["tzahal"],
-    anioMin: 1956,
-  },
-  {
-    id: "blindados",
-    nombre: "Cuerpo Blindado",
-    descripcion: "Divisiones de tanques para guerra relámpago en el desierto.",
-    categoria: "militar",
-    costo: 220,
-    efectos: { militar: 26 },
-    requiere: ["fuerza-aerea"],
-    anioMin: 1967,
-  },
-  {
-    id: "inteligencia",
-    nombre: "Inteligencia (Mossad)",
-    descripcion: "Alertas tempranas para no ser tomado por sorpresa.",
-    categoria: "militar",
-    costo: 300,
-    efectos: { militar: 22, diplomacia: 10 },
-    requiere: ["tzahal"],
-    anioMin: 1973,
-  },
-  {
-    id: "misiles",
-    nombre: "Escudo Antimisiles",
-    descripcion: "Defensa moderna contra amenazas aéreas.",
-    categoria: "militar",
-    costo: 480,
-    efectos: { militar: 34 },
-    requiere: ["blindados"],
-    anioMin: 1990,
-  },
-
-  // ECONOMÍA
-  {
-    id: "kibutz",
-    nombre: "Kibutz",
-    descripcion: "Comunidades agrícolas colectivas que alimentan a la nación.",
-    categoria: "economia",
-    costo: 12,
-    efectos: { economia: 8, sociedad: 6 },
-    ingresoBonus: 0.4,
-  },
-  {
-    id: "riego",
-    nombre: "Riego por Goteo",
-    descripcion: "Tecnología que hace florecer el desierto.",
-    categoria: "economia",
-    costo: 70,
-    efectos: { economia: 14 },
-    ingresoBonus: 0.8,
-    requiere: ["kibutz"],
-  },
-  {
-    id: "puerto",
-    nombre: "Puerto de Haifa",
-    descripcion: "Comercio marítimo que conecta al país con el mundo.",
-    categoria: "economia",
-    costo: 150,
-    efectos: { economia: 18, diplomacia: 6 },
-    ingresoBonus: 1.2,
-    requiere: ["riego"],
-    anioMin: 1956,
-  },
-  {
-    id: "industria",
-    nombre: "Industria Pesada",
-    descripcion: "Fábricas, acero y manufactura a gran escala.",
-    categoria: "economia",
-    costo: 260,
-    efectos: { economia: 24 },
-    ingresoBonus: 1.8,
-    requiere: ["puerto"],
-    anioMin: 1967,
-  },
-  {
-    id: "tech",
-    nombre: "Parques Tecnológicos",
-    descripcion: "Silicon Wadi: el corazón de la innovación.",
-    categoria: "economia",
-    costo: 420,
-    efectos: { economia: 30, sociedad: 10 },
-    ingresoBonus: 3,
-    requiere: ["industria"],
-    anioMin: 1990,
-  },
-  {
-    id: "startup",
-    nombre: "Nación Startup",
-    descripcion: "Capital de riesgo y emprendimiento de clase mundial.",
-    categoria: "economia",
-    costo: 650,
-    efectos: { economia: 40, diplomacia: 12 },
-    ingresoBonus: 5,
-    requiere: ["tech"],
-    anioMin: 2000,
-  },
-
-  // DIPLOMACIA
-  {
-    id: "onu",
-    nombre: "Reconocimiento de la ONU",
-    descripcion: "Legitimidad internacional para el nuevo Estado.",
-    categoria: "diplomacia",
-    costo: 20,
-    efectos: { diplomacia: 10 },
-  },
-  {
-    id: "alianza-usa",
-    nombre: "Alianza con EE. UU.",
-    descripcion: "Apoyo estratégico y militar de una superpotencia.",
-    categoria: "diplomacia",
-    costo: 110,
-    efectos: { diplomacia: 18, militar: 8 },
-    requiere: ["onu"],
-    anioMin: 1967,
-  },
-  {
-    id: "campdavid",
-    nombre: "Acuerdos de Camp David",
-    descripcion: "Paz histórica con Egipto. Fronteras más seguras.",
-    categoria: "diplomacia",
-    costo: 240,
-    efectos: { diplomacia: 26, militar: 6 },
-    requiere: ["alianza-usa"],
-    anioMin: 1979,
-  },
-  {
-    id: "oslo",
-    nombre: "Procesos de Paz",
-    descripcion: "Negociaciones para estabilizar la región.",
-    categoria: "diplomacia",
-    costo: 400,
-    efectos: { diplomacia: 32, sociedad: 8 },
-    requiere: ["campdavid"],
-    anioMin: 1990,
-  },
-
-  // SOCIEDAD
-  {
-    id: "aliya",
-    nombre: "Ley del Retorno",
-    descripcion: "Inmigración judía masiva que puebla la nación.",
-    categoria: "sociedad",
-    costo: 18,
-    efectos: { sociedad: 10, economia: 4 },
-    ingresoBonus: 0.3,
-  },
-  {
-    id: "educacion",
-    nombre: "Universidades",
-    descripcion: "Educación de élite y centros de investigación.",
-    categoria: "sociedad",
-    costo: 90,
-    efectos: { sociedad: 16, economia: 6 },
-    ingresoBonus: 0.6,
-    requiere: ["aliya"],
-  },
-  {
-    id: "salud",
-    nombre: "Sistema de Salud",
-    descripcion: "Medicina pública que cuida a cada ciudadano.",
-    categoria: "sociedad",
-    costo: 180,
-    efectos: { sociedad: 22 },
-    ingresoBonus: 0.5,
-    requiere: ["educacion"],
-    anioMin: 1956,
-  },
-  {
-    id: "cultura",
-    nombre: "Renacimiento Cultural",
-    descripcion: "El hebreo moderno, las artes y una identidad nacional.",
-    categoria: "sociedad",
-    costo: 300,
-    efectos: { sociedad: 28, diplomacia: 10 },
-    requiere: ["salud"],
-    anioMin: 1979,
-  },
-]
-
-export const EVENTOS: EventoHistorico[] = [
-  {
-    id: "independencia",
-    anio: 1948,
-    titulo: "Guerra de Independencia",
-    descripcion:
-      "Cinco ejércitos invaden el día de la fundación. La supervivencia del Estado depende de tu defensa.",
-    statClave: "militar",
-    umbral: 30,
-    recompensa: 80,
-  },
-  {
-    id: "suez",
-    anio: 1956,
-    titulo: "Crisis de Suez",
-    descripcion: "Una operación conjunta en el Sinaí pone a prueba tu logística y tus alianzas.",
-    statClave: "diplomacia",
-    umbral: 45,
-    recompensa: 120,
-  },
-  {
-    id: "seisdias",
-    anio: 1967,
-    titulo: "Guerra de los Seis Días",
-    descripcion: "Un ataque preventivo relámpago. Tu fuerza aérea y blindados deciden todo en horas.",
-    statClave: "militar",
-    umbral: 75,
-    recompensa: 200,
-  },
-  {
-    id: "yomkipur",
-    anio: 1973,
-    titulo: "Guerra de Yom Kipur",
-    descripcion: "Ataque sorpresa en el día más sagrado. Sin inteligencia y reservas, el riesgo es máximo.",
-    statClave: "militar",
-    umbral: 110,
-    recompensa: 280,
-  },
-  {
-    id: "campdavid-ev",
-    anio: 1979,
-    titulo: "Acuerdos de Camp David",
-    descripcion: "La oportunidad de una paz histórica. Tu diplomacia define el futuro de la región.",
-    statClave: "diplomacia",
-    umbral: 90,
-    recompensa: 320,
-  },
-  {
-    id: "aliya90",
-    anio: 1990,
-    titulo: "La Gran Inmigración",
-    descripcion: "Un millón de inmigrantes llega en pocos años. Tu sociedad debe integrarlos.",
-    statClave: "sociedad",
-    umbral: 100,
-    recompensa: 360,
-  },
-  {
-    id: "startupnation",
-    anio: 2000,
-    titulo: "El Milagro Tecnológico",
-    descripcion: "El cambio de milenio. Tu economía decide si te conviertes en una potencia mundial.",
-    statClave: "economia",
-    umbral: 130,
-    recompensa: 500,
-  },
-]
-
-export const CATEGORIA_INFO: Record<
-  Categoria,
-  { nombre: string; descripcion: string }
-> = {
+export const CATEGORIA_INFO: Record<Categoria, { nombre: string; descripcion: string }> = {
   militar: { nombre: "Militar", descripcion: "Defensa y poder de las fuerzas armadas." },
-  economia: { nombre: "Economía", descripcion: "Riqueza, industria y generación de influencia." },
+  economia: { nombre: "Economía", descripcion: "Riqueza, industria y tecnología." },
   diplomacia: { nombre: "Diplomacia", descripcion: "Alianzas y reconocimiento internacional." },
   sociedad: { nombre: "Sociedad", descripcion: "Población, educación y cohesión nacional." },
 }
 
 export const ESTADO_INICIAL_STATS: Stats = {
-  militar: 5,
-  economia: 5,
-  diplomacia: 5,
-  sociedad: 5,
+  militar: 10,
+  economia: 10,
+  diplomacia: 10,
+  sociedad: 10,
+}
+
+export const NODO_INICIAL = "start_1948"
+
+// ── EL ÁRBOL DE DECISIONES ────────────────────────────────────────────────
+export const NODOS: Record<string, NodoHistoria> = {
+  // 1948 — La Fundación
+  start_1948: {
+    id: "start_1948",
+    anio: 1948,
+    era: "La Fundación",
+    titulo: "14 de mayo de 1948",
+    texto:
+      "Acabas de declarar la independencia del Estado. Horas después, cinco ejércitos cruzan las fronteras. La nación recién nacida debe sobrevivir su primer día. ¿Cuál es tu prioridad?",
+    opciones: [
+      {
+        id: "mil",
+        texto: "Movilización militar total",
+        detalle: "Cada ciudadano apto toma las armas. La supervivencia es lo primero.",
+        efectos: { militar: 16, economia: -4 },
+        siguiente: "prio_1949",
+      },
+      {
+        id: "dip",
+        texto: "Buscar la tregua de la ONU",
+        detalle: "Apoyarte en la legitimidad internacional para ganar tiempo.",
+        efectos: { diplomacia: 14, militar: 5 },
+        siguiente: "prio_1949",
+      },
+      {
+        id: "soc",
+        texto: "Defensa popular y kibutzim",
+        detalle: "Las comunidades agrícolas se convierten en líneas de defensa.",
+        efectos: { sociedad: 12, militar: 8 },
+        siguiente: "prio_1949",
+      },
+    ],
+  },
+
+  // 1949 — Prioridad nacional
+  prio_1949: {
+    id: "prio_1949",
+    anio: 1949,
+    era: "La Fundación",
+    titulo: "El primer gobierno",
+    texto:
+      "El armisticio se firma. El Estado existe, pero está exhausto y en bancarrota, con miles de inmigrantes llegando cada mes. ¿Hacia dónde diriges la nación?",
+    opciones: [
+      {
+        id: "aus",
+        texto: "Plan de austeridad (Tzena)",
+        detalle: "Racionamiento estricto para estabilizar la economía desde cero.",
+        efectos: { economia: 14 },
+        siguiente: "suez_1956",
+      },
+      {
+        id: "ali",
+        texto: "Ley del Retorno",
+        detalle: "Abrir las puertas a la inmigración judía masiva, cueste lo que cueste.",
+        efectos: { sociedad: 15, economia: -4 },
+        siguiente: "suez_1956",
+      },
+      {
+        id: "fdi",
+        texto: "Construir las FDI",
+        detalle: "Unificar las milicias en un ejército profesional permanente.",
+        efectos: { militar: 13 },
+        siguiente: "suez_1956",
+      },
+    ],
+  },
+
+  // 1956 — Crisis de Suez
+  suez_1956: {
+    id: "suez_1956",
+    anio: 1956,
+    era: "Consolidación",
+    titulo: "Crisis de Suez",
+    texto:
+      "Egipto nacionaliza el Canal de Suez y bloquea tus rutas marítimas. Francia y Gran Bretaña proponen una operación conjunta en el Sinaí. ¿Qué haces?",
+    opciones: [
+      {
+        id: "sinai",
+        texto: "Campaña del Sinaí",
+        detalle: "Unirte a la operación militar y tomar la península.",
+        efectos: { militar: 14, diplomacia: -6 },
+        siguiente: "dev_1958",
+      },
+      {
+        id: "retiro",
+        texto: "Retirada negociada",
+        detalle: "Ceder ante la presión de EE. UU. y la URSS a cambio de garantías.",
+        efectos: { diplomacia: 16 },
+        siguiente: "dev_1958",
+      },
+    ],
+  },
+
+  // 1958 — Desarrollo
+  dev_1958: {
+    id: "dev_1958",
+    anio: 1958,
+    era: "Consolidación",
+    titulo: "Hacer florecer el desierto",
+    texto:
+      "Hay una década de relativa calma por delante. Es el momento de construir los cimientos del país. ¿En qué inviertes?",
+    opciones: [
+      {
+        id: "agua",
+        texto: "Riego y agricultura",
+        detalle: "Riego por goteo y el Acueducto Nacional para conquistar el desierto.",
+        efectos: { economia: 16, sociedad: 4 },
+        siguiente: "tension_1967",
+      },
+      {
+        id: "univ",
+        texto: "Universidades y ciencia",
+        detalle: "Centros de investigación que formarán a las próximas generaciones.",
+        efectos: { sociedad: 12, economia: 6 },
+        siguiente: "tension_1967",
+      },
+      {
+        id: "arma",
+        texto: "Programa de defensa secreto",
+        detalle: "Inversión discreta en capacidades militares avanzadas.",
+        efectos: { militar: 14, diplomacia: -4 },
+        siguiente: "tension_1967",
+      },
+    ],
+  },
+
+  // 1967 — Tensión previa a los Seis Días
+  tension_1967: {
+    id: "tension_1967",
+    anio: 1967,
+    era: "Los Seis Días",
+    titulo: "Mayo de 1967",
+    texto:
+      "Egipto expulsa a los cascos azules, concentra tropas en el Sinaí y cierra los Estrechos de Tirán. La guerra parece inevitable. El reloj corre.",
+    opciones: [
+      {
+        id: "preventivo",
+        texto: "Ataque aéreo preventivo",
+        detalle: "Destruir la aviación enemiga en tierra antes de que despegue. Requiere una fuerza preparada.",
+        efectos: { militar: 18, diplomacia: -4 },
+        requiere: { stat: "militar", min: 35 },
+        siguiente: "war67_preventivo",
+      },
+      {
+        id: "espera",
+        texto: "Esperar y buscar apoyo",
+        detalle: "Agotar la vía diplomática antes de disparar el primer tiro.",
+        efectos: { diplomacia: 10 },
+        siguiente: "war67_espera",
+      },
+    ],
+  },
+
+  // 1967 — Resultado del ataque preventivo
+  war67_preventivo: {
+    id: "war67_preventivo",
+    anio: 1967,
+    era: "Los Seis Días",
+    titulo: "Seis días que cambiaron Oriente Medio",
+    texto:
+      "Tu fuerza aérea aniquila a tres ejércitos enemigos en horas. En seis días triplicas tu territorio: el Sinaí, Cisjordania, Gaza y los Altos del Golán. Una victoria histórica, pero ahora gobiernas a millones de personas más.",
+    opciones: [
+      {
+        id: "anexar",
+        texto: "Asegurar los territorios",
+        detalle: "Establecer una presencia militar firme en las nuevas fronteras.",
+        efectos: { militar: 10, diplomacia: -8 },
+        siguiente: "yom_1973",
+      },
+      {
+        id: "carta",
+        texto: "Usarlos como moneda de cambio",
+        detalle: "Ofrecer territorio a cambio de paz futura.",
+        efectos: { diplomacia: 14, militar: -4 },
+        siguiente: "yom_1973",
+      },
+    ],
+  },
+
+  // 1967 — Resultado de esperar
+  war67_espera: {
+    id: "war67_espera",
+    anio: 1967,
+    era: "Los Seis Días",
+    titulo: "El primer golpe enemigo",
+    texto:
+      "Tu paciencia es interpretada como debilidad. El enemigo ataca primero y sufres pérdidas iniciales graves. Logras reorganizarte y resistir, pero la victoria es costosa y amarga.",
+    opciones: [
+      {
+        id: "contra",
+        texto: "Contraofensiva desesperada",
+        detalle: "Movilizar hasta el último recurso para revertir la situación.",
+        efectos: { militar: 12, sociedad: -6 },
+        siguiente: "yom_1973",
+      },
+      {
+        id: "alto",
+        texto: "Aceptar el alto el fuego",
+        detalle: "Detener las pérdidas y consolidar lo que queda.",
+        efectos: { diplomacia: 8 },
+        siguiente: "yom_1973",
+      },
+    ],
+  },
+
+  // 1973 — Yom Kipur
+  yom_1973: {
+    id: "yom_1973",
+    anio: 1973,
+    era: "Yom Kipur",
+    titulo: "6 de octubre de 1973",
+    texto:
+      "En el día más sagrado del año, Egipto y Siria lanzan un ataque sorpresa coordinado. El país está desprevenido y las primeras horas son catastróficas. La supervivencia del Estado vuelve a estar en juego.",
+    opciones: [
+      {
+        id: "reservas",
+        texto: "Movilización relámpago de reservas",
+        detalle: "Llamar a cada reservista y contraatacar de inmediato. Requiere un ejército fuerte.",
+        efectos: { militar: 14, economia: -6 },
+        requiere: { stat: "militar", min: 55 },
+        siguiente: "after73",
+      },
+      {
+        id: "puente",
+        texto: "Pedir un puente aéreo a EE. UU.",
+        detalle: "Apoyarte en tu aliado para reponer material a toda prisa.",
+        efectos: { diplomacia: 12, militar: 6 },
+        requiere: { stat: "diplomacia", min: 35 },
+        siguiente: "after73",
+      },
+      {
+        id: "aguantar",
+        texto: "Aguantar con lo que hay",
+        detalle: "Resistir con los recursos disponibles y rezar.",
+        efectos: { sociedad: 6, militar: 4 },
+        siguiente: "after73",
+      },
+    ],
+  },
+
+  // 1974 — Tras Yom Kipur
+  after73: {
+    id: "after73",
+    anio: 1974,
+    era: "Yom Kipur",
+    titulo: "El trauma nacional",
+    texto:
+      "La guerra termina con una victoria militar pero un golpe psicológico profundo. La sociedad exige cambios y cuestiona a sus líderes. ¿Cómo respondes?",
+    opciones: [
+      {
+        id: "reforma",
+        texto: "Reformar el ejército y la inteligencia",
+        detalle: "Que un fallo así no vuelva a ocurrir jamás.",
+        efectos: { militar: 12 },
+        siguiente: "camp_1979",
+      },
+      {
+        id: "sanar",
+        texto: "Sanar a la sociedad",
+        detalle: "Invertir en bienestar y reconstruir la confianza nacional.",
+        efectos: { sociedad: 14 },
+        siguiente: "camp_1979",
+      },
+    ],
+  },
+
+  // 1979 — Camp David
+  camp_1979: {
+    id: "camp_1979",
+    anio: 1979,
+    era: "Diplomacia",
+    titulo: "Acuerdos de Camp David",
+    texto:
+      "El presidente de Egipto te ofrece algo impensable: paz total a cambio de devolver el Sinaí. Es la primera oportunidad real de paz con un vecino árabe.",
+    opciones: [
+      {
+        id: "paz",
+        texto: "Firmar la paz",
+        detalle: "Devolver el Sinaí y reconocer a Egipto. Un riesgo histórico por la paz.",
+        efectos: { diplomacia: 20, militar: -6 },
+        siguiente: "modern_1990",
+      },
+      {
+        id: "rechazar",
+        texto: "Rechazar y mantener el territorio",
+        detalle: "El Sinaí es demasiado valioso estratégicamente para cederlo.",
+        efectos: { militar: 10, diplomacia: -10 },
+        siguiente: "modern_1990",
+      },
+    ],
+  },
+
+  // 1990 — Modernización y gran inmigración
+  modern_1990: {
+    id: "modern_1990",
+    anio: 1990,
+    era: "Modernización",
+    titulo: "La Gran Inmigración",
+    texto:
+      "La Unión Soviética colapsa y un millón de inmigrantes, muchos científicos e ingenieros, llegan en pocos años. Es una oportunidad y un enorme desafío de integración.",
+    opciones: [
+      {
+        id: "absorber",
+        texto: "Absorción social masiva",
+        detalle: "Vivienda, idioma y empleo para todos los recién llegados.",
+        efectos: { sociedad: 18, economia: 6 },
+        siguiente: "tech_2000",
+      },
+      {
+        id: "talento",
+        texto: "Aprovechar el talento técnico",
+        detalle: "Canalizar a los científicos hacia la naciente industria tecnológica.",
+        efectos: { economia: 18, sociedad: 4 },
+        siguiente: "tech_2000",
+      },
+    ],
+  },
+
+  // 2000 — Nación Startup, decisión final
+  tech_2000: {
+    id: "tech_2000",
+    anio: 2000,
+    era: "Nación Startup",
+    titulo: "El cambio de milenio",
+    texto:
+      "El país está a las puertas de convertirse en una potencia. El camino que elijas ahora definirá tu legado para la historia.",
+    opciones: [
+      {
+        id: "innov",
+        texto: "Apostar todo a la innovación",
+        detalle: "Capital de riesgo, startups y alta tecnología como motor del país.",
+        efectos: { economia: 20, sociedad: 6 },
+        siguiente: "_evaluar",
+      },
+      {
+        id: "fortaleza",
+        texto: "Ser una fortaleza inexpugnable",
+        detalle: "Tecnología militar, ciberdefensa y escudos antimisiles.",
+        efectos: { militar: 20 },
+        siguiente: "_evaluar",
+      },
+      {
+        id: "puente_paz",
+        texto: "Liderar la paz regional",
+        detalle: "Convertirte en el puente diplomático de todo Oriente Medio.",
+        efectos: { diplomacia: 20, sociedad: 6 },
+        siguiente: "_evaluar",
+      },
+    ],
+  },
+
+  // ── FINALES ──────────────────────────────────────────────────────────────
+  end_militar: {
+    id: "end_militar",
+    anio: 2008,
+    era: "Final",
+    titulo: "La Potencia Militar",
+    texto: "",
+    final: {
+      tipo: "militar",
+      titulo: "La Fortaleza de Oriente Medio",
+      texto:
+        "Forjaste una de las maquinarias militares más respetadas del planeta. Ningún enemigo se atreve a desafiarte y tus fronteras son inviolables. La paz que tienes es la paz de la disuasión: tensa, pero firme.",
+    },
+  },
+  end_startup: {
+    id: "end_startup",
+    anio: 2008,
+    era: "Final",
+    titulo: "La Nación Startup",
+    texto: "",
+    final: {
+      tipo: "startup",
+      titulo: "El Milagro Tecnológico",
+      texto:
+        "Convertiste un país sin recursos naturales en una superpotencia de la innovación. El mundo entero invierte en tu talento y tus inventos cambian la vida de miles de millones. Del desierto naciste; en el futuro habitas.",
+    },
+  },
+  end_paz: {
+    id: "end_paz",
+    anio: 2008,
+    era: "Final",
+    titulo: "El Arquitecto de la Paz",
+    texto: "",
+    final: {
+      tipo: "paz",
+      titulo: "El Puente entre Naciones",
+      texto:
+        "Elegiste el camino más difícil de todos: el de la mano tendida. Tratados de paz, alianzas duraderas y reconocimiento mundial son tu legado. Demostraste que incluso en la región más convulsa, la diplomacia puede vencer.",
+    },
+  },
+  end_equilibrio: {
+    id: "end_equilibrio",
+    anio: 2008,
+    era: "Final",
+    titulo: "La Nación Equilibrada",
+    texto: "",
+    final: {
+      tipo: "equilibrio",
+      titulo: "Una Nación Completa",
+      texto:
+        "No te decantaste por un solo camino: construiste una nación fuerte, próspera, respetada y unida a la vez. Un equilibrio difícil de lograr que te convierte en un Estado maduro y estable, admirado por su resiliencia.",
+    },
+  },
+  end_fracaso: {
+    id: "end_fracaso",
+    anio: 2008,
+    era: "Final",
+    titulo: "La Nación Frágil",
+    texto: "",
+    final: {
+      tipo: "fracaso",
+      titulo: "Un Equilibrio Precario",
+      texto:
+        "La nación sobrevivió, pero a duras penas. Las decisiones dejaron heridas abiertas: una economía débil, aliados dudosos o una sociedad dividida. La historia continúa, pero el camino por delante es incierto.",
+    },
+  },
 }
