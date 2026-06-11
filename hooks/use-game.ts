@@ -1,114 +1,152 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
+  ANIO_FINAL,
+  ANIO_INICIAL,
   ESTADO_INICIAL_STATS,
-  NODOS,
-  NODO_INICIAL,
-  type NodoHistoria,
-  type Opcion,
+  FINALES,
+  MEJORAS,
+  type Categoria,
+  type Mejora,
   type Stats,
   type TipoFinal,
 } from "@/lib/game-data"
 
 export type FaseJuego = "intro" | "jugando" | "fin"
+export type Velocidad = 0 | 1 | 2 | 4
 
-export interface RegistroDecision {
-  nodoId: string
-  anio: number
-  titulo: string
-  opcionTexto: string
-}
+// Cuánto tiempo real (ms) dura un año del juego a velocidad 1x.
+const MS_POR_ANIO = 3500
+// Cada cuánto corre el "tick" interno.
+const TICK_MS = 100
 
-// Determina el final según el perfil de estadísticas del jugador.
-function calcularFinal(stats: Stats): string {
+function calcularTipoFinal(stats: Stats): TipoFinal {
   const { militar, economia, diplomacia, sociedad } = stats
   const total = militar + economia + diplomacia + sociedad
   const maxStat = Math.max(militar, economia, diplomacia, sociedad)
   const minStat = Math.min(militar, economia, diplomacia, sociedad)
 
-  // Si la nación quedó demasiado débil en general, es un final frágil.
-  if (total < 130 || minStat < 8) return "end_fracaso"
-
-  // Nación equilibrada: todas las áreas razonablemente altas y parejas.
-  if (minStat >= 35 && maxStat - minStat <= 22) return "end_equilibrio"
-
-  // El área dominante define el legado.
-  if (maxStat === economia) return "end_startup"
-  if (maxStat === diplomacia) return "end_paz"
-  if (maxStat === militar) return "end_militar"
-  return "end_equilibrio"
+  if (total < 120) return "fracaso"
+  if (minStat >= 45 && maxStat - minStat <= 30) return "equilibrio"
+  if (maxStat === economia) return "startup"
+  if (maxStat === diplomacia) return "paz"
+  if (maxStat === militar) return "militar"
+  return "equilibrio"
 }
 
 export function useGame() {
   const [fase, setFase] = useState<FaseJuego>("intro")
-  const [nodoId, setNodoId] = useState<string>(NODO_INICIAL)
+  const [anio, setAnio] = useState(ANIO_INICIAL)
+  const [influencia, setInfluencia] = useState(20)
   const [stats, setStats] = useState<Stats>({ ...ESTADO_INICIAL_STATS })
-  const [historial, setHistorial] = useState<RegistroDecision[]>([])
-  const [finalId, setFinalId] = useState<string | null>(null)
+  const [compradas, setCompradas] = useState<string[]>([])
+  const [velocidad, setVelocidad] = useState<Velocidad>(1)
+  const [tipoFinal, setTipoFinal] = useState<TipoFinal | null>(null)
 
-  const nodo: NodoHistoria = NODOS[nodoId]
+  // Acumula el progreso fraccional del año para un avance suave.
+  const progresoAnio = useRef(0)
 
   const iniciar = useCallback(() => {
     setFase("jugando")
-    setNodoId(NODO_INICIAL)
+    setAnio(ANIO_INICIAL)
+    setInfluencia(20)
     setStats({ ...ESTADO_INICIAL_STATS })
-    setHistorial([])
-    setFinalId(null)
+    setCompradas([])
+    setVelocidad(1)
+    setTipoFinal(null)
+    progresoAnio.current = 0
   }, [])
 
-  const elegir = useCallback(
-    (opcion: Opcion) => {
-      const nodoActual = NODOS[nodoId]
+  // Renta de influencia por año (base + bonificaciones de mejoras compradas).
+  const rentaPorAnio = useMemo(() => {
+    const base = 6
+    const bonus = MEJORAS.filter(
+      (m) => compradas.includes(m.id) && m.rentaInfluencia,
+    ).reduce((acc, m) => acc + (m.rentaInfluencia ?? 0), 0)
+    return base + bonus
+  }, [compradas])
 
-      // Aplica efectos a las estadísticas (mínimo 0).
-      const nuevasStats: Stats = { ...stats }
-      for (const [k, v] of Object.entries(opcion.efectos)) {
-        const key = k as keyof Stats
-        nuevasStats[key] = Math.max(0, nuevasStats[key] + (v as number))
+  // Bucle de tiempo.
+  useEffect(() => {
+    if (fase !== "jugando" || velocidad === 0) return
+    const intervalo = setInterval(() => {
+      const avance = (TICK_MS / MS_POR_ANIO) * velocidad
+      progresoAnio.current += avance
+
+      if (progresoAnio.current >= 1) {
+        const aniosCompletos = Math.floor(progresoAnio.current)
+        progresoAnio.current -= aniosCompletos
+
+        setInfluencia((inf) => inf + rentaPorAnio * aniosCompletos)
+        setAnio((a) => {
+          const nuevo = a + aniosCompletos
+          if (nuevo >= ANIO_FINAL) {
+            return ANIO_FINAL
+          }
+          return nuevo
+        })
       }
-      setStats(nuevasStats)
+    }, TICK_MS)
 
-      // Guarda la decisión en el historial.
-      setHistorial((prev) => [
-        ...prev,
-        {
-          nodoId: nodoActual.id,
-          anio: nodoActual.anio,
-          titulo: nodoActual.titulo,
-          opcionTexto: opcion.texto,
-        },
-      ])
+    return () => clearInterval(intervalo)
+  }, [fase, velocidad, rentaPorAnio])
 
-      // ¿La rama termina la partida?
-      if (opcion.siguiente === "_evaluar") {
-        const endId = calcularFinal(nuevasStats)
-        setFinalId(endId)
-        setNodoId(endId)
-        setFase("fin")
-        return
-      }
+  // Detecta fin de la partida al llegar a la actualidad.
+  useEffect(() => {
+    if (fase === "jugando" && anio >= ANIO_FINAL) {
+      setTipoFinal(calcularTipoFinal(stats))
+      setFase("fin")
+    }
+  }, [anio, fase, stats])
 
-      setNodoId(opcion.siguiente)
+  const comprar = useCallback(
+    (mejora: Mejora) => {
+      setCompradas((prev) => {
+        if (prev.includes(mejora.id)) return prev
+        if (influencia < mejora.costo) return prev
+        if (anio < mejora.anioMin) return prev
+        if (mejora.requiere && !mejora.requiere.every((r) => prev.includes(r)))
+          return prev
+
+        setInfluencia((inf) => inf - mejora.costo)
+        setStats((s) => {
+          const next = { ...s }
+          for (const [k, v] of Object.entries(mejora.efectos)) {
+            const key = k as keyof Stats
+            next[key] = Math.max(0, next[key] + (v as number))
+          }
+          return next
+        })
+        return [...prev, mejora.id]
+      })
     },
-    [nodoId, stats],
+    [influencia, anio],
   )
 
   const finalActual = useMemo(() => {
-    if (!finalId) return null
-    return NODOS[finalId]?.final ?? null
-  }, [finalId])
+    if (!tipoFinal) return null
+    return FINALES[tipoFinal]
+  }, [tipoFinal])
 
-  const tipoFinal: TipoFinal | null = finalActual?.tipo ?? null
+  const progresoTotal =
+    ((anio - ANIO_INICIAL) / (ANIO_FINAL - ANIO_INICIAL)) * 100
 
   return {
     fase,
-    nodo,
+    anio,
+    influencia,
     stats,
-    historial,
+    compradas,
+    velocidad,
+    rentaPorAnio,
+    progresoTotal,
     finalActual,
     tipoFinal,
+    setVelocidad,
     iniciar,
-    elegir,
+    comprar,
   }
 }
+
+export type { Categoria }

@@ -19,11 +19,10 @@ export function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
             Génesis: La Nación
           </h1>
           <p className="text-pretty leading-relaxed text-muted-foreground">
-            Acabas de declarar la independencia. En cada momento clave de la
-            historia tomarás una decisión, y cada decisión te llevará por un
-            camino distinto: la Guerra de Independencia, los Seis Días, Yom
-            Kipur, Camp David y el rumbo hacia el año 2000. Ningún camino es
-            igual a otro.
+            Acabas de declarar la independencia. El tiempo avanzará solo, desde
+            1948 hasta hoy. Genera influencia e inviértela en un enorme árbol de
+            mejoras: del riego por goteo a los microchips, de las FDI a la Cúpula
+            de Hierro. Cada decisión moldea la nación que llegará a la actualidad.
           </p>
         </div>
 
@@ -46,17 +45,17 @@ export function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
 
         <div className="space-y-2 text-pretty text-sm leading-relaxed text-muted-foreground">
           <p>
-            Cada decisión modifica tus cuatro{" "}
-            <span className="font-medium text-foreground">estadísticas</span> y
-            desbloquea o cierra caminos futuros. Tus elecciones determinan tu{" "}
-            <span className="font-medium text-accent">legado final</span>: una
-            potencia militar, una nación tecnológica, un líder de la paz... o algo
-            completamente tuyo.
+            El tiempo corre solo (puedes pausar o acelerar). Genera{" "}
+            <span className="font-medium text-accent">influencia</span> y
+            desbloquea mejoras que abren otras nuevas. El área en la que más
+            inviertas definirá tu{" "}
+            <span className="font-medium text-foreground">legado en 2026</span>:
+            potencia militar, nación tecnológica, líder de la paz... o todo a la vez.
           </p>
         </div>
 
         <Button size="lg" onClick={onIniciar} className="w-full sm:w-auto">
-          Comenzar la historia
+          Fundar el Estado
         </Button>
       </div>
     </main>
