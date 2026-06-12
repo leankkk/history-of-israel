@@ -14,11 +14,10 @@ import {
 } from "@/lib/game-data"
 
 export type FaseJuego = "intro" | "jugando" | "fin"
+// Tipo numérico unificado para evitar conflictos de compilación con la UI
 export type Velocidad = 0 | 1 | 2 | 4
 
-// Cuánto tiempo real (ms) dura un año del juego a velocidad 1x.
 const MS_POR_ANIO = 3500
-// Cada cuánto corre el "tick" interno.
 const TICK_MS = 100
 
 function calcularTipoFinal(stats: Stats): TipoFinal {
@@ -32,67 +31,66 @@ function calcularTipoFinal(stats: Stats): TipoFinal {
   if (maxStat === economia) return "startup"
   if (maxStat === diplomacia) return "paz"
   if (maxStat === militar) return "militar"
-  return "equilibrio"
+  return "fracaso"
 }
 
 export function useGame() {
   const [fase, setFase] = useState<FaseJuego>("intro")
   const [anio, setAnio] = useState(ANIO_INICIAL)
-  const [influencia, setInfluencia] = useState(20)
-  const [stats, setStats] = useState<Stats>({ ...ESTADO_INICIAL_STATS })
+  const [influencia, setInfluencia] = useState(10)
+  const [stats, setStats] = useState<Stats>(ESTADO_INICIAL_STATS)
   const [compradas, setCompradas] = useState<string[]>([])
-  const [velocidad, setVelocidad] = useState<Velocidad>(1)
+  const [velocidad, setVelocidad] = useState<Velocidad>(0) // Inicializado en pausa (0)
   const [tipoFinal, setTipoFinal] = useState<TipoFinal | null>(null)
 
-  // Acumula el progreso fraccional del año para un avance suave.
-  const progresoAnio = useRef(0)
+  const acumuladorTiempo = useRef(0)
 
-  const iniciar = useCallback(() => {
+  const iniciarJuego = useCallback(() => {
     setFase("jugando")
     setAnio(ANIO_INICIAL)
-    setInfluencia(20)
-    setStats({ ...ESTADO_INICIAL_STATS })
+    setInfluencia(10)
+    setStats(ESTADO_INICIAL_STATS)
     setCompradas([])
     setVelocidad(1)
     setTipoFinal(null)
-    progresoAnio.current = 0
+    acumuladorTiempo.current = 0
   }, [])
 
-  // Renta de influencia por año (base + bonificaciones de mejoras compradas).
+  const reiniciarJuego = useCallback(() => {
+    setFase("intro")
+    setVelocidad(0)
+  }, [])
+
   const rentaPorAnio = useMemo(() => {
-    const base = 6
-    const bonus = MEJORAS.filter(
-      (m) => compradas.includes(m.id) && m.rentaInfluencia,
-    ).reduce((acc, m) => acc + (m.rentaInfluencia ?? 0), 0)
-    return base + bonus
+    let base = 2
+    for (const id of compradas) {
+      const m = MEJORAS.find((x) => x.id === id)
+      if (m?.rentaInfluencia) {
+        base += m.rentaInfluencia
+      }
+    }
+    return base
   }, [compradas])
 
-  // Bucle de tiempo.
   useEffect(() => {
     if (fase !== "jugando" || velocidad === 0) return
-    const intervalo = setInterval(() => {
-      const avance = (TICK_MS / MS_POR_ANIO) * velocidad
-      progresoAnio.current += avance
 
-      if (progresoAnio.current >= 1) {
-        const aniosCompletos = Math.floor(progresoAnio.current)
-        progresoAnio.current -= aniosCompletos
+    const interval = setInterval(() => {
+      acumuladorTiempo.current += TICK_MS * velocidad
 
-        setInfluencia((inf) => inf + rentaPorAnio * aniosCompletos)
-        setAnio((a) => {
-          const nuevo = a + aniosCompletos
-          if (nuevo >= ANIO_FINAL) {
-            return ANIO_FINAL
-          }
-          return nuevo
+      if (acumuladorTiempo.current >= MS_POR_ANIO) {
+        acumuladorTiempo.current -= MS_POR_ANIO
+        setAnio((prev) => {
+          if (prev >= ANIO_FINAL) return prev
+          return prev + 1
         })
+        setInfluencia((prev) => prev + rentaPorAnio)
       }
     }, TICK_MS)
 
-    return () => clearInterval(intervalo)
+    return () => clearInterval(interval)
   }, [fase, velocidad, rentaPorAnio])
 
-  // Detecta fin de la partida al llegar a la actualidad.
   useEffect(() => {
     if (fase === "jugando" && anio >= ANIO_FINAL) {
       setTipoFinal(calcularTipoFinal(stats))
@@ -129,8 +127,9 @@ export function useGame() {
     return FINALES[tipoFinal]
   }, [tipoFinal])
 
-  const progresoTotal =
-    ((anio - ANIO_INICIAL) / (ANIO_FINAL - ANIO_INICIAL)) * 100
+  const mejorasCompradasObjetos = useMemo(() => {
+    return MEJORAS.filter((m) => compradas.includes(m.id))
+  }, [compradas])
 
   return {
     fase,
@@ -139,14 +138,12 @@ export function useGame() {
     stats,
     compradas,
     velocidad,
-    rentaPorAnio,
-    progresoTotal,
-    finalActual,
-    tipoFinal,
     setVelocidad,
-    iniciar,
     comprar,
+    iniciarJuego,
+    reiniciarJuego,
+    final: finalActual,
+    tipoFinal,
+    mejorasCompradasObjetos,
   }
 }
-
-export type { Categoria }

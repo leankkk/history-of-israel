@@ -1,0 +1,1790 @@
+﻿@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-geist-sans), 'Geist Fallback';
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(0.17 0.03 255);
+  --foreground: oklch(0.96 0.01 250);
+  --card: oklch(0.22 0.035 255);
+  --card-foreground: oklch(0.96 0.01 250);
+  --popover: oklch(0.21 0.035 255);
+  --popover-foreground: oklch(0.96 0.01 250);
+  --primary: oklch(0.58 0.15 250);
+  --primary-foreground: oklch(0.98 0.01 250);
+  --secondary: oklch(0.28 0.035 255);
+  --secondary-foreground: oklch(0.96 0.01 250);
+  --muted: oklch(0.26 0.03 255);
+  --muted-foreground: oklch(0.68 0.02 250);
+  --accent: oklch(0.8 0.13 85);
+  --accent-foreground: oklch(0.2 0.04 85);
+  --destructive: oklch(0.62 0.21 25);
+  --border: oklch(0.32 0.03 255);
+  --input: oklch(0.3 0.03 255);
+  --ring: oklch(0.58 0.15 250);
+  --chart-1: oklch(0.58 0.15 250);
+  --chart-2: oklch(0.8 0.13 85);
+  --chart-3: oklch(0.62 0.21 25);
+  --chart-4: oklch(0.65 0.13 150);
+  --chart-5: oklch(0.7 0.1 300);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.2 0.035 255);
+  --sidebar-foreground: oklch(0.96 0.01 250);
+  --sidebar-primary: oklch(0.58 0.15 250);
+  --sidebar-primary-foreground: oklch(0.98 0.01 250);
+  --sidebar-accent: oklch(0.8 0.13 85);
+  --sidebar-accent-foreground: oklch(0.2 0.04 85);
+  --sidebar-border: oklch(0.32 0.03 255);
+  --sidebar-ring: oklch(0.58 0.15 250);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+import { Analytics } from '@vercel/analytics/next'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+
+const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
+
+export const metadata: Metadata = {
+  title: 'GÃ©nesis: La NaciÃ³n Â· 1948',
+  description:
+    'Juego de estrategia histÃ³rica al estilo Plague Inc: construye el Estado de Israel desde 1948, acumula influencia, mejora tu naciÃ³n y sobrevive a las guerras hasta la era de la NaciÃ³n Startup.',
+  generator: 'v0.app',
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} bg-background`}>
+      <body className="font-sans antialiased">
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
+      </body>
+    </html>
+  )
+}
+import { GameScreen } from "@/components/game-screen"
+
+export default function Page() {
+  return <GameScreen />
+}
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        secondary:
+          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        destructive:
+          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        outline:
+          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost:
+          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function Badge({
+  className,
+  variant = "default",
+  render,
+  ...props
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps<"span">(
+      {
+        className: cn(badgeVariants({ variant }), className),
+      },
+      props
+    ),
+    render,
+    state: {
+      slot: "badge",
+      variant,
+    },
+  })
+}
+
+export { Badge, badgeVariants }
+import { Button as ButtonPrimitive } from '@base-ui/react/button'
+import { cva, type VariantProps } from 'class-variance-authority'
+
+import { cn } from '@/lib/utils'
+
+const buttonVariants = cva(
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground [a]:hover:bg-primary/80',
+        outline:
+          'border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
+        ghost:
+          'hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50',
+        destructive:
+          'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
+        link: 'text-primary underline-offset-4 hover:underline',
+      },
+      size: {
+        default:
+          'h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
+        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: 'h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
+        icon: 'size-8',
+        'icon-xs':
+          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        'icon-sm':
+          'size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg',
+        'icon-lg': 'size-9',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  },
+)
+
+function Button({
+  className,
+  variant = 'default',
+  size = 'default',
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+
+export { Button, buttonVariants }
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+function Card({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+  return (
+    <div
+      data-slot="card"
+      data-size={size}
+      className={cn(
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn(
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn(
+        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-description"
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("px-(--card-spacing)", className)}
+      {...props}
+    />
+  )
+}
+
+function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn(
+        "flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing)",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+}
+"use client"
+
+import * as React from "react"
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { XIcon } from "lucide-react"
+
+function Dialog({ ...props }: DialogPrimitive.Root.Props) {
+  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+}
+
+function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+}
+
+function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
+  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+}
+
+function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+}
+
+function DialogOverlay({
+  className,
+  ...props
+}: DialogPrimitive.Backdrop.Props) {
+  return (
+    <DialogPrimitive.Backdrop
+      data-slot="dialog-overlay"
+      className={cn(
+        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DialogContent({
+  className,
+  children,
+  showCloseButton = true,
+  ...props
+}: DialogPrimitive.Popup.Props & {
+  showCloseButton?: boolean
+}) {
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Popup
+        data-slot="dialog-content"
+        className={cn(
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {showCloseButton && (
+          <DialogPrimitive.Close
+            data-slot="dialog-close"
+            render={
+              <Button
+                variant="ghost"
+                className="absolute top-2 right-2"
+                size="icon-sm"
+              />
+            }
+          >
+            <XIcon
+            />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Popup>
+    </DialogPortal>
+  )
+}
+
+function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-header"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  )
+}
+
+function DialogFooter({
+  className,
+  showCloseButton = false,
+  children,
+  ...props
+}: React.ComponentProps<"div"> & {
+  showCloseButton?: boolean
+}) {
+  return (
+    <div
+      data-slot="dialog-footer"
+      className={cn(
+        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      {showCloseButton && (
+        <DialogPrimitive.Close render={<Button variant="outline" />}>
+          Close
+        </DialogPrimitive.Close>
+      )}
+    </div>
+  )
+}
+
+function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-title"
+      className={cn(
+        "font-heading text-base leading-none font-medium",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DialogDescription({
+  className,
+  ...props
+}: DialogPrimitive.Description.Props) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="dialog-description"
+      className={cn(
+        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+}
+"use client"
+
+import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
+
+import { cn } from "@/lib/utils"
+
+function Progress({
+  className,
+  children,
+  value,
+  ...props
+}: ProgressPrimitive.Root.Props) {
+  return (
+    <ProgressPrimitive.Root
+      value={value}
+      data-slot="progress"
+      className={cn("flex flex-wrap gap-3", className)}
+      {...props}
+    >
+      {children}
+      <ProgressTrack>
+        <ProgressIndicator />
+      </ProgressTrack>
+    </ProgressPrimitive.Root>
+  )
+}
+
+function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
+  return (
+    <ProgressPrimitive.Track
+      className={cn(
+        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
+        className
+      )}
+      data-slot="progress-track"
+      {...props}
+    />
+  )
+}
+
+function ProgressIndicator({
+  className,
+  ...props
+}: ProgressPrimitive.Indicator.Props) {
+  return (
+    <ProgressPrimitive.Indicator
+      data-slot="progress-indicator"
+      className={cn("h-full bg-primary transition-all", className)}
+      {...props}
+    />
+  )
+}
+
+function ProgressLabel({ className, ...props }: ProgressPrimitive.Label.Props) {
+  return (
+    <ProgressPrimitive.Label
+      className={cn("text-sm font-medium", className)}
+      data-slot="progress-label"
+      {...props}
+    />
+  )
+}
+
+function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
+  return (
+    <ProgressPrimitive.Value
+      className={cn(
+        "ml-auto text-sm text-muted-foreground tabular-nums",
+        className
+      )}
+      data-slot="progress-value"
+      {...props}
+    />
+  )
+}
+
+export {
+  Progress,
+  ProgressTrack,
+  ProgressIndicator,
+  ProgressLabel,
+  ProgressValue,
+}
+"use client"
+
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+function Tabs({
+  className,
+  orientation = "horizontal",
+  ...props
+}: TabsPrimitive.Root.Props) {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      data-orientation={orientation}
+      className={cn(
+        "group/tabs flex gap-2 data-horizontal:flex-col",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+const tabsListVariants = cva(
+  "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none",
+  {
+    variants: {
+      variant: {
+        default: "bg-muted",
+        line: "gap-1 bg-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function TabsList({
+  className,
+  variant = "default",
+  ...props
+}: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      data-variant={variant}
+      className={cn(tabsListVariants({ variant }), className)}
+      {...props}
+    />
+  )
+}
+
+function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
+  return (
+    <TabsPrimitive.Tab
+      data-slot="tabs-trigger"
+      className={cn(
+        "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 has-data-[icon=inline-end]:pr-1 has-data-[icon=inline-start]:pl-1 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:text-muted-foreground dark:hover:text-foreground group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
+        "data-active:bg-background data-active:text-foreground dark:data-active:border-input dark:data-active:bg-input/30 dark:data-active:text-foreground",
+        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-right-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-content"
+      className={cn("flex-1 text-sm outline-none", className)}
+      {...props}
+    />
+  )
+}
+
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { StatsPanel } from "@/components/stats-panel"
+import { RotateCcw, Shield, Coins, Handshake, Scale, AlertTriangle } from "lucide-react"
+import { ANIO_FINAL, MEJORAS, type Stats, type TipoFinal } from "@/lib/game-data"
+
+interface FinalData {
+  titulo: string
+  texto: string
+}
+
+interface EndScreenProps {
+  final: FinalData
+  tipo: TipoFinal
+  stats: Stats
+  compradas: string[]
+  onReiniciar: () => void
+}
+
+const ICONO_FINAL: Record<TipoFinal, typeof Shield> = {
+  militar: Shield,
+  startup: Coins,
+  paz: Handshake,
+  equilibrio: Scale,
+  fracaso: AlertTriangle,
+}
+
+const COLOR_FINAL: Record<TipoFinal, string> = {
+  militar: "border-destructive/30 bg-destructive/10 text-destructive",
+  startup: "border-accent/30 bg-accent/10 text-accent",
+  paz: "border-primary/30 bg-primary/10 text-primary",
+  equilibrio: "border-chart-4/30 bg-chart-4/10 text-chart-4",
+  fracaso: "border-muted-foreground/30 bg-muted text-muted-foreground",
+}
+
+export function EndScreen({
+  final,
+  tipo,
+  stats,
+  compradas,
+  onReiniciar,
+}: EndScreenProps) {
+  const Icono = ICONO_FINAL[tipo]
+  const logros = MEJORAS.filter((m) => compradas.includes(m.id))
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
+      <div className="flex w-full max-w-2xl flex-col items-center gap-7 text-center">
+        <span
+          className={`flex size-16 items-center justify-center rounded-2xl border ${COLOR_FINAL[tipo]}`}
+        >
+          <Icono className="size-8" aria-hidden />
+        </span>
+
+        <div className="space-y-2">
+          <p className="font-mono text-sm uppercase tracking-widest text-accent">
+            AÃ±o {ANIO_FINAL} Â· Tu legado
+          </p>
+          <h1 className="text-balance text-4xl font-bold tracking-tight">
+            {final.titulo}
+          </h1>
+          <p className="text-pretty leading-relaxed text-muted-foreground">
+            {final.texto}
+          </p>
+        </div>
+
+        <div className="w-full">
+          <h2 className="mb-2 text-left text-sm font-semibold">
+            Estado final de la naciÃ³n
+          </h2>
+          <StatsPanel stats={stats} />
+        </div>
+
+        <div className="w-full rounded-xl border border-border bg-card p-4 text-left">
+          <h2 className="mb-3 text-sm font-semibold">
+            Lo que construiste ({logros.length} mejoras)
+          </h2>
+          {logros.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No llegaste a desarrollar nada significativo.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {logros.map((m) => (
+                <span
+                  key={m.id}
+                  className="rounded-md bg-muted/60 px-2.5 py-1 text-xs leading-snug"
+                >
+                  {m.nombre}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Button size="lg" onClick={onReiniciar} className="gap-2">
+          <RotateCcw className="size-4" aria-hidden />
+          Reescribir la historia
+        </Button>
+      </div>
+    </main>
+  )
+}
+"use client"
+
+import { useGame } from "@/hooks/use-game"
+import { IntroScreen } from "@/components/intro-screen"
+import { EndScreen } from "@/components/end-screen"
+import { StatsPanel } from "@/components/stats-panel"
+import { Shop } from "@/components/shop"
+import { ANIO_FINAL, ANIO_INICIAL, ERAS } from "@/lib/game-data"
+import { Progress } from "@/components/ui/progress"
+import { Pause, Play, FastForward, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
+import type { Velocidad } from "@/hooks/use-game"
+
+function eraDeAnio(anio: number) {
+  let nombre = ERAS[0].nombre
+  for (const e of ERAS) {
+    if (anio >= e.anio) nombre = e.nombre
+  }
+  return nombre
+}
+
+const VELOCIDADES: { v: Velocidad; label: string; icono: typeof Play }[] = [
+  { v: 0, label: "Pausa", icono: Pause },
+  { v: 1, label: "1x", icono: Play },
+  { v: 2, label: "2x", icono: FastForward },
+  { v: 4, label: "4x", icono: FastForward },
+]
+
+export function GameScreen() {
+  const game = useGame()
+
+  if (game.fase === "intro") {
+    return <IntroScreen onIniciar={game.iniciar} />
+  }
+
+  if (game.fase === "fin" && game.finalActual && game.tipoFinal) {
+    return (
+      <EndScreen
+        final={game.finalActual}
+        tipo={game.tipoFinal}
+        stats={game.stats}
+        compradas={game.compradas}
+        onReiniciar={game.iniciar}
+      />
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-background pb-10">
+      {/* HUD superior */}
+      <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
+        <div className="mx-auto max-w-5xl px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex min-w-[3.5rem] items-center justify-center rounded-lg bg-primary/15 px-2 py-1 font-mono text-lg font-bold tabular-nums text-primary">
+                {game.anio}
+              </span>
+              <div className="leading-tight">
+                <p className="text-sm font-semibold">{eraDeAnio(game.anio)}</p>
+                <p className="text-xs text-muted-foreground">
+                  +{game.rentaPorAnio} influencia/aÃ±o
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1.5 rounded-lg bg-accent/15 px-2.5 py-1.5 font-mono text-sm font-bold tabular-nums text-accent">
+                <Sparkles className="size-4" aria-hidden />
+                {Math.floor(game.influencia)}
+              </span>
+              <div className="flex items-center gap-1 rounded-lg border border-border p-0.5">
+                {VELOCIDADES.map(({ v, label, icono: Icono }) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => game.setVelocidad(v)}
+                    aria-label={label}
+                    title={label}
+                    className={cn(
+                      "flex items-center gap-1 rounded px-2 py-1 text-xs font-medium transition-colors",
+                      game.velocidad === v
+                        ? "bg-foreground text-background"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Icono className="size-3.5" aria-hidden />
+                    {v > 0 && <span>{v}x</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Barra de progreso temporal */}
+          <div className="mt-3">
+            <Progress
+              value={game.progresoTotal}
+              className="h-1.5 bg-muted [&>div]:bg-primary"
+              aria-label={`Progreso histÃ³rico: ${game.anio}`}
+            />
+            <div className="mt-1 flex justify-between font-mono text-[11px] text-muted-foreground">
+              <span>{ANIO_INICIAL}</span>
+              <span>Hoy ({ANIO_FINAL})</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto grid max-w-5xl gap-6 px-4 py-6 lg:grid-cols-[1fr_220px]">
+        {/* Ãrbol de mejoras */}
+        <section className="order-2 lg:order-1">
+          <h1 className="mb-1 text-balance text-xl font-bold tracking-tight">
+            Construye tu naciÃ³n
+          </h1>
+          <p className="mb-4 text-pretty text-sm leading-relaxed text-muted-foreground">
+            Invierte tu influencia en mejoras. Cada una desbloquea nuevas
+            tecnologÃ­as y avanza tu historia hasta hoy.
+          </p>
+          <Shop
+            stats={game.stats}
+            compradas={game.compradas}
+            influencia={game.influencia}
+            anio={game.anio}
+            onComprar={game.comprar}
+          />
+        </section>
+
+        {/* Estado de la naciÃ³n */}
+        <aside className="order-1 lg:order-2 lg:sticky lg:top-[136px] lg:self-start">
+          <h2 className="mb-2 text-sm font-semibold">Estado de la naciÃ³n</h2>
+          <StatsPanel stats={game.stats} />
+          <p className="mt-3 rounded-lg border border-border bg-card/60 p-2.5 text-[11px] leading-relaxed text-muted-foreground">
+            {game.compradas.length} mejoras desarrolladas. El Ã¡rea en la que mÃ¡s
+            inviertas definirÃ¡ tu legado en {ANIO_FINAL}.
+          </p>
+        </aside>
+      </div>
+    </main>
+  )
+}
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Flag, Shield, Coins, Handshake, Users } from "lucide-react"
+
+export function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
+      <div className="flex w-full max-w-xl flex-col items-center gap-8 text-center">
+        <span className="flex size-16 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+          <Flag className="size-8" aria-hidden />
+        </span>
+
+        <div className="space-y-3">
+          <p className="font-mono text-sm uppercase tracking-widest text-accent">
+            14 de mayo de 1948
+          </p>
+          <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
+            GÃ©nesis: La NaciÃ³n
+          </h1>
+          <p className="text-pretty leading-relaxed text-muted-foreground">
+            Acabas de declarar la independencia. El tiempo avanzarÃ¡ solo, desde
+            1948 hasta hoy. Genera influencia e inviÃ©rtela en un enorme Ã¡rbol de
+            mejoras: del riego por goteo a los microchips, de las FDI a la CÃºpula
+            de Hierro. Cada decisiÃ³n moldea la naciÃ³n que llegarÃ¡ a la actualidad.
+          </p>
+        </div>
+
+        <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { icon: Shield, label: "Militar" },
+            { icon: Coins, label: "EconomÃ­a" },
+            { icon: Handshake, label: "Diplomacia" },
+            { icon: Users, label: "Sociedad" },
+          ].map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3"
+            >
+              <Icon className="size-5 text-muted-foreground" aria-hidden />
+              <span className="text-xs font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2 text-pretty text-sm leading-relaxed text-muted-foreground">
+          <p>
+            El tiempo corre solo (puedes pausar o acelerar). Genera{" "}
+            <span className="font-medium text-accent">influencia</span> y
+            desbloquea mejoras que abren otras nuevas. El Ã¡rea en la que mÃ¡s
+            inviertas definirÃ¡ tu{" "}
+            <span className="font-medium text-foreground">legado en 2026</span>:
+            potencia militar, naciÃ³n tecnolÃ³gica, lÃ­der de la paz... o todo a la vez.
+          </p>
+        </div>
+
+        <Button size="lg" onClick={onIniciar} className="w-full sm:w-auto">
+          Fundar el Estado
+        </Button>
+      </div>
+    </main>
+  )
+}
+"use client"
+
+import Image from "next/image"
+import { useState } from "react"
+import {
+  CATEGORIA_INFO,
+  MEJORAS,
+  type Categoria,
+  type Mejora,
+  type Stats,
+} from "@/lib/game-data"
+import { Shield, Coins, Handshake, Users, Lock, Check, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const ICONOS: Record<Categoria, typeof Shield> = {
+  militar: Shield,
+  economia: Coins,
+  diplomacia: Handshake,
+  sociedad: Users,
+}
+
+const COLOR_TEXTO: Record<Categoria, string> = {
+  militar: "text-destructive",
+  economia: "text-accent",
+  diplomacia: "text-primary",
+  sociedad: "text-chart-4",
+}
+
+const COLOR_BORDE: Record<Categoria, string> = {
+  militar: "hover:border-destructive/60",
+  economia: "hover:border-accent/60",
+  diplomacia: "hover:border-primary/60",
+  sociedad: "hover:border-chart-4/60",
+}
+
+type EstadoMejora = "comprada" | "disponible" | "sin-fondos" | "bloqueada-anio" | "bloqueada-req"
+
+function estadoDeMejora(
+  m: Mejora,
+  ctx: { compradas: string[]; influencia: number; anio: number },
+): EstadoMejora {
+  if (ctx.compradas.includes(m.id)) return "comprada"
+  if (ctx.anio < m.anioMin) return "bloqueada-anio"
+  if (m.requiere && !m.requiere.every((r) => ctx.compradas.includes(r)))
+    return "bloqueada-req"
+  if (ctx.influencia < m.costo) return "sin-fondos"
+  return "disponible"
+}
+
+function nombreReq(id: string) {
+  return MEJORAS.find((m) => m.id === id)?.nombre ?? id
+}
+
+interface Props {
+  stats: Stats
+  compradas: string[]
+  influencia: number
+  anio: number
+  onComprar: (m: Mejora) => void
+}
+
+const CATEGORIAS: Categoria[] = ["militar", "economia", "diplomacia", "sociedad"]
+
+export function Shop({ compradas, influencia, anio, onComprar }: Props) {
+  const [filtro, setFiltro] = useState<Categoria | "todas">("todas")
+
+  const visibles = MEJORAS.filter(
+    (m) => filtro === "todas" || m.categoria === filtro,
+  )
+
+  return (
+    <div>
+      {/* Filtros por categorÃ­a */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setFiltro("todas")}
+          className={cn(
+            "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+            filtro === "todas"
+              ? "border-foreground bg-foreground text-background"
+              : "border-border text-muted-foreground hover:text-foreground",
+          )}
+        >
+          Todas
+        </button>
+        {CATEGORIAS.map((cat) => {
+          const Icono = ICONOS[cat]
+          const activo = filtro === cat
+          return (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setFiltro(cat)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                activo
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icono className="size-3.5" aria-hidden />
+              {CATEGORIA_INFO[cat].nombre}
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {visibles.map((m) => {
+          const estado = estadoDeMejora(m, { compradas, influencia, anio })
+          const Icono = ICONOS[m.categoria]
+          const interactiva = estado === "disponible"
+          const comprada = estado === "comprada"
+
+          return (
+            <button
+              key={m.id}
+              type="button"
+              disabled={!interactiva}
+              onClick={() => interactiva && onComprar(m)}
+              className={cn(
+                "group relative flex flex-col gap-2 overflow-hidden rounded-xl border bg-card p-3 text-left transition-colors",
+                comprada && "border-chart-4/50 bg-chart-4/5",
+                interactiva && cn("border-border cursor-pointer", COLOR_BORDE[m.categoria]),
+                (estado === "sin-fondos" ||
+                  estado === "bloqueada-anio" ||
+                  estado === "bloqueada-req") &&
+                  "border-border opacity-60",
+                !interactiva && !comprada && "cursor-not-allowed",
+              )}
+            >
+              {m.imagen && (
+                <div className="relative mb-1 h-24 w-full overflow-hidden rounded-lg">
+                  <Image
+                    src={m.imagen || "/placeholder.svg"}
+                    alt={m.nombre}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 320px"
+                    className={cn(
+                      "object-cover transition-transform duration-300",
+                      interactiva && "group-hover:scale-105",
+                      !comprada && !interactiva && "grayscale",
+                    )}
+                  />
+                </div>
+              )}
+
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Icono
+                    className={cn("size-4 shrink-0", COLOR_TEXTO[m.categoria])}
+                    aria-hidden
+                  />
+                  <span className="text-sm font-semibold leading-snug">
+                    {m.nombre}
+                  </span>
+                </div>
+                {comprada ? (
+                  <Check className="size-4 shrink-0 text-chart-4" aria-hidden />
+                ) : estado === "bloqueada-anio" || estado === "bloqueada-req" ? (
+                  <Lock
+                    className="size-4 shrink-0 text-muted-foreground"
+                    aria-hidden
+                  />
+                ) : (
+                  <span
+                    className={cn(
+                      "flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-xs tabular-nums",
+                      estado === "sin-fondos"
+                        ? "bg-muted text-muted-foreground"
+                        : "bg-accent/15 text-accent",
+                    )}
+                  >
+                    <Sparkles className="size-3" aria-hidden />
+                    {m.costo}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {m.descripcion}
+              </p>
+
+              <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
+                {Object.entries(m.efectos).map(([k, v]) => (
+                  <span
+                    key={k}
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      (v as number) >= 0
+                        ? COLOR_TEXTO[k as Categoria]
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {(v as number) >= 0 ? "+" : ""}
+                    {v} {CATEGORIA_INFO[k as Categoria].nombre}
+                  </span>
+                ))}
+                {m.rentaInfluencia ? (
+                  <span className="font-mono text-xs tabular-nums text-foreground/70">
+                    +{m.rentaInfluencia}/aÃ±o
+                  </span>
+                ) : null}
+              </div>
+
+              {estado === "bloqueada-anio" && (
+                <p className="font-mono text-[11px] text-muted-foreground">
+                  Disponible en {m.anioMin}
+                </p>
+              )}
+              {estado === "bloqueada-req" && m.requiere && (
+                <p className="text-[11px] text-muted-foreground">
+                  Requiere: {m.requiere.map(nombreReq).join(", ")}
+                </p>
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+"use client"
+
+import { Shield, Coins, Handshake, Users } from "lucide-react"
+import { CATEGORIA_INFO, type Categoria, type Stats } from "@/lib/game-data"
+import { Progress } from "@/components/ui/progress"
+import { cn } from "@/lib/utils"
+
+const ICONOS: Record<Categoria, typeof Shield> = {
+  militar: Shield,
+  economia: Coins,
+  diplomacia: Handshake,
+  sociedad: Users,
+}
+
+const COLORES: Record<Categoria, string> = {
+  militar: "text-destructive",
+  economia: "text-accent",
+  diplomacia: "text-primary",
+  sociedad: "text-chart-4",
+}
+
+const BARRAS: Record<Categoria, string> = {
+  militar: "[&>div]:bg-destructive",
+  economia: "[&>div]:bg-accent",
+  diplomacia: "[&>div]:bg-primary",
+  sociedad: "[&>div]:bg-chart-4",
+}
+
+export function StatsPanel({ stats }: { stats: Stats }) {
+  const categorias = Object.keys(CATEGORIA_INFO) as Categoria[]
+  return (
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+      {categorias.map((cat) => {
+        const Icono = ICONOS[cat]
+        const valor = stats[cat]
+        return (
+          <div
+            key={cat}
+            className="rounded-lg border border-border bg-card/60 p-3"
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Icono className={cn("size-4", COLORES[cat])} aria-hidden />
+                <span className="text-sm font-medium">
+                  {CATEGORIA_INFO[cat].nombre}
+                </span>
+              </div>
+              <span className="font-mono text-sm tabular-nums text-foreground">
+                {Math.round(valor)}
+              </span>
+            </div>
+            <Progress
+              value={Math.min(valor, 150) / 1.5}
+              className={cn("h-1.5 bg-muted", BARRAS[cat])}
+              aria-label={`${CATEGORIA_INFO[cat].nombre}: ${Math.round(valor)}`}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+"use client"
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  ANIO_FINAL,
+  ANIO_INICIAL,
+  ESTADO_INICIAL_STATS,
+  FINALES,
+  MEJORAS,
+  type Categoria,
+  type Mejora,
+  type Stats,
+  type TipoFinal,
+} from "@/lib/game-data"
+
+export type FaseJuego = "intro" | "jugando" | "fin"
+export type Velocidad = 0 | 1 | 2 | 4
+
+// CuÃ¡nto tiempo real (ms) dura un aÃ±o del juego a velocidad 1x.
+const MS_POR_ANIO = 3500
+// Cada cuÃ¡nto corre el "tick" interno.
+const TICK_MS = 100
+
+function calcularTipoFinal(stats: Stats): TipoFinal {
+  const { militar, economia, diplomacia, sociedad } = stats
+  const total = militar + economia + diplomacia + sociedad
+  const maxStat = Math.max(militar, economia, diplomacia, sociedad)
+  const minStat = Math.min(militar, economia, diplomacia, sociedad)
+
+  if (total < 120) return "fracaso"
+  if (minStat >= 45 && maxStat - minStat <= 30) return "equilibrio"
+  if (maxStat === economia) return "startup"
+  if (maxStat === diplomacia) return "paz"
+  if (maxStat === militar) return "militar"
+  return "equilibrio"
+}
+
+export function useGame() {
+  const [fase, setFase] = useState<FaseJuego>("intro")
+  const [anio, setAnio] = useState(ANIO_INICIAL)
+  const [influencia, setInfluencia] = useState(20)
+  const [stats, setStats] = useState<Stats>({ ...ESTADO_INICIAL_STATS })
+  const [compradas, setCompradas] = useState<string[]>([])
+  const [velocidad, setVelocidad] = useState<Velocidad>(1)
+  const [tipoFinal, setTipoFinal] = useState<TipoFinal | null>(null)
+
+  // Acumula el progreso fraccional del aÃ±o para un avance suave.
+  const progresoAnio = useRef(0)
+
+  const iniciar = useCallback(() => {
+    setFase("jugando")
+    setAnio(ANIO_INICIAL)
+    setInfluencia(20)
+    setStats({ ...ESTADO_INICIAL_STATS })
+    setCompradas([])
+    setVelocidad(1)
+    setTipoFinal(null)
+    progresoAnio.current = 0
+  }, [])
+
+  // Renta de influencia por aÃ±o (base + bonificaciones de mejoras compradas).
+  const rentaPorAnio = useMemo(() => {
+    const base = 6
+    const bonus = MEJORAS.filter(
+      (m) => compradas.includes(m.id) && m.rentaInfluencia,
+    ).reduce((acc, m) => acc + (m.rentaInfluencia ?? 0), 0)
+    return base + bonus
+  }, [compradas])
+
+  // Bucle de tiempo.
+  useEffect(() => {
+    if (fase !== "jugando" || velocidad === 0) return
+    const intervalo = setInterval(() => {
+      const avance = (TICK_MS / MS_POR_ANIO) * velocidad
+      progresoAnio.current += avance
+
+      if (progresoAnio.current >= 1) {
+        const aniosCompletos = Math.floor(progresoAnio.current)
+        progresoAnio.current -= aniosCompletos
+
+        setInfluencia((inf) => inf + rentaPorAnio * aniosCompletos)
+        setAnio((a) => {
+          const nuevo = a + aniosCompletos
+          if (nuevo >= ANIO_FINAL) {
+            return ANIO_FINAL
+          }
+          return nuevo
+        })
+      }
+    }, TICK_MS)
+
+    return () => clearInterval(intervalo)
+  }, [fase, velocidad, rentaPorAnio])
+
+  // Detecta fin de la partida al llegar a la actualidad.
+  useEffect(() => {
+    if (fase === "jugando" && anio >= ANIO_FINAL) {
+      setTipoFinal(calcularTipoFinal(stats))
+      setFase("fin")
+    }
+  }, [anio, fase, stats])
+
+  const comprar = useCallback(
+    (mejora: Mejora) => {
+      setCompradas((prev) => {
+        if (prev.includes(mejora.id)) return prev
+        if (influencia < mejora.costo) return prev
+        if (anio < mejora.anioMin) return prev
+        if (mejora.requiere && !mejora.requiere.every((r) => prev.includes(r)))
+          return prev
+
+        setInfluencia((inf) => inf - mejora.costo)
+        setStats((s) => {
+          const next = { ...s }
+          for (const [k, v] of Object.entries(mejora.efectos)) {
+            const key = k as keyof Stats
+            next[key] = Math.max(0, next[key] + (v as number))
+          }
+          return next
+        })
+        return [...prev, mejora.id]
+      })
+    },
+    [influencia, anio],
+  )
+
+  const finalActual = useMemo(() => {
+    if (!tipoFinal) return null
+    return FINALES[tipoFinal]
+  }, [tipoFinal])
+
+  const progresoTotal =
+    ((anio - ANIO_INICIAL) / (ANIO_FINAL - ANIO_INICIAL)) * 100
+
+  return {
+    fase,
+    anio,
+    influencia,
+    stats,
+    compradas,
+    velocidad,
+    rentaPorAnio,
+    progresoTotal,
+    finalActual,
+    tipoFinal,
+    setVelocidad,
+    iniciar,
+    comprar,
+  }
+}
+
+export type { Categoria }
+// lib/game-data.ts
+
+export type Categoria = "militar" | "economia" | "diplomacia" | "sociedad"
+export interface Stats { militar: number; economia: number; diplomacia: number; sociedad: number }
+export type TipoFinal = "militar" | "startup" | "paz" | "equilibrio" | "fracaso"
+
+export interface Mejora {
+  id: string; 
+  nombre: string; 
+  descripcion: string; 
+  categoria: Categoria
+  costo: number; 
+  anioMin: number; 
+  requiere?: string[]
+  efectos: Partial<Stats>; 
+  rentaInfluencia?: number; 
+  imagen?: string;
+  notificaciones?: string[] // Mensajes periÃ³dicos que genera esta mejora cuando estÃ¡ comprada
+}
+
+export interface Evento {
+  id: string; 
+  anio: number; 
+  titulo: string; 
+  descripcion: string;
+  icono: string; 
+  color: string; 
+  necesita: string[];
+  efectosVictoria: Partial<Stats> & { monedas?: number };
+  efectosDerrota: Partial<Stats> & { monedas?: number };
+  textoVictoria: string; 
+  textoDerrota: string; 
+  obligatorio: boolean;
+}
+
+export interface PreguntaTrivia {
+  pregunta: string; 
+  opciones: string[]; 
+  correcta: number; 
+  bonus: number; 
+  penalidad: number;
+}
+
+export interface Era {
+  anio: number;
+  nombre: string;
+}
+
+// InformaciÃ³n estÃ©tica y descriptiva de las categorÃ­as (Unificado)
+export const CATEGORIA_INFO: Record<Categoria, { nombre: string; color: string; descripcion: string }> = {
+  militar:    { nombre: "Militar",    color: "#e05050", descripcion: "Defensa y fuerzas armadas." },
+  economia:   { nombre: "EconomÃ­a",   color: "#e0b030", descripcion: "Industria, agua y tecnologÃ­a." },
+  diplomacia: { nombre: "Diplomacia", color: "#40c080", descripcion: "Alianzas y reconocimiento." },
+  sociedad:   { nombre: "Sociedad",   color: "#6090e0", descripcion: "PoblaciÃ³n, ciencia y cultura." },
+}
+
+export const ESTADO_INICIAL_STATS: Stats = { militar: 5, economia: 5, diplomacia: 5, sociedad: 5 }
+export const ANIO_INICIAL = 1948
+export const ANIO_FINAL = 2026
+
+// Eras histÃ³ricas para la barra de progreso temporal
+export const ERAS: Era[] = [
+  { anio: 1948, nombre: "La FundaciÃ³n" },
+  { anio: 1956, nombre: "ConsolidaciÃ³n" },
+  { anio: 1967, nombre: "Los Seis DÃ­as" },
+  { anio: 1973, nombre: "Yom Kipur" },
+  { anio: 1979, nombre: "La Paz" },
+  { anio: 1990, nombre: "La Gran Ola" },
+  { anio: 2000, nombre: "NaciÃ³n Startup" },
+  { anio: 2011, nombre: "Era de la Defensa" },
+  { anio: 2020, nombre: "Potencia Global" },
+]
+
+// Pool completo de mejoras para la generaciÃ³n dinÃ¡mica del Ã¡rbol
+const POOL: (Mejora & { nivel: number; obligatoria?: boolean })[] = [
+  // === MILITAR ===
+  { id: "mil_haganah", nombre: "Unificar las milicias", descripcion: "Fusiona la Haganah y grupos armados en un ejÃ©rcito.", categoria: "militar", costo: 12, anioMin: 1948, efectos: { militar: 6 }, rentaInfluencia: 1, nivel: 0, obligatoria: true,
+    notificaciones: ["Tus soldados completaron 10.000 horas de entrenamiento este aÃ±o.", "La Haganah unificada interceptÃ³ un intento de infiltraciÃ³n en la frontera norte."] },
+  { id: "mil_fdi", nombre: "Fundar las FDI", descripcion: "Las Fuerzas de Defensa de Israel: ejÃ©rcito profesional.", categoria: "militar", costo: 26, anioMin: 1948, requiere: ["mil_haganah"], efectos: { militar: 9 }, rentaInfluencia: 1, nivel: 1, obligatoria: true,
+    notificaciones: ["Las FDI reclutaron 12.000 nuevos soldados.", "Ejercicio militar conjunto: las FDI simulan defensa en 3 frentes simultÃ¡neos."] },
+  { id: "mil_reservas", nombre: "Sistema de reservistas", descripcion: "Cada ciudadano puede ser movilizado en horas.", categoria: "militar", costo: 38, anioMin: 1950, requiere: ["mil_fdi"], efectos: { militar: 8, sociedad: 3 }, rentaInfluencia: 0, nivel: 2,
+    notificaciones: ["300.000 reservistas movilizados en menos de 48 horas.", "El sistema de reservistas superÃ³ la prueba de estrÃ©s en simulacro nacional."] },
+  { id: "mil_aviacion", nombre: "Fuerza AÃ©rea", descripcion: "Cazas y pilotos de Ã©lite para dominar los cielos.", categoria: "militar", costo: 52, anioMin: 1955, requiere: ["mil_fdi"], efectos: { militar: 12 }, rentaInfluencia: 1, nivel: 2,
+    notificaciones: ["La Fuerza AÃ©rea registrÃ³ 0 pÃ©rdidas en los Ãºltimos 6 meses de patrullaje.", "Tus pilotos completaron 5.000 horas de vuelo en simulador este trimestre."] },
+  { id: "mil_blindados", nombre: "Cuerpo blindado", descripcion: "Brigadas de tanques para la guerra en el desierto.", categoria: "militar", costo: 60, anioMin: 1960, requiere: ["mil_fdi"], efectos: { militar: 13 }, rentaInfluencia: 0, nivel: 2,
+    notificaciones: ["Las brigadas blindadas ejecutaron maniobras en el NÃ©guev con precisiÃ³n rÃ©cord."] },
+  { id: "mil_paracas", nombre: "Fuerzas especiales", descripcion: "Unidades de Ã©lite para operaciones detrÃ¡s de lÃ­neas enemigas.", categoria: "militar", costo: 70, anioMin: 1965, requiere: ["mil_reservas"], efectos: { militar: 11 }, rentaInfluencia: 0, nivel: 3,
+    notificaciones: ["Las fuerzas especiales desmantelaron una cÃ©lula terrorista en operaciÃ³n secreta.", "OperaciÃ³n nocturna: 4 agentes capturados en misiÃ³n de precisiÃ³n."] },
+  { id: "mil_dimona", nombre: "Programa secreto (Dimona)", descripcion: "La disuasiÃ³n definitiva. Nunca confirmada, nunca negada.", categoria: "militar", costo: 120, anioMin: 1965, requiere: ["mil_aviacion"], efectos: { militar: 22, diplomacia: -6 }, rentaInfluencia: 0, nivel: 3,
+    notificaciones: ["El reactor de Dimona generÃ³ suficiente energÃ­a para abastecer 200.000 hogares.", "AmbigÃ¼edad estratÃ©gica mantenida: ningÃºn paÃ­s pudo confirmar la capacidad nuclear."] },
+  { id: "mil_inteligencia", nombre: "Mossad y Aman", descripcion: "Servicios de inteligencia con alcance global.", categoria: "militar", costo: 70, anioMin: 1967, requiere: ["mil_aviacion"], efectos: { militar: 10, diplomacia: 4 }, rentaInfluencia: 2, nivel: 3,
+    notificaciones: ["El Mossad descubriÃ³ 3 intentos de asesinato a diplomÃ¡ticos israelÃ­es en el exterior.", "Tu red de inteligencia identificÃ³ y neutralizÃ³ una cÃ©lula de espionaje en Europa.", "El Mossad interceptÃ³ comunicaciones que revelaron planes de ataque inminente."] },
+  { id: "mil_satelite", nombre: "SatÃ©lite espÃ­a (Ofeq)", descripcion: "Vigilancia desde el espacio. Pocos paÃ­ses lo logran.", categoria: "militar", costo: 95, anioMin: 1988, requiere: ["mil_inteligencia"], efectos: { militar: 14 }, rentaInfluencia: 2, nivel: 4,
+    notificaciones: ["El satÃ©lite Ofeq detectÃ³ movimientos de tropas en 3 fronteras simultÃ¡neamente."] },
+  { id: "mil_merkava", nombre: "Tanque Merkava", descripcion: "DiseÃ±o propio que prioriza la vida de la tripulaciÃ³n.", categoria: "militar", costo: 95, anioMin: 1979, requiere: ["mil_blindados"], efectos: { militar: 16, economia: 4 }, rentaInfluencia: 1, nivel: 3,
+    notificaciones: ["El Merkava IV superÃ³ todas las pruebas de resistencia balÃ­stica.", "ExportaciÃ³n del diseÃ±o Merkava generÃ³ ingresos por 200 millones de dÃ³lares."] },
+  { id: "mil_cupula", nombre: "CÃºpula de Hierro", descripcion: "Escudo antimisiles que intercepta cohetes en pleno vuelo.", categoria: "militar", costo: 150, anioMin: 2011, requiere: ["mil_merkava", "mil_inteligencia"], efectos: { militar: 24, sociedad: 8 }, rentaInfluencia: 3, nivel: 4, imagen: "/upgrades/cupula-hierro.png",
+    notificaciones: ["La CÃºpula de Hierro interceptÃ³ 97 de 100 proyectiles en prueba real.", "Sistema antimisiles activo: 0 bajas civiles en el Ãºltimo mes de tensiÃ³n fronteriza."] },
+  { id: "mil_ciber", nombre: "Ciberdefensa (Unidad 8200)", descripcion: "Guerra digital y ciberseguridad de primer nivel.", categoria: "militar", costo: 170, anioMin: 2015, requiere: ["mil_cupula"], efectos: { militar: 18, economia: 12 }, rentaInfluencia: 4, nivel: 5,
+    notificaciones: ["La Unidad 8200 neutralizÃ³ un ciberataque masivo contra infraestructura crÃ­tica.", "Tu ciberdefensa exportÃ³ tecnologÃ­a de seguridad a 12 paÃ­ses aliados este aÃ±o."] },
+  { id: "mil_drones", nombre: "Drones militares", descripcion: "Flota de UAVs para reconocimiento y ataques quirÃºrgicos.", categoria: "militar", costo: 140, anioMin: 2010, requiere: ["mil_satelite"], efectos: { militar: 15 }, rentaInfluencia: 3, nivel: 5,
+    notificaciones: ["Flota de drones registrÃ³ 2.000 horas de patrullaje de fronteras sin incidentes."] },
+
+  // === ECONOMÃA ===
+  { id: "eco_austeridad", nombre: "Plan de austeridad (Tzena)", descripcion: "Racionamiento para estabilizar una economÃ­a en bancarrota.", categoria: "economia", costo: 10, anioMin: 1948, efectos: { economia: 5 }, rentaInfluencia: 1, nivel: 0, obligatoria: true,
+    notificaciones: ["El plan de austeridad redujo la inflaciÃ³n un 15% este trimestre."] },
+  { id: "eco_acueducto", nombre: "Acueducto Nacional", descripcion: "Lleva agua del norte al desierto del NÃ©guev.", categoria: "economia", costo: 30, anioMin: 1953, requiere: ["eco_austeridad"], efectos: { economia: 8, sociedad: 4 }, rentaInfluencia: 1, nivel: 1,
+    notificaciones: ["El acueducto nacional distribuyÃ³ 400 millones de litros de agua al NÃ©guev este mes."] },
+  { id: "eco_goteo", nombre: "Riego por goteo", descripcion: "Hace florecer el desierto y se exporta al mundo entero.", categoria: "economia", costo: 55, anioMin: 1959, requiere: ["eco_acueducto"], efectos: { economia: 14, sociedad: 5 }, rentaInfluencia: 3, nivel: 2, imagen: "/upgrades/riego-goteo.png",
+    notificaciones: ["Tu sistema de riego por goteo ahorrÃ³ 1.200 millones de litros de agua este aÃ±o.", "El riego por goteo fue adoptado por 8 paÃ­ses en Ãfrica subsahariana gracias a Israel.", "La tecnologÃ­a de riego por goteo generÃ³ exportaciones por 180 millones de dÃ³lares."] },
+  { id: "eco_industria", nombre: "Industria pesada", descripcion: "FÃ¡bricas, quÃ­mica y manufactura para crear empleo.", categoria: "economia", costo: 48, anioMin: 1962, requiere: ["eco_austeridad"], efectos: { economia: 12 }, rentaInfluencia: 2, nivel: 1,
+    notificaciones: ["Las fÃ¡bricas israelÃ­es emplean ahora a 180.000 trabajadores."] },
+  { id: "eco_turismo", nombre: "Turismo bÃ­blico", descripcion: "Tierra Santa atrae millones de visitantes que generan divisas.", categoria: "economia", costo: 35, anioMin: 1958, requiere: ["eco_austeridad"], efectos: { economia: 9, diplomacia: 4 }, rentaInfluencia: 2, nivel: 1,
+    notificaciones: ["2.3 millones de turistas visitaron Israel este aÃ±o, rÃ©cord histÃ³rico."] },
+  { id: "eco_diamantes", nombre: "Industria del diamante", descripcion: "Tallado y comercio de diamantes, fuente clave de divisas.", categoria: "economia", costo: 40, anioMin: 1965, requiere: ["eco_industria"], efectos: { economia: 10 }, rentaInfluencia: 2, nivel: 2,
+    notificaciones: ["Israel procesÃ³ el 35% del mercado mundial de diamantes pulidos este aÃ±o."] },
+  { id: "eco_desalacion", nombre: "Plantas desaladoras", descripcion: "Convierte agua de mar en agua potable a gran escala.", categoria: "economia", costo: 90, anioMin: 1999, requiere: ["eco_goteo"], efectos: { economia: 16, sociedad: 8 }, rentaInfluencia: 3, nivel: 3,
+    notificaciones: ["Las plantas desaladoras cubrieron el 70% del consumo de agua potable del paÃ­s."] },
+  { id: "eco_chips", nombre: "FÃ¡brica de chips (Intel Haifa)", descripcion: "Semiconductores israelÃ­es en computadoras de todo el planeta.", categoria: "economia", costo: 130, anioMin: 1995, requiere: ["eco_industria"], efectos: { economia: 22 }, rentaInfluencia: 5, nivel: 3, imagen: "/upgrades/chips.png",
+    notificaciones: ["Intel Haifa completÃ³ el diseÃ±o del procesador mÃ¡s eficiente del mundo.", "Tus chips se instalaron en 400 millones de dispositivos este aÃ±o.", "La planta de semiconductores de Haifa exportÃ³ chips por 3.200 millones de dÃ³lares."] },
+  { id: "eco_startup", nombre: "NaciÃ³n Startup", descripcion: "Capital de riesgo y miles de empresas tecnolÃ³gicas.", categoria: "economia", costo: 175, anioMin: 2000, requiere: ["eco_chips"], efectos: { economia: 26, sociedad: 6 }, rentaInfluencia: 6, nivel: 4, imagen: "/upgrades/startup.png",
+    notificaciones: ["Tel Aviv fue nombrada la 3ra ciudad del mundo en densidad de startups.", "23 nuevas startups israelÃ­es recaudaron mÃ¡s de 10 millones de dÃ³lares este mes."] },
+  { id: "eco_gas", nombre: "Gas natural (LeviatÃ¡n)", descripcion: "Enormes yacimientos de gas en el MediterrÃ¡neo.", categoria: "economia", costo: 140, anioMin: 2010, requiere: ["eco_desalacion"], efectos: { economia: 20, diplomacia: 6 }, rentaInfluencia: 4, nivel: 4,
+    notificaciones: ["El yacimiento LeviatÃ¡n exportÃ³ gas a Egipto y Jordania por 1.500 millones este aÃ±o."] },
+  { id: "eco_unicornios", nombre: "Hub de unicornios", descripcion: "Decenas de empresas valuadas en miles de millones.", categoria: "economia", costo: 200, anioMin: 2018, requiere: ["eco_startup"], efectos: { economia: 28 }, rentaInfluencia: 8, nivel: 5,
+    notificaciones: ["Waze, Mobileye y Monday.com generaron 8.000 millones de dÃ³lares en exportaciones."] },
+  { id: "eco_agritech", nombre: "AgriTech global", descripcion: "TecnologÃ­a agrÃ­cola exportada a paÃ­ses con escasez hÃ­drica.", categoria: "economia", costo: 120, anioMin: 2012, requiere: ["eco_goteo"], efectos: { economia: 18, diplomacia: 8 }, rentaInfluencia: 4, nivel: 4,
+    notificaciones: ["AgriTech israelÃ­ firmÃ³ contratos con 14 paÃ­ses en desarrollo este aÃ±o."] },
+
+  // === DIPLOMACIA ===
+  { id: "dip_onu", nombre: "Reconocimiento de la ONU", descripcion: "Asegurar un asiento y legitimidad en la comunidad mundial.", categoria: "diplomacia", costo: 12, anioMin: 1949, efectos: { diplomacia: 7 }, rentaInfluencia: 1, nivel: 0, obligatoria: true,
+    notificaciones: ["Israel presentÃ³ 3 resoluciones en el Consejo de Seguridad este mes."] },
+  { id: "dip_alemania", nombre: "Acuerdo de reparaciones", descripcion: "CompensaciÃ³n de Alemania que ayuda a financiar el paÃ­s.", categoria: "diplomacia", costo: 35, anioMin: 1952, requiere: ["dip_onu"], efectos: { diplomacia: 8, economia: 8 }, rentaInfluencia: 0, nivel: 1,
+    notificaciones: ["Las reparaciones alemanas financiaron la construcciÃ³n de 3 hospitales nuevos."] },
+  { id: "dip_europa", nombre: "Relaciones con Europa", descripcion: "Acuerdos comerciales con el bloque europeo.", categoria: "diplomacia", costo: 45, anioMin: 1955, requiere: ["dip_onu"], efectos: { diplomacia: 10, economia: 6 }, rentaInfluencia: 2, nivel: 1,
+    notificaciones: ["El acuerdo de libre comercio con la UE impulsÃ³ las exportaciones un 22%."] },
+  { id: "dip_eeuu", nombre: "Alianza con EE. UU.", descripcion: "Tu aliado estratÃ©gico mÃ¡s importante: ayuda militar y vetos.", categoria: "diplomacia", costo: 45, anioMin: 1962, requiere: ["dip_onu"], efectos: { diplomacia: 14, militar: 6 }, rentaInfluencia: 3, nivel: 1, obligatoria: true,
+    notificaciones: ["EE.UU. aprobÃ³ un paquete de ayuda militar de 3.800 millones de dÃ³lares.", "La alianza con Washington vetÃ³ 2 resoluciones hostiles en la ONU este aÃ±o."] },
+  { id: "dip_africa", nombre: "Diplomacia en Ãfrica", descripcion: "Asistencia tÃ©cnica y agrÃ­cola genera aliados en el continente.", categoria: "diplomacia", costo: 55, anioMin: 1960, requiere: ["dip_onu"], efectos: { diplomacia: 12 }, rentaInfluencia: 2, nivel: 1,
+    notificaciones: ["Israel firmÃ³ acuerdos de cooperaciÃ³n tÃ©cnica con 6 paÃ­ses africanos."] },
+  { id: "dip_campdavid", nombre: "Paz con Egipto (Camp David)", descripcion: "El primer tratado de paz con un vecino Ã¡rabe. HistÃ³rico.", categoria: "diplomacia", costo: 110, anioMin: 1979, requiere: ["dip_eeuu"], efectos: { diplomacia: 22, militar: -4 }, rentaInfluencia: 3, nivel: 2,
+    notificaciones: ["La frontera con Egipto lleva 5 aÃ±os sin incidentes tras Camp David."] },
+  { id: "dip_oslo", nombre: "Acuerdos de Oslo", descripcion: "Negociaciones para una paz duradera en la regiÃ³n.", categoria: "diplomacia", costo: 95, anioMin: 1993, requiere: ["dip_campdavid"], efectos: { diplomacia: 16, sociedad: 4 }, rentaInfluencia: 2, nivel: 3,
+    notificaciones: ["El comitÃ© de seguimiento de Oslo se reuniÃ³ con avances en cooperaciÃ³n econÃ³mica."] },
+  { id: "dip_jordania", nombre: "Paz con Jordania", descripcion: "Un segundo tratado que estabiliza la frontera este.", categoria: "diplomacia", costo: 85, anioMin: 1994, requiere: ["dip_campdavid"], efectos: { diplomacia: 15 }, rentaInfluencia: 2, nivel: 3,
+    notificaciones: ["El corredor econÃ³mico Israel-Jordania moviÃ³ mercancÃ­as por 400 millones de dÃ³lares."] },
+  { id: "dip_tech", nombre: "Diplomacia tecnolÃ³gica", descripcion: "Exportar innovaciÃ³n abre puertas en Asia, Ãfrica y Europa.", categoria: "diplomacia", costo: 120, anioMin: 2005, requiere: ["dip_eeuu"], efectos: { diplomacia: 18, economia: 8 }, rentaInfluencia: 4, nivel: 2,
+    notificaciones: ["La diplomacia tecnolÃ³gica abriÃ³ 4 nuevos mercados en Asia este aÃ±o."] },
+  { id: "dip_india", nombre: "Alianza con India", descripcion: "CooperaciÃ³n en defense, agua y tecnologÃ­a con India.", categoria: "diplomacia", costo: 100, anioMin: 2000, requiere: ["dip_tech"], efectos: { diplomacia: 14, economia: 10 }, rentaInfluencia: 3, nivel: 3,
+    notificaciones: ["India importÃ³ tecnologÃ­a de riego israelÃ­ para 2 millones de hectÃ¡reas."] },
+  { id: "dip_abraham", nombre: "Acuerdos de Abraham", descripcion: "NormalizaciÃ³n con EAU, BarÃ©in, Marruecos. Una nueva era.", categoria: "diplomacia", costo: 180, anioMin: 2020, requiere: ["dip_tech", "dip_jordania"], efectos: { diplomacia: 26, economia: 10 }, rentaInfluencia: 6, nivel: 4,
+    notificaciones: ["Los Acuerdos de Abraham generaron inversiÃ³n Ã¡rabe por 3.000 millones en Israel.", "Vuelos directos Tel Avivâ€“DubÃ¡i transportaron 500.000 pasajeros el primer aÃ±o."] },
+
+  // === SOCIEDAD ===
+  { id: "soc_kibutz", nombre: "Movimiento kibutz", descripcion: "Comunidades colectivas que cultivan la tierra y defienden las fronteras.", categoria: "sociedad", costo: 22, anioMin: 1948, efectos: { sociedad: 7, economia: 4 }, rentaInfluencia: 1, nivel: 0, obligatoria: true,
+    notificaciones: ["Los kibutzim produjeron el 40% de los alimentos frescos del paÃ­s este aÃ±o."] },
+  { id: "soc_retorno", nombre: "Ley del Retorno", descripcion: "Abre las puertas a la inmigraciÃ³n judÃ­a de todo el mundo.", categoria: "sociedad", costo: 12, anioMin: 1950, efectos: { sociedad: 8 }, rentaInfluencia: 1, nivel: 0, obligatoria: true,
+    notificaciones: ["45.000 nuevos ciudadanos llegaron a Israel bajo la Ley del Retorno este aÃ±o."] },
+  { id: "soc_hebreo", nombre: "Renacer del hebreo", descripcion: "Una lengua antigua revivida como idioma nacional moderno.", categoria: "sociedad", costo: 28, anioMin: 1950, requiere: ["soc_retorno"], efectos: { sociedad: 10 }, rentaInfluencia: 0, nivel: 1,
+    notificaciones: ["El hebreo fue adoptado como lengua principal por el 94% de la poblaciÃ³n."] },
+  { id: "soc_inmigracion", nombre: "AbsorciÃ³n de inmigrantes", descripcion: "Programas de integraciÃ³n para oleadas de nuevos ciudadanos.", categoria: "sociedad", costo: 40, anioMin: 1952, requiere: ["soc_retorno"], efectos: { sociedad: 9, economia: 5 }, rentaInfluencia: 2, nivel: 1,
+    notificaciones: ["Los centros de absorciÃ³n integraron a 18.000 nuevos inmigrantes este semestre."] },
+  { id: "soc_universidades", nombre: "Universidades de Ã©lite", descripcion: "Technion, Hebrea, Weizmann: ciencia de clase mundial.", categoria: "sociedad", costo: 50, anioMin: 1955, requiere: ["soc_retorno"], efectos: { sociedad: 12, economia: 6 }, rentaInfluencia: 3, nivel: 1,
+    notificaciones: ["El Technion publicÃ³ 300 papers cientÃ­ficos citados internacionalmente este aÃ±o.", "La Universidad Hebrea lanzÃ³ un programa de doctorado en IA con MIT y Stanford."] },
+  { id: "soc_radio", nombre: "RadiodifusiÃ³n pÃºblica", descripcion: "La voz de Israel une a una sociedad diversa e inmigrante.", categoria: "sociedad", costo: 30, anioMin: 1950, requiere: ["soc_kibutz"], efectos: { sociedad: 8 }, rentaInfluencia: 1, nivel: 1,
+    notificaciones: ["Radio Israel transmitiÃ³ en 12 idiomas para integrar a los nuevos inmigrantes."] },
+  { id: "soc_salud", nombre: "Sistema de salud universal", descripcion: "Cobertura mÃ©dica para toda la poblaciÃ³n.", categoria: "sociedad", costo: 60, anioMin: 1970, requiere: ["soc_universidades"], efectos: { sociedad: 14 }, rentaInfluencia: 2, nivel: 2,
+    notificaciones: ["Israel alcanzÃ³ la 5ta esperanza de vida mÃ¡s alta del mundo este aÃ±o.", "El sistema de salud israelÃ­ fue clasificado entre los 10 mejores del mundo por la OMS."] },
+  { id: "soc_derechos", nombre: "Derechos civiles", descripcion: "GarantÃ­as constitucionales para una sociedad plural.", categoria: "sociedad", costo: 45, anioMin: 1965, requiere: ["soc_hebreo"], efectos: { sociedad: 11, diplomacia: 5 }, rentaInfluencia: 0, nivel: 2,
+    notificaciones: ["Israel fue reconocida como la Ãºnica democracia plena de Oriente Medio."] },
+  { id: "soc_aliyah", nombre: "La Gran Aliyah soviÃ©tica", descripcion: "Un millÃ³n de inmigrantes, muchos cientÃ­ficos e ingenieros.", categoria: "sociedad", costo: 100, anioMin: 1990, requiere: ["soc_universidades"], efectos: { sociedad: 18, economia: 12 }, rentaInfluencia: 4, nivel: 2,
+    notificaciones: ["Los inmigrantes soviÃ©ticos fundaron 2.400 nuevas empresas tecnolÃ³gicas.", "La oleada de cientÃ­ficos soviÃ©ticos impulsÃ³ 14 nuevos laboratorios de investigaciÃ³n."] },
+  { id: "soc_cultura", nombre: "Cultura y cine", descripcion: "Literatura, mÃºsica y cine que proyectan tu identidad al mundo.", categoria: "sociedad", costo: 80, anioMin: 2000, requiere: ["soc_salud"], efectos: { sociedad: 14, diplomacia: 6 }, rentaInfluencia: 3, nivel: 3,
+    notificaciones: ["Una pelÃ­cula israelÃ­ fue nominada al Oscar a mejor pelÃ­cula extranjera.", "La literatura israelÃ­ fue traducida a 40 idiomas este aÃ±o."] },
+  { id: "soc_iddanim", nombre: "EducaciÃ³n tecnolÃ³gica", descripcion: "Formar a la prÃ³xima generaciÃ³n en programaciÃ³n e ingenierÃ­a.", categoria: "sociedad", costo: 130, anioMin: 2010, requiere: ["soc_aliyah"], efectos: { sociedad: 16, economia: 14 }, rentaInfluencia: 5, nivel: 3,
+    notificaciones: ["El 78% de los estudiantes israelÃ­es aprendieron programaciÃ³n en la escuela secundaria."] },
+  { id: "soc_longevidad", nombre: "InvestigaciÃ³n en longevidad", descripcion: "Liderar la ciencia anti-envejecimiento con aplicaciones globales.", categoria: "sociedad", costo: 170, anioMin: 2015, requiere: ["soc_iddanim"], efectos: { sociedad: 20, economia: 12 }, rentaInfluencia: 5, nivel: 4,
+    notificaciones: ["Investigadores israelÃ­es publicaron un avance en reversiÃ³n del envejecimiento celular."] },
+  { id: "soc_medioambiente", nombre: "EnergÃ­as renovables", descripcion: "Paneles solares en el desierto. Independencia energÃ©tica.", categoria: "sociedad", costo: 110, anioMin: 2008, requiere: ["soc_salud"], efectos: { sociedad: 12, economia: 10 }, rentaInfluencia: 3, nivel: 3,
+    notificaciones: ["El 35% de la energÃ­a de Israel provino de fuentes renovables este aÃ±o."] },
+]
+
+// Pool de guerras de las cuales se seleccionarÃ¡n exactamente 2 aleatorias por partida
+export const EVENTOS_OPCIONALES: Evento[] = [
+  {
+    id: "guerra_independencia", anio: 1948, titulo: "Guerra de Independencia", icono: "âš”ï¸", color: "#8b1a1a", obligatorio: false,
+    descripcion: "Los ejÃ©rcitos de 5 paÃ­ses Ã¡rabes atacan el dÃ­a siguiente de la declaraciÃ³n. Israel lucha por su supervivencia.",
+    necesita: ["mil_haganah"], textoVictoria: "Israel derrota a las fuerzas Ã¡rabes. Los acuerdos de armisticio definen las fronteras del nuevo Estado.",
+    textoDerrota: "Sin organizaciÃ³n militar, las pÃ©rdidas son enormes. La naciÃ³n sobrevive a duras penas.",
+    efectosVictoria: { militar: 15, monedas: 70 }, efectosDerrota: { militar: -10, monedas: -40 },
+  },
+  {
+    id: "crisis_suez", anio: 1956, titulo: "Crisis del Canal de Suez", icono: "ðŸš¢", color: "#7a4500", obligatorio: false,
+    descripcion: "Egipto nacionaliza el Canal. Israel, Francia y el Reino Unido atacan en coordinaciÃ³n.",
+    necesita: ["mil_aviacion"], textoVictoria: "Victoria militar. Israel gana libertad de navegaciÃ³n en el Mar Rojo.",
+    textoDerrota: "Sin fuerza aÃ©rea capaz, la campaÃ±a termina en fracaso diplomÃ¡tico.",
+    efectosVictoria: { militar: 12, diplomacia: -4, monedas: 60 }, efectosDerrota: { diplomacia: -8, monedas: -25 },
+  },
+  {
+    id: "guerra_6_dias", anio: 1967, titulo: "Guerra de los Seis DÃ­as", icono: "âœ¡ï¸", color: "#8b1a1a", obligatorio: false,
+    descripcion: "En apenas 6 dÃ­as, Israel derrota a Egipto, Jordania y Siria. Un golpe sin precedentes en la historia.",
+    necesita: ["mil_aviacion", "mil_inteligencia"], textoVictoria: "Victoria aplastante. Israel captura SinaÃ­, Cisjordania, Gaza y los Altos del GolÃ¡n.",
+    textoDerrota: "Sin inteligencia ni superioridad aÃ©rea, el resultado es incierto y muy costoso.",
+    efectosVictoria: { militar: 25, diplomacia: 8, monedas: 120 }, efectosDerrota: { militar: -15, monedas: -60 },
+  },
+  {
+    id: "yom_kipur", anio: 1973, titulo: "Guerra de Yom Kipur", icono: "ðŸ”¯", color: "#6b1a1a", obligatorio: false,
+    descripcion: "Egipto y Siria atacan por sorpresa en el dÃ­a mÃ¡s sagrado. Israel, desprevenido, lucha contra la marea.",
+    necesita: ["mil_blindados", "mil_reservas"], textoVictoria: "Contraataque exitoso. Israel rodea al ejÃ©rcito egipcio. Las pÃ©rdidas son grandes pero la victoria llega.",
+    textoDerrota: "Sin blindados ni reservistas organizados, el frente casi cede. Una herida profunda en la naciÃ³n.",
+    efectosVictoria: { militar: 20, sociedad: -8, monedas: 90 }, efectosDerrota: { militar: -18, sociedad: -14, monedas: -75 },
+  },
+  {
+    id: "libano_1982", anio: 1982, titulo: "Primera Guerra del LÃ­bano", icono: "ðŸª–", color: "#8b3a1a", obligatorio: false,
+    descripcion: "Israel invade el LÃ­bano para destruir la infraestructura de la OLP. Una guerra larga y polÃ©mica.",
+    necesita: ["mil_aviacion", "mil_blindados"], textoVictoria: "La OLP es expulsada del LÃ­bano. Israel asegura su frontera norte por aÃ±os.",
+    textoDerrota: "Sin coordinaciÃ³n entre las fuerzas, la campaÃ±a se estanca y genera presiÃ³n internacional.",
+    efectosVictoria: { militar: 15, diplomacia: -8, monedas: 60 }, efectosDerrota: { militar: -8, diplomacia: -12, monedas: -50 },
+  },
+  {
+    id: "libano_2006", anio: 2006, titulo: "Segunda Guerra del LÃ­bano", icono: "ðŸš€", color: "#8b1a1a", obligatorio: false,
+    descripcion: "Hezbollah secuestra soldados israelÃ­es. Israel responde con una campaÃ±a de 34 dÃ­as.",
+    necesita: ["mil_merkava", "mil_aviacion"], textoVictoria: "Alto el fuego con UNIFIL. La disuasiÃ³n se restablece y Hezbollah queda debilitado.",
+    textoDerrota: "Sin capacidad aÃ©rea ni blindada coordinada, la campaÃ±a no logra objetivos estratÃ©gicos.",
+    efectosVictoria: { militar: 10, diplomacia: -6, monedas: 50 }, efectosDerrota: { militar: -12, monedas: -40 },
+  },
+]
+
+// Evento definitivo y obligatorio del final de la lÃ­nea temporal
+export const EVENTO_7_OCTUBRE: Evento = {
+  id: "7_octubre", anio: 2023, titulo: "7 de Octubre", icono: "ðŸ”¯", color: "#1a0808", obligatorio: true,
+  descripcion: "El ataque de HamÃ¡s en los kibutzim y el festival Nova es el mayor golpe en dÃ©cadas. Miles de vÃ­ctimas, cientos de rehenes. La naciÃ³n entera se detiene.",
+  necesita: ["mil_cupula", "mil_inteligencia", "mil_ciber"],
+  textoVictoria: "El horror no puede borrarse, pero Israel se reagrupa. La respuesta militar, diplomÃ¡tica y tecnolÃ³gica que construiste durante dÃ©cadas permite una recuperaciÃ³n sin precedentes. El mundo ve a una naciÃ³n que resiste y emerge mÃ¡s fuerte.",
+  textoDerrota: "Sin los pilares militares e inteligencia que debieron construirse, el golpe es devastador. Israel sobrevive, pero el camino para levantarse es mucho mÃ¡s largo y doloroso.",
+  efectosVictoria: { militar: 20, economia: 10, diplomacia: 5, sociedad: -15, monedas: 100 },
+  efectosDerrota: { militar: -25, economia: -15, sociedad: -30, monedas: -80 },
+}
+
+// Banco de preguntas para la Trivia
+export const TRIVIA: PreguntaTrivia[] = [
+  { pregunta: "Â¿En quÃ© aÃ±o fue fundado el Estado de Israel?", opciones: ["1946", "1948", "1950", "1947"], correcta: 1, bonus: 50, penalidad: 25 },
+  { pregunta: "Â¿QuiÃ©n fue el primer Primer Ministro de Israel?", opciones: ["Golda Meir", "Moshe Dayan", "David Ben-GuriÃ³n", "Levi Eshkol"], correcta: 2, bonus: 60, penalidad: 30 },
+  { pregunta: "Â¿CuÃ¡ntos dÃ­as durÃ³ la Guerra de los Seis DÃ­as?", opciones: ["3 dÃ­as", "6 dÃ­as", "10 dÃ­as", "14 dÃ­as"], correcta: 1, bonus: 55, penalidad: 25 },
+  { pregunta: "Â¿En quÃ© ciudad estÃ¡ el KnÃ©set (Parlamento israelÃ­)?", opciones: ["Tel Aviv", "Haifa", "Beersheba", "JerusalÃ©n"], correcta: 3, bonus: 40, penalidad: 20 },
+  { pregunta: "Â¿CÃ³mo se llama el sistema antimisiles israelÃ­?", opciones: ["Escudo Dorado", "CÃºpula de Hierro", "Muro de David", "Lanza MÃ¡gica"], correcta: 1, bonus: 50, penalidad: 25 },
+  { pregunta: "Â¿QuÃ© empresa de chips tiene sede principal en Haifa?", opciones: ["AMD", "Samsung", "Intel", "TSMC"], correcta: 2, bonus: 60, penalidad: 30 },
+  { pregunta: "Â¿En quÃ© aÃ±o Israel y Egipto firmaron un tratado de paz?", opciones: ["1973", "1979", "1982", "1993"], correcta: 1, bonus: 55, penalidad: 25 },
+  { pregunta: "Â¿CÃ³mo se llama la tecnologÃ­a de riego que Israel desarrollÃ³?", opciones: ["AspersiÃ³n", "Goteo", "InundaciÃ³n", "HidropÃ³nico"], correcta: 1, bonus: 45, penalidad: 20 },
+  { pregunta: "Â¿QuiÃ©n fue la primera mujer Primera Ministra de Israel?", opciones: ["Tzipi Livni", "Golda Meir", "Sara Netanyahu", "Dalia Itzik"], correcta: 1, bonus: 50, penalidad: 25 },
+  { pregunta: "Â¿QuÃ© app de navegaciÃ³n israelÃ­ comprÃ³ Google en 2013?", opciones: ["Moovit", "Gett", "Waze", "Via"], correcta: 2, bonus: 65, penalidad: 30 },
+  { pregunta: "Â¿En quÃ© desierto estÃ¡ el reactor nuclear de Dimona?", opciones: ["Sahara", "SinaÃ­", "Neguev", "Judea"], correcta: 2, bonus: 55, penalidad: 25 },
+  { pregunta: "Â¿CÃ³mo se llama el tanque diseÃ±ado y fabricado en Israel?", opciones: ["Patton", "Challenger", "Leclerc", "Merkava"], correcta: 3, bonus: 50, penalidad: 25 },
+  { pregunta: "Â¿QuÃ© significa 'Aliyah'?", opciones: ["EjÃ©rcito", "InmigraciÃ³n a Israel", "Paz en hebreo", "Ciudad santa"], correcta: 1, bonus: 40, penalidad: 20 },
+  { pregunta: "Â¿CuÃ¡l fue el nombre de la operaciÃ³n de rescate en Uganda en 1976?", opciones: ["OperaciÃ³n Trueno", "OperaciÃ³n Entebbe", "OperaciÃ³n Jonathan", "OperaciÃ³n CÃ³ndor"], correcta: 1, bonus: 70, penalidad: 35 },
+]
+
+// GENERADOR DEL ÃRBOL ALEATORIO (~25 nodos por partida adaptativos)
+export function generarArbol(): Mejora[] {
+  const obligatorias = POOL.filter(m => m.obligatoria)
+  const opcionales = POOL.filter(m => !m.obligatoria)
+
+  // Mezclar opcionales de forma aleatoria
+  const mezcladas = [...opcionales].sort(() => Math.random() - 0.5)
+
+  const porCategoria: Record<Categoria, typeof mezcladas> = {
+    militar: mezcladas.filter(m => m.categoria === "militar"),
+    economia: mezcladas.filter(m => m.categoria === "economia"),
+    diplomacia: mezcladas.filter(m => m.categoria === "diplomacia"),
+    sociedad: mezcladas.filter(m => m.categoria === "sociedad"),
+  }
+
+  // Tomar de 4 a 5 nodos opcionales de cada categorÃ­a para garantizar variedad balanceada
+  const seleccionadas: typeof mezcladas = []
+  ;(["militar", "economia", "diplomacia", "sociedad"] as Categoria[]).forEach(cat => {
+    const cantidad = 4 + Math.floor(Math.random() * 2) 
+    seleccionadas.push(...porCategoria[cat].slice(0, cantidad))
+  })
+
+  const pool = [...obligatorias, ...seleccionadas]
+  const idsDisponibles = new Set(pool.map(m => m.id))
+
+  // Re-mapear requisitos para que el Ã¡rbol no quede roto por nodos ausentes
+  const resultado: Mejora[] = pool.map(m => {
+    if (!m.requiere) return { ...m }
+    const reqValidos = m.requiere.filter(r => idsDisponibles.has(r))
+    if (reqValidos.length === 0) {
+      const fallback = obligatorias.find(o => o.categoria === m.categoria && o.id !== m.id)
+      return { ...m, requiere: fallback ? [fallback.id] : undefined }
+    }
+    return { ...m, requiere: reqValidos }
+  })
+
+  // Fluctuar costos levemente (Â±20%) para aÃ±adir rejugabilidad econÃ³mica
+  return resultado.map(m => ({
+    ...m,
+    costo: Math.max(8, Math.round(m.costo * (0.82 + Math.random() * 0.38))),
+  }))
+}
+
+// Seleccionar exactamente 2 guerras aleatorias del pool para cada ciclo de juego
+export function seleccionarGuerras(): Evento[] {
+  const shuffled = [...EVENTOS_OPCIONALES].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, 2)
+}
+
+export let MEJORAS: Mejora[] = generarArbol()
+
+// DefiniciÃ³n de las condiciones finales del juego para el aÃ±o 2026
+export const FINALES: Record<TipoFinal, { titulo: string; texto: string }> = {
+  militar: { titulo: "La Fortaleza de Oriente Medio", texto: "Llegaste a 2026 como una de las potencias militares mÃ¡s respetadas del planeta. Tu ciberdefensa y escudos antimisiles hacen que ningÃºn enemigo se atreva a desafiarte." },
+  startup: { titulo: "El Milagro TecnolÃ³gico", texto: "Un paÃ­s sin recursos naturales convertido en superpotencia de la innovaciÃ³n. Tus chips, startups y unicornios cambian la vida de miles de millones en el mundo." },
+  paz: { titulo: "El Puente entre Naciones", texto: "Elegiste el camino mÃ¡s difÃ­cil: la mano tendida. Los Acuerdos de Abraham te convirtieron en el gran arquitecto diplomÃ¡tico de la regiÃ³n." },
+  equilibrio: { titulo: "Una NaciÃ³n Completa", texto: "Llegaste a la actualidad siendo fuerte, prÃ³spero, respetado y unido. Un equilibrio extraordinariamente difÃ­cil que te convierte en un Estado maduro y admirado." },
+  fracaso: { titulo: "Un Equilibrio Precario", texto: "La naciÃ³n sobreviviÃ³ hasta hoy, pero a duras penas. FaltÃ³ inversiÃ³n en Ã¡reas clave y el camino por delante sigue siendo incierto." },
+}
+
+export const NODO_INICIAL = ""
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}

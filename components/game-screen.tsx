@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useGame } from "@/hooks/use-game"
 import { IntroScreen } from "@/components/intro-screen"
 import { EndScreen } from "@/components/end-screen"
@@ -30,75 +31,79 @@ export function GameScreen() {
   const game = useGame()
 
   if (game.fase === "intro") {
-    return <IntroScreen onIniciar={game.iniciar} />
+    return <IntroScreen onIniciar={game.iniciarJuego} />
   }
 
-  if (game.fase === "fin" && game.finalActual && game.tipoFinal) {
+  if (game.fase === "fin" && game.final && game.tipoFinal) {
     return (
       <EndScreen
-        final={game.finalActual}
+        final={game.final}
         tipo={game.tipoFinal}
         stats={game.stats}
         compradas={game.compradas}
-        onReiniciar={game.iniciar}
+        onReiniciar={game.reiniciarJuego}
       />
     )
   }
 
-  return (
-    <main className="min-h-screen bg-background pb-10">
-      {/* HUD superior */}
-      <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
-        <div className="mx-auto max-w-5xl px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="flex min-w-[3.5rem] items-center justify-center rounded-lg bg-primary/15 px-2 py-1 font-mono text-lg font-bold tabular-nums text-primary">
-                {game.anio}
-              </span>
-              <div className="leading-tight">
-                <p className="text-sm font-semibold">{eraDeAnio(game.anio)}</p>
-                <p className="text-xs text-muted-foreground">
-                  +{game.rentaPorAnio} influencia/año
-                </p>
-              </div>
-            </div>
+  const progresoAnio =
+    ((game.anio - ANIO_INICIAL) / (ANIO_FINAL - ANIO_INICIAL)) * 100
 
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 rounded-lg bg-accent/15 px-2.5 py-1.5 font-mono text-sm font-bold tabular-nums text-accent">
-                <Sparkles className="size-4" aria-hidden />
-                {Math.floor(game.influencia)}
-              </span>
-              <div className="flex items-center gap-1 rounded-lg border border-border p-0.5">
-                {VELOCIDADES.map(({ v, label, icono: Icono }) => (
-                  <button
-                    key={v}
-                    type="button"
-                    onClick={() => game.setVelocidad(v)}
-                    aria-label={label}
-                    title={label}
-                    className={cn(
-                      "flex items-center gap-1 rounded px-2 py-1 text-xs font-medium transition-colors",
-                      game.velocidad === v
-                        ? "bg-foreground text-background"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    <Icono className="size-3.5" aria-hidden />
-                    {v > 0 && <span>{v}x</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+      {/* Barra superior de control temporal */}
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+          <div className="flex flex-col">
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              {eraDeAnio(game.anio)}
+            </span>
+            <span className="text-xl font-bold tabular-nums tracking-tight">
+              Año {game.anio}
+            </span>
           </div>
 
-          {/* Barra de progreso temporal */}
-          <div className="mt-3">
-            <Progress
-              value={game.progresoTotal}
-              className="h-1.5 bg-muted [&>div]:bg-primary"
-              aria-label={`Progreso histórico: ${game.anio}`}
-            />
-            <div className="mt-1 flex justify-between font-mono text-[11px] text-muted-foreground">
+          {/* Controles de velocidad */}
+          <div className="flex items-center gap-1 rounded-xl border border-border bg-muted/40 p-1">
+            {VELOCIDADES.map(({ v, label, icono: Icono }) => {
+              const activo = game.velocidad === v
+              return (
+                <button
+                  key={v}
+                  onClick={() => game.setVelocidad(v)}
+                  className={cn(
+                    "flex h-7 items-center gap-1 rounded-lg px-2.5 text-xs font-medium transition-all outline-none",
+                    activo
+                      ? "bg-background text-foreground shadow-xs"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                  title={label}
+                >
+                  <Icono className="size-3.5 shrink-0" aria-hidden />
+                  <span className="sr-only sm:not-sr-only">{label}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex flex-col items-end">
+            <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-accent font-medium">
+              <Sparkles className="size-3" aria-hidden /> Influencia
+            </span>
+            <span className="text-xl font-bold tabular-nums text-accent">
+              {game.influencia}
+            </span>
+          </div>
+        </div>
+
+        {/* Línea de progreso de la simulación */}
+        <div className="relative h-1 w-full bg-muted/30">
+          <div
+            className="h-full bg-linear-to-r from-primary to-accent transition-all duration-300 ease-out"
+            style={{ width: `${progresoAnio}%` }}
+          />
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="absolute top-2 flex w-[calc(100%-32px)] justify-between font-mono text-[10px] text-muted-foreground/60">
               <span>{ANIO_INICIAL}</span>
               <span>Hoy ({ANIO_FINAL})</span>
             </div>
@@ -106,8 +111,8 @@ export function GameScreen() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-5xl gap-6 px-4 py-6 lg:grid-cols-[1fr_220px]">
-        {/* Árbol de mejoras */}
+      <div className="mx-auto grid max-w-5xl gap-6 px-4 py-6 lg:grid-cols-[1fr_240px]">
+        {/* Árbol de mejoras (Shop) */}
         <section className="order-2 lg:order-1">
           <h1 className="mb-1 text-balance text-xl font-bold tracking-tight">
             Construye tu nación
@@ -125,16 +130,30 @@ export function GameScreen() {
           />
         </section>
 
-        {/* Estado de la nación */}
-        <aside className="order-1 lg:order-2 lg:sticky lg:top-[136px] lg:self-start">
-          <h2 className="mb-2 text-sm font-semibold">Estado de la nación</h2>
-          <StatsPanel stats={game.stats} />
-          <p className="mt-3 rounded-lg border border-border bg-card/60 p-2.5 text-[11px] leading-relaxed text-muted-foreground">
-            {game.compradas.length} mejoras desarrolladas. El área en la que más
-            inviertas definirá tu legado en {ANIO_FINAL}.
-          </p>
+        {/* Panel lateral: Estado e Ilustración del mapa */}
+        <aside className="order-1 lg:order-2 lg:sticky lg:top-[136px] lg:self-start space-y-4">
+          <div>
+            <h2 className="mb-2 text-sm font-semibold">Estado de la nación</h2>
+            <StatsPanel stats={game.stats} />
+          </div>
+
+          {/* Visualización del mapa cargado desde public/israel.svg */}
+          <div className="rounded-xl border border-border bg-card/40 p-4 flex flex-col items-center justify-center min-h-[220px]">
+            <span className="text-[10px] font-mono text-muted-foreground/50 uppercase mb-3 tracking-wider">
+              Territorio Nacional
+            </span>
+            <div className="relative w-full h-40 flex items-center justify-center opacity-85 dark:invert-[0.05]">
+              <Image
+                src="/israel.svg"
+                alt="Mapa geopolítico de la nación"
+                fill
+                className="object-contain p-2"
+                priority
+              />
+            </div>
+          </div>
         </aside>
       </div>
-    </main>
+    </div>
   )
 }
