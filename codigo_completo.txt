@@ -1,0 +1,1838 @@
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: app\globals.css===   & type "app\globals.css" ) 
+===FILE: app\globals.css=== 
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-geist-sans), 'Geist Fallback';
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(0.17 0.03 255);
+  --foreground: oklch(0.96 0.01 250);
+  --card: oklch(0.22 0.035 255);
+  --card-foreground: oklch(0.96 0.01 250);
+  --popover: oklch(0.21 0.035 255);
+  --popover-foreground: oklch(0.96 0.01 250);
+  --primary: oklch(0.58 0.15 250);
+  --primary-foreground: oklch(0.98 0.01 250);
+  --secondary: oklch(0.28 0.035 255);
+  --secondary-foreground: oklch(0.96 0.01 250);
+  --muted: oklch(0.26 0.03 255);
+  --muted-foreground: oklch(0.68 0.02 250);
+  --accent: oklch(0.8 0.13 85);
+  --accent-foreground: oklch(0.2 0.04 85);
+  --destructive: oklch(0.62 0.21 25);
+  --border: oklch(0.32 0.03 255);
+  --input: oklch(0.3 0.03 255);
+  --ring: oklch(0.58 0.15 250);
+  --chart-1: oklch(0.58 0.15 250);
+  --chart-2: oklch(0.8 0.13 85);
+  --chart-3: oklch(0.62 0.21 25);
+  --chart-4: oklch(0.65 0.13 150);
+  --chart-5: oklch(0.7 0.1 300);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.2 0.035 255);
+  --sidebar-foreground: oklch(0.96 0.01 250);
+  --sidebar-primary: oklch(0.58 0.15 250);
+  --sidebar-primary-foreground: oklch(0.98 0.01 250);
+  --sidebar-accent: oklch(0.8 0.13 85);
+  --sidebar-accent-foreground: oklch(0.2 0.04 85);
+  --sidebar-border: oklch(0.32 0.03 255);
+  --sidebar-ring: oklch(0.58 0.15 250);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: app\layout.tsx===   & type "app\layout.tsx" ) 
+===FILE: app\layout.tsx=== 
+import { Analytics } from '@vercel/analytics/next'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+
+const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
+
+export const metadata: Metadata = {
+  title: 'Génesis: La Nación · 1948',
+  description:
+    'Juego de estrategia histórica al estilo Plague Inc: construye el Estado de Israel desde 1948, acumula influencia, mejora tu nación y sobrevive a las guerras hasta la era de la Nación Startup.',
+  generator: 'v0.app',
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} bg-background`}>
+      <body className="font-sans antialiased">
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
+      </body>
+    </html>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: app\page.tsx===   & type "app\page.tsx" ) 
+===FILE: app\page.tsx=== 
+"use client"
+
+import { GameScreen } from "@/components/game-screen"
+
+export default function Home() {
+  return <GameScreen />
+}
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\end-screen.tsx===   & type "components\end-screen.tsx" ) 
+===FILE: components\end-screen.tsx=== 
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { StatsPanel } from "@/components/stats-panel"
+import { RotateCcw, Shield, Coins, Handshake, Scale, AlertTriangle } from "lucide-react"
+import { ANIO_FINAL, MEJORAS, type Stats, type TipoFinal } from "@/lib/game-data"
+
+interface FinalData {
+  titulo: string
+  texto: string
+}
+
+interface EndScreenProps {
+  final: FinalData
+  tipo: TipoFinal
+  stats: Stats
+  compradas: string[]
+  onReiniciar: () => void
+}
+
+const ICONO_FINAL: Record<TipoFinal, typeof Shield> = {
+  militar: Shield,
+  startup: Coins,
+  paz: Handshake,
+  equilibrio: Scale,
+  fracaso: AlertTriangle,
+}
+
+const COLOR_FINAL: Record<TipoFinal, string> = {
+  militar: "border-destructive/30 bg-destructive/10 text-destructive",
+  startup: "border-accent/30 bg-accent/10 text-accent",
+  paz: "border-primary/30 bg-primary/10 text-primary",
+  equilibrio: "border-chart-4/30 bg-chart-4/10 text-chart-4",
+  fracaso: "border-muted-foreground/30 bg-muted text-muted-foreground",
+}
+
+export function EndScreen({
+  final,
+  tipo,
+  stats,
+  compradas,
+  onReiniciar,
+}: EndScreenProps) {
+  const Icono = ICONO_FINAL[tipo]
+  const logros = MEJORAS.filter((m) => compradas.includes(m.id))
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
+      <div className="flex w-full max-w-2xl flex-col items-center gap-7 text-center">
+        <span
+          className={`flex size-16 items-center justify-center rounded-2xl border ${COLOR_FINAL[tipo]}`}
+        >
+          <Icono className="size-8" aria-hidden />
+        </span>
+
+        <div className="space-y-2">
+          <p className="font-mono text-sm uppercase tracking-widest text-accent">
+            Año {ANIO_FINAL} · Tu legado
+          </p>
+          <h1 className="text-balance text-4xl font-bold tracking-tight">
+            {final.titulo}
+          </h1>
+          <p className="text-pretty leading-relaxed text-muted-foreground">
+            {final.texto}
+          </p>
+        </div>
+
+        <div className="w-full">
+          <h2 className="mb-2 text-left text-sm font-semibold">
+            Estado final de la nación
+          </h2>
+          <StatsPanel stats={stats} />
+        </div>
+
+        <div className="w-full rounded-xl border border-border bg-card p-4 text-left">
+          <h2 className="mb-3 text-sm font-semibold">
+            Lo que construiste ({logros.length} mejoras)
+          </h2>
+          {logros.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No llegaste a desarrollar nada significativo.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {logros.map((m) => (
+                <span
+                  key={m.id}
+                  className="rounded-md bg-muted/60 px-2.5 py-1 text-xs leading-snug"
+                >
+                  {m.nombre}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Button size="lg" onClick={onReiniciar} className="gap-2">
+          <RotateCcw className="size-4" aria-hidden />
+          Reescribir la historia
+        </Button>
+      </div>
+    </main>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\game-screen.tsx===   & type "components\game-screen.tsx" ) 
+===FILE: components\game-screen.tsx=== 
+"use client"
+
+import Image from "next/image"
+import { useGame } from "@/hooks/use-game"
+import { IntroScreen } from "@/components/intro-screen"
+import { EndScreen } from "@/components/end-screen"
+import { StatsPanel } from "@/components/stats-panel"
+import { Shop } from "@/components/shop"
+import { WarEventModal } from "@/components/war-event-modal"
+import { ANIO_FINAL, ANIO_INICIAL, ERAS } from "@/lib/game-data"
+import { Progress } from "@/components/ui/progress"
+import { Pause, Play, FastForward, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
+import type { Velocidad } from "@/hooks/use-game"
+
+function eraDeAnio(anio: number) {
+  let nombre = ERAS[0].nombre
+  for (const e of ERAS) {
+    if (anio >= e.anio) nombre = e.nombre
+  }
+  return nombre
+}
+
+const VELOCIDADES: { v: Velocidad; label: string; icono: typeof Play }[] = [
+  { v: 0, label: "Pausa", icono: Pause },
+  { v: 1, label: "1x", icono: Play },
+  { v: 2, label: "2x", icono: FastForward },
+  { v: 4, label: "4x", icono: FastForward },
+]
+
+export function GameScreen() {
+  const game = useGame()
+
+  if (game.fase === "intro") {
+    return <IntroScreen onIniciar={game.iniciarJuego} />
+  }
+
+  if (game.fase === "fin" && game.final && game.tipoFinal) {
+    return (
+      <EndScreen
+        final={game.final}
+        tipo={game.tipoFinal}
+        stats={game.stats}
+        compradas={game.compradas}
+        onReiniciar={game.reiniciarJuego}
+      />
+    )
+  }
+
+  const progresoAnio =
+    ((game.anio - ANIO_INICIAL) / (ANIO_FINAL - ANIO_INICIAL)) * 100
+
+  return (
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+      {/* Modal de evento de guerra */}
+      <WarEventModal
+        evento={game.eventoActual}
+        activo={game.mostrarEventoModal}
+        compradas={game.compradas}
+        onResolve={game.procesarResultadoEvento}
+      />
+
+      {/* Barra superior de control temporal */}
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+          <div className="flex flex-col">
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              {eraDeAnio(game.anio)}
+            </span>
+            <span className="text-xl font-bold tabular-nums tracking-tight">
+              Año {game.anio}
+            </span>
+          </div>
+
+          {/* Controles de velocidad */}
+          <div className="flex items-center gap-1 rounded-xl border border-border bg-muted/40 p-1">
+            {VELOCIDADES.map(({ v, label, icono: Icono }) => {
+              const activo = game.velocidad === v
+              return (
+                <button
+                  key={v}
+                  onClick={() => game.setVelocidad(v)}
+                  className={cn(
+                    "flex h-7 items-center gap-1 rounded-lg px-2.5 text-xs font-medium transition-all outline-none",
+                    activo
+                      ? "bg-background text-foreground shadow-xs"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                  title={label}
+                >
+                  <Icono className="size-3.5 shrink-0" aria-hidden />
+                  <span className="sr-only sm:not-sr-only">{label}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex flex-col items-end">
+            <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-wider text-accent font-medium">
+              <Sparkles className="size-3" aria-hidden /> Influencia
+            </span>
+            <span className="text-xl font-bold tabular-nums text-accent">
+              {game.influencia}
+            </span>
+          </div>
+        </div>
+
+        {/* Línea de progreso de la simulación */}
+        <div className="relative h-1 w-full bg-muted/30">
+          <div
+            className="h-full bg-linear-to-r from-primary to-accent transition-all duration-300 ease-out"
+            style={{ width: `${progresoAnio}%` }}
+          />
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="absolute top-2 flex w-[calc(100%-32px)] justify-between font-mono text-[10px] text-muted-foreground/60">
+              <span>{ANIO_INICIAL}</span>
+              <span>Hoy ({ANIO_FINAL})</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto grid max-w-5xl gap-6 px-4 py-6 lg:grid-cols-[1fr_240px]">
+        {/* Árbol de mejoras (Shop) */}
+        <section className="order-2 lg:order-1">
+          <h1 className="mb-1 text-balance text-xl font-bold tracking-tight">
+            Construye tu nación
+          </h1>
+          <p className="mb-4 text-pretty text-sm leading-relaxed text-muted-foreground">
+            Invierte tu influencia en mejoras. Cada una desbloquea nuevas
+            tecnologías y avanza tu historia hasta hoy.
+          </p>
+          <Shop
+            stats={game.stats}
+            compradas={game.compradas}
+            influencia={game.influencia}
+            anio={game.anio}
+            onComprar={game.comprar}
+          />
+        </section>
+
+        {/* Panel lateral: Estado e Ilustración del mapa */}
+        <aside className="order-1 lg:order-2 lg:sticky lg:top-[136px] lg:self-start space-y-4">
+          <div>
+            <h2 className="mb-2 text-sm font-semibold">Estado de la nación</h2>
+            <StatsPanel stats={game.stats} />
+          </div>
+
+          {/* Visualización del mapa cargado desde public/israel.svg */}
+          <div className="rounded-xl border border-border bg-card/40 p-4 flex flex-col items-center justify-center min-h-[220px]">
+            <span className="text-[10px] font-mono text-muted-foreground/50 uppercase mb-3 tracking-wider">
+              Territorio Nacional
+            </span>
+            <div className="relative w-full h-40 flex items-center justify-center opacity-85 dark:invert-[0.05]">
+              <Image
+                src="/israel.svg"
+                alt="Mapa geopolítico de la nación"
+                fill
+                className="object-contain p-2"
+                priority
+              />
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\intro-screen.tsx===   & type "components\intro-screen.tsx" ) 
+===FILE: components\intro-screen.tsx=== 
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Flag, Shield, Coins, Handshake, Users } from "lucide-react"
+
+export function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
+      <div className="flex w-full max-w-xl flex-col items-center gap-8 text-center">
+        <span className="flex size-16 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+          <Flag className="size-8" aria-hidden />
+        </span>
+
+        <div className="space-y-3">
+          <p className="font-mono text-sm uppercase tracking-widest text-accent">
+            14 de mayo de 1948
+          </p>
+          <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
+            Génesis: La Nación
+          </h1>
+          <p className="text-pretty leading-relaxed text-muted-foreground">
+            Acabas de declarar la independencia. El tiempo avanzará solo, desde
+            1948 hasta hoy. Genera influencia e inviértela en un enorme árbol de
+            mejoras: del riego por goteo a los microchips, de las FDI a la Cúpula
+            de Hierro. Cada decisión moldea la nación que llegará a la actualidad.
+          </p>
+        </div>
+
+        <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { icon: Shield, label: "Militar" },
+            { icon: Coins, label: "Economía" },
+            { icon: Handshake, label: "Diplomacia" },
+            { icon: Users, label: "Sociedad" },
+          ].map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3"
+            >
+              <Icon className="size-5 text-muted-foreground" aria-hidden />
+              <span className="text-xs font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2 text-pretty text-sm leading-relaxed text-muted-foreground">
+          <p>
+            El tiempo corre solo (puedes pausar o acelerar). Genera{" "}
+            <span className="font-medium text-accent">influencia</span> y
+            desbloquea mejoras que abren otras nuevas. El área en la que más
+            inviertas definirá tu{" "}
+            <span className="font-medium text-foreground">legado en 2026</span>:
+            potencia militar, nación tecnológica, líder de la paz... o todo a la vez.
+          </p>
+        </div>
+
+        <Button size="lg" onClick={onIniciar} className="w-full sm:w-auto">
+          Fundar el Estado
+        </Button>
+      </div>
+    </main>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\shop.tsx===   & type "components\shop.tsx" ) 
+===FILE: components\shop.tsx=== 
+"use client"
+
+import { useState, useEffect } from "react"
+import {
+  CATEGORIA_INFO,
+  MEJORAS,
+  type Categoria,
+  type Mejora,
+  type Stats,
+} from "@/lib/game-data"
+import { Shield, Coins, Handshake, Users, Lock, Check, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { TreeModal } from "@/components/tree-modal"
+import { Button } from "@/components/ui/button"
+
+const POSICIONES_MEJORAS: Record<string, { x: number; y: number; zona: string }> = {
+  "riego-goteo": { x: 42, y: 72, zona: "Distrito Sur - Neguev" },
+  "desalinizacion": { x: 38, y: 82, zona: "Costa del Neguev" },
+  "reactor-dimona": { x: 49, y: 64, zona: "Complejo Dimona" },
+  "desarrollo-nuclear": { x: 49, y: 64, zona: "Complejo Dimona" },
+  "mil_fdi": { x: 53, y: 46, zona: "Comando Central - Jerusalén" },
+  "mil_cupula": { x: 44, y: 55, zona: "Baterías Móviles - Centro/Sur" },
+  "industria-militar": { x: 48, y: 24, zona: "Astilleros y Complejos - Haifa" },
+  "eco_chips": { x: 44, y: 36, zona: "Silicon Wadi - Tel Aviv" },
+  "eco_startup": { x: 44, y: 36, zona: "Silicon Wadi - Tel Aviv" },
+  "dip_abraham": { x: 54, y: 48, zona: "Distrito Diplomático - Jerusalén" },
+  "soc_universidades": { x: 45, y: 34, zona: "Eje Cultural - Tel Aviv" },
+}
+
+type EstadoMejora = "comprada" | "disponible" | "sin-fondos" | "bloqueada-anio" | "bloqueada-req"
+
+function estadoDeMejora(
+  m: Mejora,
+  compradas: string[],
+  influencia: number,
+  anio: number
+): EstadoMejora {
+  if (compradas.includes(m.id)) return "comprada"
+  if (anio < m.anioMin) return "bloqueada-anio"
+  if (m.requiere && !m.requiere.every((r) => compradas.includes(r))) return "bloqueada-req"
+  if (influencia < m.costo) return "sin-fondos"
+  return "disponible"
+}
+
+interface ShopProps {
+  stats: Stats
+  compradas: string[]
+  influencia: number
+  anio: number
+  onComprar: (mejora: Mejora) => void
+}
+
+export function Shop({ stats, compradas, influencia, anio, onComprar }: ShopProps) {
+  const [openTree, setOpenTree] = useState(false)
+  const [nuevasDisponibles, setNuevasDisponibles] = useState<string[]>([])
+
+  useEffect(() => {
+    const disponibles = MEJORAS.filter(m => {
+      const estado = estadoDeMejora(m, compradas, influencia, anio)
+      return estado === "disponible"
+    }).map(m => m.id)
+    
+    setNuevasDisponibles(disponibles)
+  }, [compradas, anio, influencia])
+
+  return (
+    <div className="w-full space-y-6">
+      
+      {/* MAPA TÁCTICO VECTORIAL */}
+      <div className="relative w-full h-[580px] bg-slate-950/90 border border-cyan-500/30 rounded-xl overflow-hidden shadow-[inner_0_0_40px_rgba(6,182,212,0.15)] flex items-center justify-center">
+        
+        {/* Grilla Holográfica */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0891b20a_1px,transparent_1px),linear-gradient(to_bottom,#0891b20a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+        
+        <div className="absolute top-3 left-4 font-mono text-[10px] text-cyan-400/60 tracking-wider uppercase pointer-events-none space-y-0.5">
+          <div>SYS.LOC: EASTERN_MEDITERRANEAN // VECTOR_MODE</div>
+          <div>GRID STATUS: ACTIVE // YEAR: {anio}</div>
+        </div>
+
+        <div className="absolute bottom-3 right-4 font-mono text-[9px] text-cyan-500/40 pointer-events-none">
+          STRATEGIC TACTICAL MAP v4.02
+        </div>
+
+        {/* MAPA SVG ESTILIZADO DE ISRAEL */}
+        <svg 
+          className="h-[90%] w-auto text-cyan-950/40 filter drop-shadow-[0_0_30px_rgba(6,182,212,0.1)] transition-transform duration-700 ease-out" 
+          viewBox="0 0 100 100" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M 45 8 Q 52 14 53 19 Q 54 24 51 27 Q 48 31 46 35 Q 44 41 47 44 Q 56 44 57 47 Q 59 51 55 54 Q 54 57 55 61 Q 52 67 48 74 Q 43 84 44 96 L 42 96 Q 40 82 38 72 Q 36 64 35 56 Q 32 52 39 48 Q 42 44 41 41 Q 39 37 35 39 Q 28 44 25 40 Q 20 35 22 28 Q 26 20 30 16 Q 38 8 45 8 Z"
+            fill="currentColor"
+            stroke="rgba(6, 182, 212, 0.4)"
+            strokeWidth="0.6"
+            strokeDasharray="1 1"
+          />
+        </svg>
+
+        {/* BALIZAS DINÁMICAS SOBRE EL MAPA */}
+        {MEJORAS.map((m) => {
+          const estado = estadoDeMejora(m, compradas, influencia, anio)
+          const pos = POSICIONES_MEJORAS[m.id] || { 
+            x: 40 + (m.id.charCodeAt(0) % 12), 
+            y: 20 + (m.id.charCodeAt(m.id.length - 1) % 65),
+            zona: "Sector General" 
+          }
+
+          const esNueva = nuevasDisponibles.includes(m.id)
+          const yaComprada = estado === "comprada"
+
+          if (estado === "bloqueada-anio") return null
+
+          return (
+            <div
+              key={m.id}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-20"
+              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            >
+              {esNueva && (
+                <span className="absolute -inset-3 rounded-full animate-ping bg-red-500/50 duration-1000 pointer-events-none" />
+              )}
+              
+              <button
+                onClick={() => setOpenTree(true)}
+                className={cn(
+                  "w-3 h-3 rounded-full transition-all duration-300 border flex items-center justify-center shadow-lg outline-none",
+                  yaComprada
+                    ? "bg-cyan-400 border-cyan-300 scale-100 shadow-cyan-500/50"
+                    : esNueva
+                    ? "bg-red-500 border-red-400 scale-110 animate-pulse shadow-red-500/80"
+                    : "bg-slate-900 border-cyan-500/50 hover:border-cyan-400 hover:scale-125"
+                )}
+              />
+
+              {/* TOOLTIP HUD MILITAR */}
+              <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-slate-950/95 border border-cyan-500/50 p-2.5 rounded shadow-[0_0_20px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap text-xs">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className={cn("w-1.5 h-1.5 rounded-full", yaComprada ? "bg-cyan-400" : esNueva ? "bg-red-500" : "bg-muted-foreground")} />
+                  <span className="font-bold text-sm tracking-wide text-white">{m.nombre}</span>
+                </div>
+                <div className="text-[10px] text-cyan-400/70 mb-1">{pos.zona}</div>
+                <div className="text-[11px] text-slate-400 max-w-[200px]">{m.descripcion}</div>
+              </div>
+            </div>
+          )
+        })}
+
+        <Button 
+          onClick={() => setOpenTree(true)}
+          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900/90 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-mono text-xs tracking-wider"
+        >
+          <Sparkles className="size-3.5 mr-2" />
+          Abrir Árbol de Desarrollo
+        </Button>
+      </div>
+
+      {/* MODAL DEL ÁRBOL DE MEJORAS */}
+      <TreeModal
+        open={openTree}
+        onOpenChange={setOpenTree}
+        compradas={compradas}
+        influencia={influencia}
+        anio={anio}
+        onComprar={onComprar}
+      />
+    </div>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\stats-panel.tsx===   & type "components\stats-panel.tsx" ) 
+===FILE: components\stats-panel.tsx=== 
+"use client"
+
+import { Shield, Coins, Handshake, Users } from "lucide-react"
+import { CATEGORIA_INFO, type Categoria, type Stats } from "@/lib/game-data"
+import { Progress } from "@/components/ui/progress"
+import { cn } from "@/lib/utils"
+
+const ICONOS: Record<Categoria, typeof Shield> = {
+  militar: Shield,
+  economia: Coins,
+  diplomacia: Handshake,
+  sociedad: Users,
+}
+
+const COLORES: Record<Categoria, string> = {
+  militar: "text-destructive",
+  economia: "text-accent",
+  diplomacia: "text-primary",
+  sociedad: "text-chart-4",
+}
+
+const BARRAS: Record<Categoria, string> = {
+  militar: "[&>div]:bg-destructive",
+  economia: "[&>div]:bg-accent",
+  diplomacia: "[&>div]:bg-primary",
+  sociedad: "[&>div]:bg-chart-4",
+}
+
+export function StatsPanel({ stats }: { stats: Stats }) {
+  const categorias = Object.keys(CATEGORIA_INFO) as Categoria[]
+  return (
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+      {categorias.map((cat) => {
+        const Icono = ICONOS[cat]
+        const valor = stats[cat]
+        return (
+          <div
+            key={cat}
+            className="rounded-lg border border-border bg-card/60 p-3"
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Icono className={cn("size-4", COLORES[cat])} aria-hidden />
+                <span className="text-sm font-medium">
+                  {CATEGORIA_INFO[cat].nombre}
+                </span>
+              </div>
+              <span className="font-mono text-sm tabular-nums text-foreground">
+                {Math.round(valor)}
+              </span>
+            </div>
+            <Progress
+              value={Math.min(valor, 150) / 1.5}
+              className={cn("h-1.5 bg-muted", BARRAS[cat])}
+              aria-label={`${CATEGORIA_INFO[cat].nombre}: ${Math.round(valor)}`}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\tree-modal.tsx===   & type "components\tree-modal.tsx" ) 
+===FILE: components\tree-modal.tsx=== 
+"use client"
+
+import { useState, useMemo } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { MEJORAS, CATEGORIA_INFO, type Categoria, type Mejora } from "@/lib/game-data"
+import { Lock, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+interface TreeModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  compradas: string[]
+  influencia: number
+  anio: number
+  onComprar: (mejora: Mejora) => void
+}
+
+type EstadoMejora = "comprada" | "disponible" | "sin-fondos" | "bloqueada-anio" | "bloqueada-req"
+
+function estadoDeMejora(
+  m: Mejora,
+  compradas: string[],
+  influencia: number,
+  anio: number
+): EstadoMejora {
+  if (compradas.includes(m.id)) return "comprada"
+  if (anio < m.anioMin) return "bloqueada-anio"
+  if (m.requiere && !m.requiere.every((r) => compradas.includes(r))) return "bloqueada-req"
+  if (influencia < m.costo) return "sin-fondos"
+  return "disponible"
+}
+
+export function TreeModal({
+  open,
+  onOpenChange,
+  compradas,
+  influencia,
+  anio,
+  onComprar,
+}: TreeModalProps) {
+  const [selectedNode, setSelectedNode] = useState<string | null>(null)
+
+  // Organizar mejoras por categoría y tiempo
+  const mejPorCategoria = useMemo(() => {
+    const resultado: Record<Categoria, Mejora[]> = {
+      militar: [],
+      economia: [],
+      diplomacia: [],
+      sociedad: [],
+    }
+    for (const mejora of MEJORAS) {
+      resultado[mejora.categoria].push(mejora)
+    }
+    // Ordenar por año
+    for (const cat of Object.keys(resultado) as Categoria[]) {
+      resultado[cat].sort((a, b) => a.anioMin - b.anioMin)
+    }
+    return resultado
+  }, [])
+
+  const nombreReq = (id: string) => MEJORAS.find((m) => m.id === id)?.nombre || id
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-7xl h-[95vh] bg-slate-950 border border-cyan-500/40 text-white rounded-xl p-0 flex flex-col overflow-hidden">
+        <DialogHeader className="border-b border-cyan-500/20 p-6 pb-4 shrink-0">
+          <DialogTitle className="text-cyan-400 text-2xl font-bold tracking-wider flex items-center gap-2">
+            <Sparkles className="size-6" />
+            // ÁRBOL_DE_DESARROLLO_NACIONAL
+          </DialogTitle>
+          <p className="text-xs text-slate-400 mt-2">
+            Estructura de progreso adaptativa. Año: {anio} | Influencia: {influencia} | Cada partida genera un árbol diferente.
+          </p>
+        </DialogHeader>
+
+        <div className="flex flex-1 overflow-hidden gap-6">
+          {/* Scroll izquierdo - Árbol */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-8 border-r border-cyan-500/20">
+            {/* Renderizar por categoría */}
+            {(["militar", "economia", "diplomacia", "sociedad"] as Categoria[]).map((categoria) => {
+              const mejoras = mejPorCategoria[categoria]
+              const catInfo = CATEGORIA_INFO[categoria]
+
+              return (
+                <div key={categoria} className="space-y-3">
+                  <div className="flex items-center gap-3 mb-4 sticky top-0 bg-slate-950/90 py-2 backdrop-blur">
+                    <div className="text-2xl">{catInfo.icono}</div>
+                    <div>
+                      <h3 className="font-bold text-lg" style={{ color: catInfo.color }}>
+                        {catInfo.nombre.toUpperCase()}
+                      </h3>
+                      <p className="text-xs text-slate-400">{catInfo.descripcion}</p>
+                    </div>
+                  </div>
+
+                  {/* Grid de nodos por categoría - RESPONSIVE */}
+                  <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
+                    {mejoras.map((mejora) => {
+                      const estado = estadoDeMejora(mejora, compradas, influencia, anio)
+                      const yaComprada = estado === "comprada"
+                      const esDisponible = estado === "disponible"
+
+                      if (estado === "bloqueada-anio") {
+                        return (
+                          <div
+                            key={mejora.id}
+                            className="border border-slate-800 bg-slate-900/30 p-3 rounded-lg flex items-center justify-center aspect-square opacity-30 hover:opacity-40 transition-opacity"
+                          >
+                            <div className="text-center">
+                              <Lock className="size-4 mx-auto text-slate-500 mb-1" />
+                              <p className="text-[8px] uppercase text-slate-500">{mejora.anioMin}</p>
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      return (
+                        <button
+                          key={mejora.id}
+                          onClick={() => setSelectedNode(mejora.id)}
+                          className={cn(
+                            "relative border p-3 rounded-lg transition-all duration-200 aspect-square flex flex-col justify-between group hover:shadow-lg text-left",
+                            yaComprada
+                              ? "bg-cyan-950/30 border-cyan-500/60 shadow-cyan-500/20 shadow-lg"
+                              : esDisponible
+                              ? "bg-slate-900/80 border-slate-600 hover:border-cyan-400 hover:shadow-cyan-400/20 hover:shadow-lg cursor-pointer"
+                              : "bg-slate-950/40 border-slate-900 opacity-50"
+                          )}
+                        >
+                          {/* Pulsión si está disponible */}
+                          {esDisponible && (
+                            <div className="absolute inset-0 rounded-lg bg-cyan-400 opacity-20 animate-pulse pointer-events-none" />
+                          )}
+
+                          <div className="space-y-1 z-10 relative">
+                            <div className="text-lg font-bold">{mejora.anioMin}</div>
+                            <h4 className="font-bold text-xs leading-tight line-clamp-2">{mejora.nombre}</h4>
+                          </div>
+
+                          <div className="z-10 relative">
+                            {yaComprada && (
+                              <div className="text-[10px] bg-cyan-500/30 border border-cyan-500 text-cyan-300 px-1.5 py-0.5 rounded w-fit">
+                                ✓ Comprado
+                              </div>
+                            )}
+                            {!yaComprada && (
+                              <div className="text-[10px] text-slate-400 font-mono">
+                                {mejora.costo} INF
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Panel detalle del nodo seleccionado - DERECHA FIJA */}
+          <div className="w-80 border-l border-cyan-500/20 bg-slate-900/50 p-6 overflow-y-auto shrink-0">
+            {selectedNode ? (
+              (() => {
+                const mejora = MEJORAS.find((m) => m.id === selectedNode)
+                if (!mejora) return null
+
+                const estado = estadoDeMejora(mejora, compradas, influencia, anio)
+                const yaComprada = estado === "comprada"
+
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h2 className="text-lg font-bold mb-1">{mejora.nombre}</h2>
+                        <div className="text-2xl">{CATEGORIA_INFO[mejora.categoria].icono}</div>
+                      </div>
+                      <div className="text-sm text-slate-400">{mejora.anioMin}</div>
+                    </div>
+
+                    <p className="text-sm text-slate-300 leading-relaxed">{mejora.descripcion}</p>
+
+                    {/* Requisitos */}
+                    {estado === "bloqueada-req" && mejora.requiere && (
+                      <div className="text-xs bg-red-900/30 border border-red-500/50 text-red-200 p-3 rounded space-y-1">
+                        <span className="font-bold block">Requisitos necesarios:</span>
+                        <div className="space-y-1">
+                          {mejora.requiere.map(req => (
+                            <div key={req} className="text-xs">
+                              • {nombreReq(req)}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Efectos */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold text-slate-300">Efectos:</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {Object.entries(mejora.efectos).map(([stat, value]) => (
+                          <div
+                            key={stat}
+                            className="bg-slate-800 p-2 rounded text-center border border-slate-700"
+                          >
+                            <div className="font-bold text-sm">{value > 0 ? "+" : ""}{value}</div>
+                            <div className="text-xs text-slate-400 capitalize">{stat}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Renta */}
+                    {mejora.rentaInfluencia && (
+                      <div className="text-xs bg-cyan-900/20 border border-cyan-500/30 p-2 rounded">
+                        💰 Genera <span className="font-bold">{mejora.rentaInfluencia}</span> influencia/año
+                      </div>
+                    )}
+
+                    {/* Botón Comprar */}
+                    <Button
+                      onClick={() => {
+                        onComprar(mejora)
+                        setSelectedNode(null)
+                      }}
+                      disabled={estado !== "disponible"}
+                      className={cn(
+                        "w-full font-mono text-xs py-2 mt-4",
+                        yaComprada
+                          ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/10"
+                          : "bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                      )}
+                    >
+                      {yaComprada
+                        ? "✓ Desplegado"
+                        : estado === "sin-fondos"
+                        ? `Costo: ${mejora.costo}`
+                        : estado === "bloqueada-anio"
+                        ? `Disponible en ${mejora.anioMin}`
+                        : "Comprar"}
+                    </Button>
+
+                    {estado === "sin-fondos" && (
+                      <div className="text-xs text-yellow-400/70 text-center">
+                        Necesitas {mejora.costo - influencia} monedas más
+                      </div>
+                    )}
+                  </div>
+                )
+              })()
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <Sparkles className="size-12 text-slate-600 mb-3" />
+                <p className="text-sm text-slate-400">Selecciona una mejora para ver detalles</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: components\war-event-modal.tsx===   & type "components\war-event-modal.tsx" ) 
+===FILE: components\war-event-modal.tsx=== 
+"use client"
+
+import { useState, useEffect } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import type { Evento } from "@/lib/game-data"
+
+interface WarEventModalProps {
+  evento: Evento | null
+  activo: boolean
+  compradas: string[]
+  onResolve: (victoria: boolean) => void
+}
+
+export function WarEventModal({ evento, activo, compradas, onResolve }: WarEventModalProps) {
+  const [resolviendo, setResolviendo] = useState(false)
+  const [localActivo, setLocalActivo] = useState(activo)
+
+  // Sincronizar estado local
+  useEffect(() => {
+    setLocalActivo(activo)
+    if (activo) {
+      setResolviendo(false)
+    }
+  }, [activo, evento?.id])
+
+  if (!evento || !localActivo) return null
+
+  const tieneRequisitos = evento.necesita.every(req => compradas.includes(req))
+
+  const handleVictoria = () => {
+    setResolviendo(true)
+    setTimeout(() => {
+      onResolve(true)
+      setLocalActivo(false)
+    }, 200)
+  }
+
+  const handleDerrota = () => {
+    setResolviendo(true)
+    setTimeout(() => {
+      onResolve(false)
+      setLocalActivo(false)
+    }, 200)
+  }
+
+  return (
+    <Dialog open={localActivo && !resolviendo}>
+      <DialogContent 
+        className={cn(
+          "max-w-2xl border-2 transition-all duration-300",
+          tieneRequisitos 
+            ? "bg-gradient-to-br from-green-950 to-green-900 border-green-500/60" 
+            : "bg-gradient-to-br from-red-950 to-red-900 border-red-500/60"
+        )}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
+        <DialogHeader className={cn(
+          "border-b pb-4",
+          tieneRequisitos ? "border-green-500/30" : "border-red-500/30"
+        )}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 space-y-2">
+              <div className="text-4xl mb-2">{evento.icono}</div>
+              <DialogTitle className={cn(
+                "text-2xl font-bold",
+                tieneRequisitos ? "text-green-300" : "text-red-300"
+              )}>
+                {evento.titulo}
+              </DialogTitle>
+              <DialogDescription className="text-sm font-mono opacity-70 text-slate-300">
+                Año {evento.anio}
+              </DialogDescription>
+            </div>
+            <div className={cn(
+              "text-5xl font-bold",
+              tieneRequisitos ? "text-green-500" : "text-red-500"
+            )}>
+              {tieneRequisitos ? "✓" : "✕"}
+            </div>
+          </div>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4 max-h-[calc(90vh-300px)] overflow-y-auto px-6">
+          <p className="text-base text-gray-200">
+            {evento.descripcion}
+          </p>
+
+          <div className={cn(
+            "p-4 rounded-lg border-l-4",
+            tieneRequisitos
+              ? "bg-green-950/40 border-l-green-400 text-green-100"
+              : "bg-red-950/40 border-l-red-400 text-red-100"
+          )}>
+            <div className="font-bold mb-1">
+              {tieneRequisitos ? "✓ Estado: Preparado" : "✕ Estado: Desprevenido"}
+            </div>
+            <div className="text-sm">
+              {tieneRequisitos 
+                ? `Tienes todas las mejoras necesarias`
+                : `Te faltan mejoras clave`
+              }
+            </div>
+            {evento.necesita.length > 0 && (
+              <div className="text-xs mt-2 space-y-1">
+                {evento.necesita.map((req, idx) => (
+                  <div key={idx}>
+                    {compradas.includes(req) ? "✓" : "✕"} {req}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="text-xs font-mono uppercase opacity-50 tracking-wider mb-2">Resultado Probable:</div>
+            <div className={cn(
+              "p-3 rounded border",
+              tieneRequisitos
+                ? "bg-green-900/30 border-green-500/50 text-green-200"
+                : "bg-red-900/30 border-red-500/50 text-red-200"
+            )}>
+              <div className="font-bold text-sm mb-1">
+                {tieneRequisitos ? "VICTORIA PROBABLE" : "DERROTA PROBABLE"}
+              </div>
+              <div className="text-xs leading-relaxed">
+                {tieneRequisitos ? evento.textoVictoria : evento.textoDerrota}
+              </div>
+            </div>
+          </div>
+
+          {tieneRequisitos && (
+            <div className="bg-green-900/20 border border-green-500/30 p-3 rounded text-xs text-green-200">
+              💡 <strong>Ventaja estratégica:</strong> Tu preparación te da una ventaja decisiva en este conflicto.
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3 justify-end pt-4 border-t border-white/10 px-6 pb-6">
+          <Button
+            onClick={handleDerrota}
+            disabled={resolviendo}
+            variant="outline"
+            className="border-red-500/50 text-red-300 hover:bg-red-900/40 disabled:opacity-50"
+          >
+            <span className="text-lg mr-2">💔</span> Derrota
+          </Button>
+          <Button
+            onClick={handleVictoria}
+            disabled={resolviendo}
+            className={cn(
+              "font-bold disabled:opacity-50",
+              tieneRequisitos
+                ? "bg-green-600 hover:bg-green-500 text-white"
+                : "bg-slate-600 hover:bg-slate-500 text-white"
+            )}
+          >
+            <span className="text-lg mr-2">⚔️</span> Victoria
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: hooks\use-game.ts===   & type "hooks\use-game.ts" ) 
+===FILE: hooks\use-game.ts=== 
+"use client"
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  ANIO_FINAL,
+  ANIO_INICIAL,
+  ESTADO_INICIAL_STATS,
+  FINALES,
+  MEJORAS,
+  EVENTO_7_OCTUBRE,
+  EVENTOS_OPCIONALES,
+  type Categoria,
+  type Evento,
+  type Mejora,
+  type Stats,
+  type TipoFinal,
+} from "@/lib/game-data"
+
+export type FaseJuego = "intro" | "jugando" | "fin"
+export type Velocidad = 0 | 1 | 2 | 4
+
+const MS_POR_ANIO = 3500
+const TICK_MS = 100
+
+function calcularTipoFinal(stats: Stats): TipoFinal {
+  const { militar, economia, diplomacia, sociedad } = stats
+  const total = militar + economia + diplomacia + sociedad
+  const maxStat = Math.max(militar, economia, diplomacia, sociedad)
+  const minStat = Math.min(militar, economia, diplomacia, sociedad)
+
+  if (total < 120) return "fracaso"
+  if (minStat >= 45 && maxStat - minStat <= 30) return "equilibrio"
+  if (maxStat === economia) return "startup"
+  if (maxStat === diplomacia) return "paz"
+  if (maxStat === militar) return "militar"
+  return "fracaso"
+}
+
+export function useGame() {
+  const [fase, setFase] = useState<FaseJuego>("intro")
+  const [anio, setAnio] = useState(ANIO_INICIAL)
+  const [influencia, setInfluencia] = useState(10)
+  const [stats, setStats] = useState<Stats>(ESTADO_INICIAL_STATS)
+  const [compradas, setCompradas] = useState<string[]>([])
+  const [velocidad, setVelocidad] = useState<Velocidad>(0)
+  const [tipoFinal, setTipoFinal] = useState<TipoFinal | null>(null)
+  
+  // Estado para eventos de guerra
+  const [eventoActual, setEventoActual] = useState<Evento | null>(null)
+  const [mostrarEventoModal, setMostrarEventoModal] = useState(false)
+  const eventosOcurridos = useRef<Set<string>>(new Set())
+  const guerrasDePartida = useRef<Evento[]>([])
+  const eventoEnProceso = useRef(false)
+
+  const acumuladorTiempo = useRef(0)
+
+  const iniciarJuego = useCallback(() => {
+    // Generar guerras aleatorias
+    const shuffled = [...EVENTOS_OPCIONALES].sort(() => Math.random() - 0.5)
+    guerrasDePartida.current = [shuffled[0], shuffled[1], EVENTO_7_OCTUBRE]
+    eventosOcurridos.current = new Set()
+    eventoEnProceso.current = false
+    
+    setFase("jugando")
+    setAnio(ANIO_INICIAL)
+    setInfluencia(10)
+    setStats(ESTADO_INICIAL_STATS)
+    setCompradas([])
+    setVelocidad(1)
+    setTipoFinal(null)
+    setMostrarEventoModal(false)
+    setEventoActual(null)
+    acumuladorTiempo.current = 0
+  }, [])
+
+  const reiniciarJuego = useCallback(() => {
+    setFase("intro")
+    setVelocidad(0)
+    eventoEnProceso.current = false
+    setMostrarEventoModal(false)
+    setEventoActual(null)
+  }, [])
+
+  const rentaPorAnio = useMemo(() => {
+    let base = 2
+    for (const id of compradas) {
+      const m = MEJORAS.find((x) => x.id === id)
+      if (m?.rentaInfluencia) {
+        base += m.rentaInfluencia
+      }
+    }
+    return base
+  }, [compradas])
+
+  // Procesar resultado del evento
+  const procesarResultadoEvento = useCallback(
+    (evento: Evento, victoria: boolean) => {
+      try {
+        // Validar que el resultado es consistente con las mejoras
+        const tieneRequisitos = evento.necesita.every(req => compradas.includes(req))
+        const resultadoReal = tieneRequisitos ? true : false
+        
+        // Si elige victoria sin requisitos o derrota con requisitos, se aplica el resultado real
+        const resultadoFinal = victoria === resultadoReal ? victoria : resultadoReal
+
+        // Aplicar efectos
+        const efectos = resultadoFinal ? evento.efectosVictoria : evento.efectosDerrota
+        
+        setStats((s) => {
+          const next = { ...s }
+          for (const [k, v] of Object.entries(efectos)) {
+            if (k !== "monedas") {
+              const key = k as keyof Stats
+              next[key] = Math.max(0, next[key] + (v as number))
+            }
+          }
+          return next
+        })
+
+        if (efectos.monedas) {
+          setInfluencia((prev) => Math.max(0, prev + efectos.monedas!))
+        }
+
+        // Registrar evento como ocurrido
+        eventosOcurridos.current.add(evento.id)
+        
+        // Cerrar modal
+        setMostrarEventoModal(false)
+        setEventoActual(null)
+        eventoEnProceso.current = false
+      } catch (error) {
+        console.error("Error procesando evento:", error)
+        setMostrarEventoModal(false)
+        setEventoActual(null)
+        eventoEnProceso.current = false
+      }
+    },
+    [compradas]
+  )
+
+  // Detectar eventos de guerra
+  useEffect(() => {
+    if (fase !== "jugando" || eventoEnProceso.current || !guerrasDePartida.current.length) return
+
+    for (const evento of guerrasDePartida.current) {
+      if (anio === evento.anio && !eventosOcurridos.current.has(evento.id)) {
+        eventoEnProceso.current = true
+        setEventoActual(evento)
+        setMostrarEventoModal(true)
+        // Pausar el juego cuando aparece un evento
+        setVelocidad(0)
+        break // Solo mostrar un evento a la vez
+      }
+    }
+  }, [anio, fase])
+
+  useEffect(() => {
+    if (fase !== "jugando" || velocidad === 0) return
+
+    const interval = setInterval(() => {
+      acumuladorTiempo.current += TICK_MS * velocidad
+
+      if (acumuladorTiempo.current >= MS_POR_ANIO) {
+        acumuladorTiempo.current -= MS_POR_ANIO
+        setAnio((prev) => {
+          if (prev >= ANIO_FINAL) return prev
+          return prev + 1
+        })
+        setInfluencia((prev) => prev + rentaPorAnio)
+      }
+    }, TICK_MS)
+
+    return () => clearInterval(interval)
+  }, [fase, velocidad, rentaPorAnio])
+
+  useEffect(() => {
+    if (fase === "jugando" && anio >= ANIO_FINAL) {
+      setTipoFinal(calcularTipoFinal(stats))
+      setFase("fin")
+    }
+  }, [anio, fase, stats])
+
+  const comprar = useCallback(
+    (mejora: Mejora) => {
+      setCompradas((prev) => {
+        if (prev.includes(mejora.id)) return prev
+        if (influencia < mejora.costo) return prev
+        if (anio < mejora.anioMin) return prev
+        if (mejora.requiere && !mejora.requiere.every((r) => prev.includes(r)))
+          return prev
+
+        setInfluencia((inf) => inf - mejora.costo)
+        setStats((s) => {
+          const next = { ...s }
+          for (const [k, v] of Object.entries(mejora.efectos)) {
+            const key = k as keyof Stats
+            next[key] = Math.max(0, next[key] + (v as number))
+          }
+          return next
+        })
+        return [...prev, mejora.id]
+      })
+    },
+    [influencia, anio]
+  )
+
+  const finalActual = useMemo(() => {
+    if (!tipoFinal) return null
+    return FINALES[tipoFinal]
+  }, [tipoFinal])
+
+  const mejorasCompradasObjetos = useMemo(() => {
+    return MEJORAS.filter((m) => compradas.includes(m.id))
+  }, [compradas])
+
+  return {
+    fase,
+    anio,
+    influencia,
+    stats,
+    compradas,
+    velocidad,
+    setVelocidad,
+    comprar,
+    iniciarJuego,
+    reiniciarJuego,
+    final: finalActual,
+    tipoFinal,
+    mejorasCompradasObjetos,
+    // War events
+    eventoActual,
+    mostrarEventoModal,
+    procesarResultadoEvento,
+  }
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: hooks\use-war-events.ts===   & type "hooks\use-war-events.ts" ) 
+===FILE: hooks\use-war-events.ts=== 
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import { EVENTO_7_OCTUBRE, EVENTOS_OPCIONALES, type Evento } from "@/lib/game-data"
+
+export interface WarEventState {
+  evento: Evento | null
+  activo: boolean
+}
+
+export function useWarEvents(anio: number, compradas: string[], onEventResolved: (evento: Evento, victoria: boolean) => void) {
+  const [eventState, setEventState] = useState<WarEventState>({ evento: null, activo: false })
+  const eventosRegistrados = useRef<Set<string>>(new Set())
+  const guerrasDePartida = useRef<Evento[]>([])
+
+  // Inicializar guerras aleatorias en primera ejecución
+  useEffect(() => {
+    if (guerrasDePartida.current.length === 0) {
+      const shuffled = [...EVENTOS_OPCIONALES].sort(() => Math.random() - 0.5)
+      guerrasDePartida.current = [shuffled[0], shuffled[1], EVENTO_7_OCTUBRE]
+    }
+  }, [])
+
+  // Detectar cuando se cumple un evento
+  useEffect(() => {
+    if (!guerrasDePartida.current.length) return
+
+    for (const evento of guerrasDePartida.current) {
+      if (anio === evento.anio && !eventosRegistrados.current.has(evento.id)) {
+        eventosRegistrados.current.add(evento.id)
+        
+        // Determinar victoria o derrota según mejoras compradas
+        const victoria = evento.necesita.every(req => compradas.includes(req))
+        
+        setEventState({ evento, activo: true })
+        
+        // Auto-resolver después de 1 segundo para que se vea el popup
+        setTimeout(() => {
+          onEventResolved(evento, victoria)
+          setEventState({ evento: null, activo: false })
+        }, 100)
+      }
+    }
+  }, [anio, compradas, onEventResolved])
+
+  const resolveEvent = (victoria: boolean) => {
+    if (eventState.evento) {
+      onEventResolved(eventState.evento, victoria)
+      setEventState({ evento: null, activo: false })
+    }
+  }
+
+  return {
+    ...eventState,
+    resolveEvent,
+  }
+}
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: lib\game-data.ts===   & type "lib\game-data.ts" ) 
+===FILE: lib\game-data.ts=== 
+// lib/game-data.ts
+
+export type Categoria = "militar" | "economia" | "diplomacia" | "sociedad"
+export interface Stats { militar: number; economia: number; diplomacia: number; sociedad: number }
+export type TipoFinal = "militar" | "startup" | "paz" | "equilibrio" | "fracaso"
+
+export interface Mejora {
+  id: string; 
+  nombre: string; 
+  descripcion: string; 
+  categoria: Categoria
+  costo: number; 
+  anioMin: number; 
+  requiere?: string[]
+  efectos: Partial<Stats>; 
+  rentaInfluencia?: number; 
+  imagen?: string;
+  notificaciones?: string[] // Mensajes periódicos que genera esta mejora cuando está comprada
+}
+
+export interface Evento {
+  id: string; 
+  anio: number; 
+  titulo: string; 
+  descripcion: string;
+  icono: string; 
+  color: string; 
+  necesita: string[];
+  efectosVictoria: Partial<Stats> & { monedas?: number };
+  efectosDerrota: Partial<Stats> & { monedas?: number };
+  textoVictoria: string; 
+  textoDerrota: string; 
+  obligatorio: boolean;
+}
+
+export interface PreguntaTrivia {
+  pregunta: string; 
+  opciones: string[]; 
+  correcta: number; 
+  bonus: number; 
+  penalidad: number;
+}
+
+export interface Era {
+  anio: number;
+  nombre: string;
+}
+
+// Información estética y descriptiva de las categorías (Unificado)
+export const CATEGORIA_INFO: Record<Categoria, { nombre: string; color: string; descripcion: string; icono: string }> = {
+  militar:    { nombre: "Militar",    color: "#e05050", descripcion: "Defensa y fuerzas armadas.", icono: "⚔️" },
+  economia:   { nombre: "Economía",   color: "#e0b030", descripcion: "Industria, agua y tecnología.", icono: "💰" },
+  diplomacia: { nombre: "Diplomacia", color: "#40c080", descripcion: "Alianzas y reconocimiento.", icono: "🤝" },
+  sociedad:   { nombre: "Sociedad",   color: "#6090e0", descripcion: "Población, ciencia y cultura.", icono: "🏛️" },
+}
+
+export const ESTADO_INICIAL_STATS: Stats = { militar: 5, economia: 5, diplomacia: 5, sociedad: 5 }
+export const ANIO_INICIAL = 1948
+export const ANIO_FINAL = 2026
+
+// Eras históricas para la barra de progreso temporal
+export const ERAS: Era[] = [
+  { anio: 1948, nombre: "La Fundación" },
+  { anio: 1956, nombre: "Consolidación" },
+  { anio: 1967, nombre: "Los Seis Días" },
+  { anio: 1973, nombre: "Yom Kipur" },
+  { anio: 1979, nombre: "La Paz" },
+  { anio: 1990, nombre: "La Gran Ola" },
+  { anio: 2000, nombre: "Nación Startup" },
+  { anio: 2011, nombre: "Era de la Defensa" },
+  { anio: 2020, nombre: "Potencia Global" },
+]
+
+// Pool completo de mejoras para la generación dinámica del árbol
+const POOL: (Mejora & { nivel: number; obligatoria?: boolean })[] = [
+  // === MILITAR ===
+  { id: "mil_haganah", nombre: "Unificar las milicias", descripcion: "Fusiona la Haganah y grupos armados en un ejército.", categoria: "militar", costo: 12, anioMin: 1948, efectos: { militar: 6 }, nivel: 1, obligatoria: true,
+    rentaInfluencia: 0.5, notificaciones: ["Tus soldados completaron 10.000 horas de entrenamiento este año.", "La Haganah unificada interceptó un intento de infiltración en la frontera norte."] },
+  { id: "mil_fdi", nombre: "Fundar las FDI", descripcion: "Las Fuerzas de Defensa de Israel: ejército profesional.", categoria: "militar", costo: 26, anioMin: 1948, requiere: ["mil_haganah"], efectos: { militar: 8 }, nivel: 2, rentaInfluencia: 1,
+    notificaciones: ["Las FDI reclutaron 12.000 nuevos soldados.", "Ejercicio militar conjunto: las FDI simulan defensa en 3 frentes simultáneos."] },
+  { id: "mil_reservas", nombre: "Sistema de reservistas", descripcion: "Cada ciudadano puede ser movilizado en horas.", categoria: "militar", costo: 38, anioMin: 1950, requiere: ["mil_fdi"], efectos: { militar: 7 }, nivel: 3,
+    notificaciones: ["300.000 reservistas movilizados en menos de 48 horas.", "El sistema de reservistas superó la prueba de estrés en simulacro nacional."] },
+  { id: "mil_aviacion", nombre: "Fuerza Aérea", descripcion: "Cazas y pilotos de élite para dominar los cielos.", categoria: "militar", costo: 52, anioMin: 1955, requiere: ["mil_fdi"], efectos: { militar: 12 }, nivel: 3, rentaInfluencia: 1.5,
+    notificaciones: ["La Fuerza Aérea registró 0 pérdidas en los últimos 6 meses de patrullaje.", "Tus pilotos completaron 5.000 horas de vuelo en simulador este trimestre."] },
+  { id: "mil_blindados", nombre: "Cuerpo blindado", descripcion: "Brigadas de tanques para la guerra en el desierto.", categoria: "militar", costo: 60, anioMin: 1960, requiere: ["mil_fdi"], efectos: { militar: 10 }, nivel: 3,
+    notificaciones: ["Las brigadas blindadas ejecutaron maniobras en el Néguev con precisión récord."] },
+  { id: "mil_paracas", nombre: "Fuerzas especiales", descripcion: "Unidades de élite para operaciones detrás de líneas enemigas.", categoria: "militar", costo: 70, anioMin: 1965, requiere: ["mil_aviacion"], efectos: { militar: 8 }, nivel: 4,
+    notificaciones: ["Las fuerzas especiales desmantelaron una célula terrorista en operación secreta.", "Operación nocturna: 4 agentes capturados en misión de precisión."] },
+  { id: "mil_dimona", nombre: "Programa secreto (Dimona)", descripcion: "La disuasión definitiva. Nunca confirmada, nunca negada.", categoria: "militar", costo: 120, anioMin: 1965, requiere: ["mil_aviacion"], efectos: { militar: 20 }, nivel: 5, rentaInfluencia: 2,
+    notificaciones: ["El reactor de Dimona generó suficiente energía para abastecer 200.000 hogares.", "Ambigüedad estratégica mantenida: ningún país pudo confirmar la capacidad nuclear."] },
+  { id: "mil_inteligencia", nombre: "Mossad y Aman", descripcion: "Servicios de inteligencia con alcance global.", categoria: "militar", costo: 70, anioMin: 1967, requiere: ["mil_aviacion"], efectos: { militar: 9 }, nivel: 4, rentaInfluencia: 1.5,
+    notificaciones: ["El Mossad descubrió 3 intentos de asesinato a diplomáticos israelíes en el exterior.", "Tu red de inteligencia identificó y neutralizó una célula de espionaje en Europa."] },
+  { id: "mil_satelite", nombre: "Satélite espía (Ofeq)", descripcion: "Vigilancia desde el espacio. Pocos países lo logran.", categoria: "militar", costo: 95, anioMin: 1988, requiere: ["mil_inteligencia"], efectos: { militar: 12 }, nivel: 5,
+    notificaciones: ["El satélite Ofeq detectó movimientos de tropas en 3 fronteras simultáneamente."] },
+  { id: "mil_merkava", nombre: "Tanque Merkava", descripcion: "Diseño propio que prioriza la vida de la tripulación.", categoria: "militar", costo: 95, anioMin: 1979, requiere: ["mil_blindados"], efectos: { militar: 11 }, nivel: 4, rentaInfluencia: 1,
+    notificaciones: ["El Merkava IV superó todas las pruebas de resistencia balística.", "Exportación del diseño Merkava generó ingresos por 200 millones de dólares."] },
+  { id: "mil_cupula", nombre: "Cúpula de Hierro", descripcion: "Escudo antimisiles que intercepta cohetes en pleno vuelo.", categoria: "militar", costo: 150, anioMin: 2011, requiere: ["mil_merkava", "mil_inteligencia"], efectos: { militar: 18 }, nivel: 6, rentaInfluencia: 2,
+    notificaciones: ["La Cúpula de Hierro interceptó 97 de 100 proyectiles en prueba real.", "Sistema antimisiles activo: 0 bajas civiles en el último mes de tensión fronteriza."] },
+  { id: "mil_ciber", nombre: "Ciberdefensa (Unidad 8200)", descripcion: "Guerra digital y ciberseguridad de primer nivel.", categoria: "militar", costo: 170, anioMin: 2015, requiere: ["mil_cupula"], efectos: { militar: 14 }, nivel: 6, rentaInfluencia: 2,
+    notificaciones: ["La Unidad 8200 neutralizó un ciberataque masivo contra infraestructura crítica.", "Tu ciberdefensa exportó tecnología de seguridad a 12 países aliados este año."] },
+  { id: "mil_drones", nombre: "Drones militares", descripcion: "Flota de UAVs para reconocimiento y ataques quirúrgicos.", categoria: "militar", costo: 140, anioMin: 2010, requiere: ["mil_satelite"], efectos: { militar: 13 }, nivel: 5, rentaInfluencia: 1.5,
+    notificaciones: ["Flota de drones registró 2.000 horas de patrullaje de fronteras sin incidentes."] },
+
+  // === ECONOMÍA ===
+  { id: "eco_austeridad", nombre: "Plan de austeridad (Tzena)", descripcion: "Racionamiento para estabilizar una economía en bancarrota.", categoria: "economia", costo: 10, anioMin: 1948, efectos: { economia: 5 }, nivel: 1, obligatoria: true, rentaInfluencia: 0.3,
+    notificaciones: ["El plan de austeridad redujo la inflación un 15% este trimestre."] },
+  { id: "eco_acueducto", nombre: "Acueducto Nacional", descripcion: "Lleva agua del norte al desierto del Néguev.", categoria: "economia", costo: 30, anioMin: 1953, requiere: ["eco_austeridad"], efectos: { economia: 7 }, nivel: 2, rentaInfluencia: 1,
+    notificaciones: ["El acueducto nacional distribuyó 400 millones de litros de agua al Néguev este mes."] },
+  { id: "eco_goteo", nombre: "Riego por goteo", descripcion: "Hace florecer el desierto y se exporta al mundo entero.", categoria: "economia", costo: 55, anioMin: 1959, requiere: ["eco_acueducto"], efectos: { economia: 10 }, nivel: 3, rentaInfluencia: 2,
+    notificaciones: ["Tu sistema de riego por goteo ahorró 1.200 millones de litros de agua este año.", "El riego por goteo fue adoptado por 8 países en África subsahariana gracias a Israel."] },
+  { id: "eco_industria", nombre: "Industria pesada", descripcion: "Fábricas, química y manufactura para crear empleo.", categoria: "economia", costo: 48, anioMin: 1962, requiere: ["eco_austeridad"], efectos: { economia: 8 }, nivel: 2, rentaInfluencia: 1.5,
+    notificaciones: ["Las fábricas israelíes emplean ahora a 180.000 trabajadores."] },
+  { id: "eco_turismo", nombre: "Turismo bíblico", descripcion: "Tierra Santa atrae millones de visitantes que generan divisas.", categoria: "economia", costo: 35, anioMin: 1958, requiere: ["eco_austeridad"], efectos: { economia: 6 }, nivel: 2, rentaInfluencia: 1,
+    notificaciones: ["2.3 millones de turistas visitaron Israel este año, récord histórico."] },
+  { id: "eco_diamantes", nombre: "Industria del diamante", descripcion: "Tallado y comercio de diamantes, fuente clave de divisas.", categoria: "economia", costo: 40, anioMin: 1965, requiere: ["eco_turismo"], efectos: { economia: 9 }, nivel: 3, rentaInfluencia: 1.5,
+    notificaciones: ["Israel procesó el 35% del mercado mundial de diamantes pulidos este año."] },
+  { id: "eco_desalacion", nombre: "Plantas desaladoras", descripcion: "Convierte agua de mar en agua potable a gran escala.", categoria: "economia", costo: 90, anioMin: 1999, requiere: ["eco_goteo"], efectos: { economia: 12 }, nivel: 4, rentaInfluencia: 2,
+    notificaciones: ["Las plantas desaladoras cubrieron el 70% del consumo de agua potable del país."] },
+  { id: "eco_chips", nombre: "Fábrica de chips (Intel Haifa)", descripcion: "Semiconductores israelíes en computadoras de todo el planeta.", categoria: "economia", costo: 130, anioMin: 1995, requiere: ["eco_desalacion"], efectos: { economia: 16 }, nivel: 5, rentaInfluencia: 3,
+    notificaciones: ["Intel Haifa completó el diseño del procesador más eficiente del mundo.", "Tus chips se instalaron en 400 millones de dispositivos este año.", "La planta de semiconductores recibió inversión adicional por 500 millones de dólares."] },
+  { id: "eco_startup", nombre: "Nación Startup", descripcion: "Capital de riesgo y miles de empresas tecnológicas.", categoria: "economia", costo: 175, anioMin: 2000, requiere: ["eco_chips"], efectos: { economia: 18 }, nivel: 6, rentaInfluencia: 3.5,
+    notificaciones: ["Tel Aviv fue nombrada la 3ra ciudad del mundo en densidad de startups.", "23 nuevas startups israelíes recaudaron más de 10 millones de dólares este mes."] },
+  { id: "eco_gas", nombre: "Gas natural (Leviatán)", descripcion: "Enormes yacimientos de gas en el Mediterráneo.", categoria: "economia", costo: 140, anioMin: 2010, requiere: ["eco_desalacion"], efectos: { economia: 14 }, nivel: 5, rentaInfluencia: 2.5,
+    notificaciones: ["El yacimiento Leviatán exportó gas a Egipto y Jordania por 1.500 millones este año."] },
+  { id: "eco_unicornios", nombre: "Hub de unicornios", descripcion: "Decenas de empresas valuadas en miles de millones.", categoria: "economia", costo: 200, anioMin: 2018, requiere: ["eco_startup"], efectos: { economia: 20 }, nivel: 6, rentaInfluencia: 4,
+    notificaciones: ["Waze, Mobileye y Monday.com generaron 8.000 millones de dólares en exportaciones."] },
+  { id: "eco_agritech", nombre: "AgriTech global", descripcion: "Tecnología agrícola exportada a países con escasez hídrica.", categoria: "economia", costo: 120, anioMin: 2012, requiere: ["eco_goteo"], efectos: { economia: 11 }, nivel: 4, rentaInfluencia: 2,
+    notificaciones: ["AgriTech israelí firmó contratos con 14 países en desarrollo este año."] },
+
+  // === DIPLOMACIA ===
+  { id: "dip_onu", nombre: "Reconocimiento de la ONU", descripcion: "Asegurar un asiento y legitimidad en la comunidad mundial.", categoria: "diplomacia", costo: 12, anioMin: 1949, efectos: { diplomacia: 8 }, nivel: 1, obligatoria: true, rentaInfluencia: 0.5,
+    notificaciones: ["Israel presentó 3 resoluciones en el Consejo de Seguridad este mes."] },
+  { id: "dip_alemania", nombre: "Acuerdo de reparaciones", descripcion: "Compensación de Alemania que ayuda a financiar el país.", categoria: "diplomacia", costo: 35, anioMin: 1952, requiere: ["dip_onu"], efectos: { diplomacia: 6 }, nivel: 2, rentaInfluencia: 1,
+    notificaciones: ["Las reparaciones alemanas financiaron la construcción de 3 hospitales nuevos."] },
+  { id: "dip_europa", nombre: "Relaciones con Europa", descripcion: "Acuerdos comerciales con el bloque europeo.", categoria: "diplomacia", costo: 45, anioMin: 1955, requiere: ["dip_onu"], efectos: { diplomacia: 9 }, nivel: 2, rentaInfluencia: 1.5,
+    notificaciones: ["El acuerdo de libre comercio con la UE impulsó las exportaciones un 22%."] },
+  { id: "dip_eeuu", nombre: "Alianza con EE. UU.", descripcion: "Tu aliado estratégico más importante: ayuda militar y vetos.", categoria: "diplomacia", costo: 45, anioMin: 1962, requiere: ["dip_onu"], efectos: { diplomacia: 12 }, nivel: 3, rentaInfluencia: 2,
+    notificaciones: ["EE.UU. aprobó un paquete de ayuda militar de 3.800 millones de dólares.", "La alianza con Washington vetó 2 resoluciones hostiles en la ONU este año."] },
+  { id: "dip_africa", nombre: "Diplomacia en África", descripcion: "Asistencia técnica y agrícola genera aliados en el continente.", categoria: "diplomacia", costo: 55, anioMin: 1960, requiere: ["dip_onu"], efectos: { diplomacia: 7 }, nivel: 2, rentaInfluencia: 1,
+    notificaciones: ["Israel firmó acuerdos de cooperación técnica con 6 países africanos."] },
+  { id: "dip_campdavid", nombre: "Paz con Egipto (Camp David)", descripcion: "El primer tratado de paz con un vecino árabe. Histórico.", categoria: "diplomacia", costo: 110, anioMin: 1979, requiere: ["dip_eeuu"], efectos: { diplomacia: 15 }, nivel: 4, rentaInfluencia: 2,
+    notificaciones: ["La frontera con Egipto lleva 5 años sin incidentes tras Camp David."] },
+  { id: "dip_oslo", nombre: "Acuerdos de Oslo", descripcion: "Negociaciones para una paz duradera en la región.", categoria: "diplomacia", costo: 95, anioMin: 1993, requiere: ["dip_campdavid"], efectos: { diplomacia: 12 }, nivel: 4, rentaInfluencia: 1.5,
+    notificaciones: ["El comité de seguimiento de Oslo se reunió con avances en cooperación económica."] },
+  { id: "dip_jordania", nombre: "Paz con Jordania", descripcion: "Un segundo tratado que estabiliza la frontera este.", categoria: "diplomacia", costo: 85, anioMin: 1994, requiere: ["dip_campdavid"], efectos: { diplomacia: 11 }, nivel: 4, rentaInfluencia: 1.5,
+    notificaciones: ["El corredor económico Israel-Jordania movió mercancías por 400 millones de dólares."] },
+  { id: "dip_tech", nombre: "Diplomacia tecnológica", descripcion: "Exportar innovación abre puertas en Asia, África y Europa.", categoria: "diplomacia", costo: 120, anioMin: 2005, requiere: ["dip_eeuu"], efectos: { diplomacia: 10 }, nivel: 4, rentaInfluencia: 2,
+    notificaciones: ["La diplomacia tecnológica abrió 4 nuevos mercados en Asia este año."] },
+  { id: "dip_india", nombre: "Alianza con India", descripcion: "Cooperación en defense, agua y tecnología con India.", categoria: "diplomacia", costo: 100, anioMin: 2000, requiere: ["dip_tech"], efectos: { diplomacia: 10 }, nivel: 4, rentaInfluencia: 1.5,
+    notificaciones: ["India importó tecnología de riego israelí para 2 millones de hectáreas."] },
+  { id: "dip_abraham", nombre: "Acuerdos de Abraham", descripcion: "Normalización con EAU, Baréin, Marruecos. Una nueva era.", categoria: "diplomacia", costo: 180, anioMin: 2020, requiere: ["dip_oslo", "dip_jordania"], efectos: { diplomacia: 20 }, nivel: 5, rentaInfluencia: 3,
+    notificaciones: ["Los Acuerdos de Abraham generaron inversión árabe por 3.000 millones en Israel.", "Vuelos directos Tel Aviv–Dubái transportaron 500.000 pasajeros el primer año."] },
+
+  // === SOCIEDAD ===
+  { id: "soc_kibutz", nombre: "Movimiento kibutz", descripcion: "Comunidades colectivas que cultivan la tierra y defienden las fronteras.", categoria: "sociedad", costo: 22, anioMin: 1948, efectos: { sociedad: 7 }, nivel: 1, obligatoria: true, rentaInfluencia: 0.5,
+    notificaciones: ["Los kibutzim produjeron el 40% de los alimentos frescos del país este año."] },
+  { id: "soc_retorno", nombre: "Ley del Retorno", descripcion: "Abre las puertas a la inmigración judía de todo el mundo.", categoria: "sociedad", costo: 12, anioMin: 1950, efectos: { sociedad: 8 }, nivel: 1, obligatoria: true, rentaInfluencia: 0.5,
+    notificaciones: ["45.000 nuevos ciudadanos llegaron a Israel bajo la Ley del Retorno este año."] },
+  { id: "soc_hebreo", nombre: "Renacer del hebreo", descripcion: "Una lengua antigua revivida como idioma nacional moderno.", categoria: "sociedad", costo: 28, anioMin: 1950, requiere: ["soc_retorno"], efectos: { sociedad: 6 }, nivel: 2, rentaInfluencia: 0.5,
+    notificaciones: ["El hebreo fue adoptado como lengua principal por el 94% de la población."] },
+  { id: "soc_inmigracion", nombre: "Absorción de inmigrantes", descripcion: "Programas de integración para oleadas de nuevos ciudadanos.", categoria: "sociedad", costo: 40, anioMin: 1952, requiere: ["soc_retorno"], efectos: { sociedad: 7 }, nivel: 2, rentaInfluencia: 1,
+    notificaciones: ["Los centros de absorción integraron a 18.000 nuevos inmigrantes este semestre."] },
+  { id: "soc_universidades", nombre: "Universidades de élite", descripcion: "Technion, Hebrea, Weizmann: ciencia de clase mundial.", categoria: "sociedad", costo: 50, anioMin: 1955, requiere: ["soc_retorno"], efectos: { sociedad: 10 }, nivel: 3, rentaInfluencia: 1.5,
+    notificaciones: ["El Technion publicó 300 papers científicos citados internacionalmente este año.", "La Universidad Hebrea lanzó un programa de doctorado en IA con MIT y Stanford."] },
+  { id: "soc_radio", nombre: "Radiodifusión pública", descripcion: "La voz de Israel une a una sociedad diversa e inmigrante.", categoria: "sociedad", costo: 30, anioMin: 1950, requiere: ["soc_retorno"], efectos: { sociedad: 5 }, nivel: 1, rentaInfluencia: 0.5,
+    notificaciones: ["Radio Israel transmitió en 12 idiomas para integrar a los nuevos inmigrantes."] },
+  { id: "soc_salud", nombre: "Sistema de salud universal", descripcion: "Cobertura médica para toda la población.", categoria: "sociedad", costo: 60, anioMin: 1970, requiere: ["soc_universidades"], efectos: { sociedad: 12 }, nivel: 4, rentaInfluencia: 2,
+    notificaciones: ["Israel alcanzó la 5ta esperanza de vida más alta del mundo este año.", "El sistema de salud israelí fue clasificado entre los 10 mejores del mundo por la OMS."] },
+  { id: "soc_derechos", nombre: "Derechos civiles", descripcion: "Garantías constitucionales para una sociedad plural.", categoria: "sociedad", costo: 45, anioMin: 1965, requiere: ["soc_hebreo"], efectos: { sociedad: 8 }, nivel: 3, rentaInfluencia: 1,
+    notificaciones: ["Israel fue reconocida como la única democracia plena de Oriente Medio."] },
+  { id: "soc_aliyah", nombre: "La Gran Aliyah soviética", descripcion: "Un millón de inmigrantes, muchos científicos e ingenieros.", categoria: "sociedad", costo: 100, anioMin: 1990, requiere: ["soc_universidades"], efectos: { sociedad: 14 }, nivel: 5, rentaInfluencia: 2,
+    notificaciones: ["Los inmigrantes soviéticos fundaron 2.400 nuevas empresas tecnológicas.", "La oleada de científicos soviéticos impulsó 14 nuevos laboratorios de investigación."] },
+  { id: "soc_cultura", nombre: "Cultura y cine", descripcion: "Literatura, música y cine que proyectan tu identidad al mundo.", categoria: "sociedad", costo: 80, anioMin: 2000, requiere: ["soc_salud"], efectos: { sociedad: 11 }, nivel: 4, rentaInfluencia: 1.5,
+    notificaciones: ["Una película israelí fue nominada al Oscar a mejor película extranjera.", "La literatura israelí fue traducida a 40 idiomas este año."] },
+  { id: "soc_iddanim", nombre: "Educación tecnológica", descripcion: "Formar a la próxima generación en programación e ingeniería.", categoria: "sociedad", costo: 130, anioMin: 2010, requiere: ["soc_aliyah"], efectos: { sociedad: 13 }, nivel: 5, rentaInfluencia: 2,
+    notificaciones: ["El 78% de los estudiantes israelíes aprendieron programación en la escuela secundaria."] },
+  { id: "soc_longevidad", nombre: "Investigación en longevidad", descripcion: "Liderar la ciencia anti-envejecimiento con aplicaciones globales.", categoria: "sociedad", costo: 170, anioMin: 2015, requiere: ["soc_iddanim"], efectos: { sociedad: 15 }, nivel: 6, rentaInfluencia: 2.5,
+    notificaciones: ["Investigadores israelíes publicaron un avance en reversión del envejecimiento celular."] },
+  { id: "soc_medioambiente", nombre: "Energías renovables", descripcion: "Paneles solares en el desierto. Independencia energética.", categoria: "sociedad", costo: 110, anioMin: 2008, requiere: ["soc_aliyah"], efectos: { sociedad: 12 }, nivel: 4, rentaInfluencia: 1.5,
+    notificaciones: ["El 35% de la energía de Israel provino de fuentes renovables este año."] },
+]
+
+// Pool de guerras de las cuales se seleccionarán exactamente 2 aleatorias por partida
+export const EVENTOS_OPCIONALES: Evento[] = [
+  {
+    id: "guerra_independencia", anio: 1948, titulo: "Guerra de Independencia", icono: "⚔️", color: "#8b1a1a", obligatorio: false,
+    descripcion: "Los ejércitos de 5 países árabes atacan el día siguiente de la declaración. Israel lucha por su supervivencia.",
+    necesita: ["mil_haganah"], textoVictoria: "Israel derrota a las fuerzas árabes. Los acuerdos de armisticio definen las fronteras del nuevo Estado.",
+    textoDerrota: "Sin organización militar, las pérdidas son enormes. La nación sobrevive a duras penas.",
+    efectosVictoria: { militar: 15, monedas: 70 }, efectosDerrota: { militar: -10, monedas: -40 },
+  },
+  {
+    id: "crisis_suez", anio: 1956, titulo: "Crisis del Canal de Suez", icono: "🚢", color: "#7a4500", obligatorio: false,
+    descripcion: "Egipto nacionaliza el Canal. Israel, Francia y el Reino Unido atacan en coordinación.",
+    necesita: ["mil_aviacion"], textoVictoria: "Victoria militar. Israel gana libertad de navegación en el Mar Rojo.",
+    textoDerrota: "Sin fuerza aérea capaz, la campaña termina en fracaso diplomático.",
+    efectosVictoria: { militar: 12, diplomacia: -4, monedas: 60 }, efectosDerrota: { diplomacia: -8, monedas: -25 },
+  },
+  {
+    id: "guerra_6_dias", anio: 1967, titulo: "Guerra de los Seis Días", icono: "✡️", color: "#8b1a1a", obligatorio: false,
+    descripcion: "En apenas 6 días, Israel derrota a Egipto, Jordania y Siria. Un golpe sin precedentes en la historia.",
+    necesita: ["mil_aviacion", "mil_inteligencia"], textoVictoria: "Victoria aplastante. Israel captura Sinaí, Cisjordania, Gaza y los Altos del Golán.",
+    textoDerrota: "Sin inteligencia ni superioridad aérea, el resultado es incierto y muy costoso.",
+    efectosVictoria: { militar: 25, diplomacia: 8, monedas: 120 }, efectosDerrota: { militar: -15, monedas: -60 },
+  },
+  {
+    id: "yom_kipur", anio: 1973, titulo: "Guerra de Yom Kipur", icono: "🔯", color: "#6b1a1a", obligatorio: false,
+    descripcion: "Egipto y Siria atacan por sorpresa en el día más sagrado. Israel, desprevenido, lucha contra la marea.",
+    necesita: ["mil_blindados", "mil_reservas"], textoVictoria: "Contraataque exitoso. Israel rodea al ejército egipcio. Las pérdidas son grandes pero la victoria llega.",
+    textoDerrota: "Sin blindados ni reservistas organizados, el frente casi cede. Una herida profunda en la nación.",
+    efectosVictoria: { militar: 20, sociedad: -8, monedas: 90 }, efectosDerrota: { militar: -18, sociedad: -14, monedas: -75 },
+  },
+  {
+    id: "libano_1982", anio: 1982, titulo: "Primera Guerra del Líbano", icono: "🪖", color: "#8b3a1a", obligatorio: false,
+    descripcion: "Israel invade el Líbano para destruir la infraestructura de la OLP. Una guerra larga y polémica.",
+    necesita: ["mil_aviacion", "mil_blindados"], textoVictoria: "La OLP es expulsada del Líbano. Israel asegura su frontera norte por años.",
+    textoDerrota: "Sin coordinación entre las fuerzas, la campaña se estanca y genera presión internacional.",
+    efectosVictoria: { militar: 15, diplomacia: -8, monedas: 60 }, efectosDerrota: { militar: -8, diplomacia: -12, monedas: -50 },
+  },
+  {
+    id: "libano_2006", anio: 2006, titulo: "Segunda Guerra del Líbano", icono: "🚀", color: "#8b1a1a", obligatorio: false,
+    descripcion: "Hezbollah secuestra soldados israelíes. Israel responde con una campaña de 34 días.",
+    necesita: ["mil_merkava", "mil_aviacion"], textoVictoria: "Alto el fuego con UNIFIL. La disuasión se restablece y Hezbollah queda debilitado.",
+    textoDerrota: "Sin capacidad aérea ni blindada coordinada, la campaña no logra objetivos estratégicos.",
+    efectosVictoria: { militar: 10, diplomacia: -6, monedas: 50 }, efectosDerrota: { militar: -12, monedas: -40 },
+  },
+]
+
+// Evento definitivo y obligatorio del final de la línea temporal
+export const EVENTO_7_OCTUBRE: Evento = {
+  id: "7_octubre", anio: 2023, titulo: "7 de Octubre", icono: "🔯", color: "#1a0808", obligatorio: true,
+  descripcion: "El ataque de Hamás en los kibutzim y el festival Nova es el mayor golpe en décadas. Miles de víctimas, cientos de rehenes. La nación entera se detiene.",
+  necesita: ["mil_cupula", "mil_inteligencia", "mil_ciber"],
+  textoVictoria: "El horror no puede borrarse, pero Israel se reagrupa. La respuesta militar, diplomática y tecnológica que construiste durante décadas permite una recuperación sin precedentes.",
+  textoDerrota: "Sin los pilares militares e inteligencia que debieron construirse, el golpe es devastador. Israel sobrevive, pero el camino para levantarse es mucho más largo y doloroso.",
+  efectosVictoria: { militar: 20, economia: 10, diplomacia: 5, sociedad: -15, monedas: 100 },
+  efectosDerrota: { militar: -25, economia: -15, sociedad: -30, monedas: -80 },
+}
+
+// Banco de preguntas para la Trivia
+export const TRIVIA: PreguntaTrivia[] = [
+  { pregunta: "¿En qué año fue fundado el Estado de Israel?", opciones: ["1946", "1948", "1950", "1947"], correcta: 1, bonus: 50, penalidad: 25 },
+  { pregunta: "¿Quién fue el primer Primer Ministro de Israel?", opciones: ["Golda Meir", "Moshe Dayan", "David Ben-Gurión", "Levi Eshkol"], correcta: 2, bonus: 60, penalidad: 30 },
+  { pregunta: "¿Cuántos días duró la Guerra de los Seis Días?", opciones: ["3 días", "6 días", "10 días", "14 días"], correcta: 1, bonus: 55, penalidad: 25 },
+  { pregunta: "¿En qué ciudad está el Knéset (Parlamento israelí)?", opciones: ["Tel Aviv", "Haifa", "Beersheba", "Jerusalén"], correcta: 3, bonus: 40, penalidad: 20 },
+  { pregunta: "¿Cómo se llama el sistema antimisiles israelí?", opciones: ["Escudo Dorado", "Cúpula de Hierro", "Muro de David", "Lanza Mágica"], correcta: 1, bonus: 50, penalidad: 25 },
+  { pregunta: "¿Qué empresa de chips tiene sede principal en Haifa?", opciones: ["AMD", "Samsung", "Intel", "TSMC"], correcta: 2, bonus: 60, penalidad: 30 },
+  { pregunta: "¿En qué año Israel y Egipto firmaron un tratado de paz?", opciones: ["1973", "1979", "1982", "1993"], correcta: 1, bonus: 55, penalidad: 25 },
+  { pregunta: "¿Cómo se llama la tecnología de riego que Israel desarrolló?", opciones: ["Aspersión", "Goteo", "Inundación", "Hidropónico"], correcta: 1, bonus: 45, penalidad: 20 },
+  { pregunta: "¿Quién fue la primera mujer Primera Ministra de Israel?", opciones: ["Tzipi Livni", "Golda Meir", "Sara Netanyahu", "Dalia Itzik"], correcta: 1, bonus: 50, penalidad: 25 },
+  { pregunta: "¿Qué app de navegación israelí compró Google en 2013?", opciones: ["Moovit", "Gett", "Waze", "Via"], correcta: 2, bonus: 65, penalidad: 30 },
+  { pregunta: "¿En qué desierto está el reactor nuclear de Dimona?", opciones: ["Sahara", "Sinaí", "Neguev", "Judea"], correcta: 2, bonus: 55, penalidad: 25 },
+  { pregunta: "¿Cómo se llama el tanque diseñado y fabricado en Israel?", opciones: ["Patton", "Challenger", "Leclerc", "Merkava"], correcta: 3, bonus: 50, penalidad: 25 },
+  { pregunta: "¿Qué significa 'Aliyah'?", opciones: ["Ejército", "Inmigración a Israel", "Paz en hebreo", "Ciudad santa"], correcta: 1, bonus: 40, penalidad: 20 },
+  { pregunta: "¿Cuál fue el nombre de la operación de rescate en Uganda en 1976?", opciones: ["Operación Trueno", "Operación Entebbe", "Operación Jonathan", "Operación Cóndor"], correcta: 1, bonus: 55, penalidad: 25 },
+]
+
+// GENERADOR DEL ÁRBOL ALEATORIO (~25 nodos por partida adaptativos)
+export function generarArbol(): Mejora[] {
+  const obligatorias = POOL.filter(m => m.obligatoria)
+  const opcionales = POOL.filter(m => !m.obligatoria)
+
+  // Mezclar opcionales de forma aleatoria
+  const mezcladas = [...opcionales].sort(() => Math.random() - 0.5)
+
+  const porCategoria: Record<Categoria, typeof mezcladas> = {
+    militar: mezcladas.filter(m => m.categoria === "militar"),
+    economia: mezcladas.filter(m => m.categoria === "economia"),
+    diplomacia: mezcladas.filter(m => m.categoria === "diplomacia"),
+    sociedad: mezcladas.filter(m => m.categoria === "sociedad"),
+  }
+
+  // Tomar de 4 a 5 nodos opcionales de cada categoría para garantizar variedad balanceada
+  const seleccionadas: typeof mezcladas = []
+  ;(["militar", "economia", "diplomacia", "sociedad"] as Categoria[]).forEach(cat => {
+    const cantidad = 4 + Math.floor(Math.random() * 2) 
+    seleccionadas.push(...porCategoria[cat].slice(0, cantidad))
+  })
+
+  const pool = [...obligatorias, ...seleccionadas]
+  const idsDisponibles = new Set(pool.map(m => m.id))
+
+  // Re-mapear requisitos para que el árbol no quede roto por nodos ausentes
+  const resultado: Mejora[] = pool.map(m => {
+    if (!m.requiere) return { ...m }
+    const reqValidos = m.requiere.filter(r => idsDisponibles.has(r))
+    if (reqValidos.length === 0) {
+      const fallback = obligatorias.find(o => o.categoria === m.categoria && o.id !== m.id)
+      return { ...m, requiere: fallback ? [fallback.id] : undefined }
+    }
+    return { ...m, requiere: reqValidos }
+  })
+
+  // Fluctuar costos levemente (±20%) para añadir rejugabilidad económica
+  return resultado.map(m => ({
+    ...m,
+    costo: Math.max(8, Math.round(m.costo * (0.82 + Math.random() * 0.38))),
+  }))
+}
+
+// Seleccionar exactamente 2 guerras aleatorias del pool para cada ciclo de juego
+export function seleccionarGuerras(): Evento[] {
+  const shuffled = [...EVENTOS_OPCIONALES].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, 2)
+}
+
+export let MEJORAS: Mejora[] = generarArbol()
+
+// Definición de las condiciones finales del juego para el año 2026
+export const FINALES: Record<TipoFinal, { titulo: string; texto: string }> = {
+  militar: { titulo: "La Fortaleza de Oriente Medio", texto: "Llegaste a 2026 como una de las potencias militares más respetadas del planeta. Tu ciberdefensa y escudos antimisiles hacen que ningún enemigo se atreva a desafiar tu soberanía. El legado de tu fortaleza inspirará a generaciones futuras." },
+  startup: { titulo: "El Milagro Tecnológico", texto: "Un país sin recursos naturales convertido en superpotencia de la innovación. Tus chips, startups y unicornios cambian la vida de miles de millones en todo el mundo. Tel Aviv brilla como el epicentro del futuro." },
+  paz: { titulo: "El Puente entre Naciones", texto: "Elegiste el camino más difícil: la mano tendida. Los Acuerdos de Abraham te convirtieron en el gran arquitecto diplomático de la región. El comercio reemplazó la confrontación." },
+  equilibrio: { titulo: "Una Nación Completa", texto: "Llegaste a la actualidad siendo fuerte, próspero, respetado y unido. Un equilibrio extraordinariamente difícil que te convierte en un Estado modelo para el siglo XXI." },
+  fracaso: { titulo: "Un Equilibrio Precario", texto: "La nación sobrevivió hasta hoy, pero a duras penas. Faltó inversión en áreas clave y el camino por delante sigue siendo incierto." },
+}
+
+export const NODO_INICIAL = ""
+
+D:\Users\Usuario\Downloads\history-of-israel>(echo ===FILE: lib\utils.ts===   & type "lib\utils.ts" ) 
+===FILE: lib\utils.ts=== 
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
