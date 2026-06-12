@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -14,31 +14,39 @@ interface WarEventModalProps {
 }
 
 export function WarEventModal({ evento, activo, compradas, onResolve }: WarEventModalProps) {
-  const [animando, setAnimando] = useState(false)
+  const [resolviendo, setResolviendo] = useState(false)
+  const [localActivo, setLocalActivo] = useState(activo)
 
-  if (!evento) return null
+  // Sincronizar estado local
+  useEffect(() => {
+    setLocalActivo(activo)
+    if (activo) {
+      setResolviendo(false)
+    }
+  }, [activo, evento?.id])
+
+  if (!evento || !localActivo) return null
 
   const tieneRequisitos = evento.necesita.every(req => compradas.includes(req))
-  const resultadoPreferido = tieneRequisitos ? "victoria" : "derrota"
 
   const handleVictoria = () => {
-    setAnimando(true)
+    setResolviendo(true)
     setTimeout(() => {
       onResolve(true)
-      setAnimando(false)
-    }, 300)
+      setLocalActivo(false)
+    }, 200)
   }
 
   const handleDerrota = () => {
-    setAnimando(true)
+    setResolviendo(true)
     setTimeout(() => {
       onResolve(false)
-      setAnimando(false)
-    }, 300)
+      setLocalActivo(false)
+    }, 200)
   }
 
   return (
-    <Dialog open={activo} onOpenChange={() => {}}>
+    <Dialog open={localActivo && !resolviendo}>
       <DialogContent 
         className={cn(
           "max-w-2xl border-2 transition-all duration-300",
@@ -46,6 +54,8 @@ export function WarEventModal({ evento, activo, compradas, onResolve }: WarEvent
             ? "bg-gradient-to-br from-green-950 to-green-900 border-green-500/60" 
             : "bg-gradient-to-br from-red-950 to-red-900 border-red-500/60"
         )}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className={cn(
           "border-b pb-4",
@@ -60,7 +70,9 @@ export function WarEventModal({ evento, activo, compradas, onResolve }: WarEvent
               )}>
                 {evento.titulo}
               </DialogTitle>
-              <div className="text-sm font-mono opacity-70">Año {evento.anio}</div>
+              <DialogDescription className="text-sm font-mono opacity-70 text-slate-300">
+                Año {evento.anio}
+              </DialogDescription>
             </div>
             <div className={cn(
               "text-5xl font-bold",
@@ -71,10 +83,10 @@ export function WarEventModal({ evento, activo, compradas, onResolve }: WarEvent
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <DialogDescription className="text-base text-gray-200">
+        <div className="space-y-4 py-4 max-h-[calc(90vh-300px)] overflow-y-auto px-6">
+          <p className="text-base text-gray-200">
             {evento.descripcion}
-          </DialogDescription>
+          </p>
 
           <div className={cn(
             "p-4 rounded-lg border-l-4",
@@ -87,14 +99,23 @@ export function WarEventModal({ evento, activo, compradas, onResolve }: WarEvent
             </div>
             <div className="text-sm">
               {tieneRequisitos 
-                ? `Tienes todas las mejoras necesarias: ${evento.necesita.map(req => `"${req}"`).join(", ")}`
-                : `Te faltan mejoras clave. Necesitabas: ${evento.necesita.map(req => `"${req}"`).join(", ")}`
+                ? `Tienes todas las mejoras necesarias`
+                : `Te faltan mejoras clave`
               }
             </div>
+            {evento.necesita.length > 0 && (
+              <div className="text-xs mt-2 space-y-1">
+                {evento.necesita.map((req, idx) => (
+                  <div key={idx}>
+                    {compradas.includes(req) ? "✓" : "✕"} {req}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="space-y-2 max-h-[200px] overflow-y-auto">
-            <div className="text-xs font-mono uppercase opacity-50 tracking-wider">Posible Resultado:</div>
+          <div>
+            <div className="text-xs font-mono uppercase opacity-50 tracking-wider mb-2">Resultado Probable:</div>
             <div className={cn(
               "p-3 rounded border",
               tieneRequisitos
@@ -112,25 +133,25 @@ export function WarEventModal({ evento, activo, compradas, onResolve }: WarEvent
 
           {tieneRequisitos && (
             <div className="bg-green-900/20 border border-green-500/30 p-3 rounded text-xs text-green-200">
-              💡 <strong>Ventaja estratégica:</strong> Tu preparación militar/diplomática te da una ventaja decisiva.
+              💡 <strong>Ventaja estratégica:</strong> Tu preparación te da una ventaja decisiva en este conflicto.
             </div>
           )}
         </div>
 
-        <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+        <div className="flex gap-3 justify-end pt-4 border-t border-white/10 px-6 pb-6">
           <Button
             onClick={handleDerrota}
-            disabled={animando}
+            disabled={resolviendo}
             variant="outline"
-            className="border-red-500/50 text-red-300 hover:bg-red-900/40"
+            className="border-red-500/50 text-red-300 hover:bg-red-900/40 disabled:opacity-50"
           >
             <span className="text-lg mr-2">💔</span> Derrota
           </Button>
           <Button
             onClick={handleVictoria}
-            disabled={animando}
+            disabled={resolviendo}
             className={cn(
-              "font-bold",
+              "font-bold disabled:opacity-50",
               tieneRequisitos
                 ? "bg-green-600 hover:bg-green-500 text-white"
                 : "bg-slate-600 hover:bg-slate-500 text-white"
@@ -138,10 +159,6 @@ export function WarEventModal({ evento, activo, compradas, onResolve }: WarEvent
           >
             <span className="text-lg mr-2">⚔️</span> Victoria
           </Button>
-        </div>
-
-        <div className="text-[10px] text-center text-gray-400 mt-2 font-mono">
-          Elige el resultado. El sistema validará tu decisión según tus mejoras.
         </div>
       </DialogContent>
     </Dialog>
