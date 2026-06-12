@@ -63,8 +63,8 @@ export function TreeModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden bg-slate-950 border border-cyan-500/40 text-white rounded-xl p-0">
-        <DialogHeader className="border-b border-cyan-500/20 p-6 pb-4">
+      <DialogContent className="max-w-7xl h-[95vh] bg-slate-950 border border-cyan-500/40 text-white rounded-xl p-0 flex flex-col overflow-hidden">
+        <DialogHeader className="border-b border-cyan-500/20 p-6 pb-4 shrink-0">
           <DialogTitle className="text-cyan-400 text-2xl font-bold tracking-wider flex items-center gap-2">
             <Sparkles className="size-6" />
             // ÁRBOL_DE_DESARROLLO_NACIONAL
@@ -74,166 +74,189 @@ export function TreeModal({
           </p>
         </DialogHeader>
 
-        <div className="flex-1 overflow-auto p-6 space-y-8">
-          {/* Renderizar por categoría */}
-          {(["militar", "economia", "diplomacia", "sociedad"] as Categoria[]).map((categoria) => {
-            const mejoras = mejPorCategoria[categoria]
-            const catInfo = CATEGORIA_INFO[categoria]
-
-            return (
-              <div key={categoria} className="space-y-3">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="text-2xl">{catInfo.icono}</div>
-                  <div>
-                    <h3 className="font-bold text-lg" style={{ color: catInfo.color }}>
-                      {catInfo.nombre.toUpperCase()}
-                    </h3>
-                    <p className="text-xs text-slate-400">{catInfo.descripcion}</p>
-                  </div>
-                </div>
-
-                {/* Grid de nodos por categoría */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {mejoras.map((mejora) => {
-                    const estado = estadoDeMejora(mejora, compradas, influencia, anio)
-                    const yaComprada = estado === "comprada"
-                    const esDisponible = estado === "disponible"
-
-                    if (estado === "bloqueada-anio") {
-                      return (
-                        <div
-                          key={mejora.id}
-                          className="border border-slate-800 bg-slate-900/30 p-3 rounded-lg flex items-center justify-center aspect-square opacity-30"
-                        >
-                          <div className="text-center">
-                            <Lock className="size-4 mx-auto text-slate-500 mb-1" />
-                            <p className="text-[8px] uppercase text-slate-500">{mejora.anioMin}</p>
-                          </div>
-                        </div>
-                      )
-                    }
-
-                    return (
-                      <div
-                        key={mejora.id}
-                        onClick={() => setSelectedNode(mejora.id)}
-                        className={cn(
-                          "relative border p-3 rounded-lg cursor-pointer transition-all duration-200 aspect-square flex flex-col justify-between group hover:shadow-lg",
-                          yaComprada
-                            ? "bg-cyan-950/30 border-cyan-500/60 shadow-cyan-500/20 shadow-lg"
-                            : esDisponible
-                            ? "bg-slate-900/80 border-slate-600 hover:border-cyan-400 hover:shadow-cyan-400/20 hover:shadow-lg"
-                            : "bg-slate-950/40 border-slate-900 opacity-50"
-                        )}
-                      >
-                        {/* Pulsión si está disponible */}
-                        {esDisponible && (
-                          <div className="absolute inset-0 rounded-lg bg-cyan-400 opacity-20 animate-pulse pointer-events-none" />
-                        )}
-
-                        <div className="space-y-1 z-10 relative">
-                          <div className="text-lg font-bold">{mejora.anioMin}</div>
-                          <h4 className="font-bold text-xs leading-tight line-clamp-2">{mejora.nombre}</h4>
-                        </div>
-
-                        <div className="z-10 relative">
-                          {yaComprada && (
-                            <div className="text-[10px] bg-cyan-500/30 border border-cyan-500 text-cyan-300 px-1.5 py-0.5 rounded w-fit">
-                              ✓ Comprado
-                            </div>
-                          )}
-                          {!yaComprada && (
-                            <div className="text-[10px] text-slate-400 font-mono">
-                              {mejora.costo} INF
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Panel detalle del nodo seleccionado */}
-        {selectedNode && (
-          <div className="border-t border-cyan-500/20 bg-slate-900/50 p-6">
-            {(() => {
-              const mejora = MEJORAS.find((m) => m.id === selectedNode)
-              if (!mejora) return null
-
-              const estado = estadoDeMejora(mejora, compradas, influencia, anio)
-              const yaComprada = estado === "comprada"
+        <div className="flex flex-1 overflow-hidden gap-6">
+          {/* Scroll izquierdo - Árbol */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-8 border-r border-cyan-500/20">
+            {/* Renderizar por categoría */}
+            {(["militar", "economia", "diplomacia", "sociedad"] as Categoria[]).map((categoria) => {
+              const mejoras = mejPorCategoria[categoria]
+              const catInfo = CATEGORIA_INFO[categoria]
 
               return (
-                <div className="space-y-4 max-w-4xl">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h2 className="text-xl font-bold mb-1">{mejora.nombre}</h2>
-                      <p className="text-sm text-slate-300 mb-3">{mejora.descripcion}</p>
+                <div key={categoria} className="space-y-3">
+                  <div className="flex items-center gap-3 mb-4 sticky top-0 bg-slate-950/90 py-2 backdrop-blur">
+                    <div className="text-2xl">{catInfo.icono}</div>
+                    <div>
+                      <h3 className="font-bold text-lg" style={{ color: catInfo.color }}>
+                        {catInfo.nombre.toUpperCase()}
+                      </h3>
+                      <p className="text-xs text-slate-400">{catInfo.descripcion}</p>
+                    </div>
+                  </div>
 
-                      {/* Requisitos */}
-                      {estado === "bloqueada-req" && mejora.requiere && (
-                        <div className="text-xs bg-red-900/30 border border-red-500/50 text-red-200 p-2 rounded mb-3">
-                          <span className="font-bold">Requisitos necesarios:</span>
-                          <br />
-                          {mejora.requiere.map(nombreReq).join(", ")}
+                  {/* Grid de nodos por categoría - RESPONSIVE */}
+                  <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
+                    {mejoras.map((mejora) => {
+                      const estado = estadoDeMejora(mejora, compradas, influencia, anio)
+                      const yaComprada = estado === "comprada"
+                      const esDisponible = estado === "disponible"
+
+                      if (estado === "bloqueada-anio") {
+                        return (
+                          <div
+                            key={mejora.id}
+                            className="border border-slate-800 bg-slate-900/30 p-3 rounded-lg flex items-center justify-center aspect-square opacity-30 hover:opacity-40 transition-opacity"
+                          >
+                            <div className="text-center">
+                              <Lock className="size-4 mx-auto text-slate-500 mb-1" />
+                              <p className="text-[8px] uppercase text-slate-500">{mejora.anioMin}</p>
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      return (
+                        <button
+                          key={mejora.id}
+                          onClick={() => setSelectedNode(mejora.id)}
+                          className={cn(
+                            "relative border p-3 rounded-lg transition-all duration-200 aspect-square flex flex-col justify-between group hover:shadow-lg text-left",
+                            yaComprada
+                              ? "bg-cyan-950/30 border-cyan-500/60 shadow-cyan-500/20 shadow-lg"
+                              : esDisponible
+                              ? "bg-slate-900/80 border-slate-600 hover:border-cyan-400 hover:shadow-cyan-400/20 hover:shadow-lg cursor-pointer"
+                              : "bg-slate-950/40 border-slate-900 opacity-50"
+                          )}
+                        >
+                          {/* Pulsión si está disponible */}
+                          {esDisponible && (
+                            <div className="absolute inset-0 rounded-lg bg-cyan-400 opacity-20 animate-pulse pointer-events-none" />
+                          )}
+
+                          <div className="space-y-1 z-10 relative">
+                            <div className="text-lg font-bold">{mejora.anioMin}</div>
+                            <h4 className="font-bold text-xs leading-tight line-clamp-2">{mejora.nombre}</h4>
+                          </div>
+
+                          <div className="z-10 relative">
+                            {yaComprada && (
+                              <div className="text-[10px] bg-cyan-500/30 border border-cyan-500 text-cyan-300 px-1.5 py-0.5 rounded w-fit">
+                                ✓ Comprado
+                              </div>
+                            )}
+                            {!yaComprada && (
+                              <div className="text-[10px] text-slate-400 font-mono">
+                                {mejora.costo} INF
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Panel detalle del nodo seleccionado - DERECHA FIJA */}
+          <div className="w-80 border-l border-cyan-500/20 bg-slate-900/50 p-6 overflow-y-auto shrink-0">
+            {selectedNode ? (
+              (() => {
+                const mejora = MEJORAS.find((m) => m.id === selectedNode)
+                if (!mejora) return null
+
+                const estado = estadoDeMejora(mejora, compradas, influencia, anio)
+                const yaComprada = estado === "comprada"
+
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h2 className="text-lg font-bold mb-1">{mejora.nombre}</h2>
+                        <div className="text-2xl">{CATEGORIA_INFO[mejora.categoria].icono}</div>
+                      </div>
+                      <div className="text-sm text-slate-400">{mejora.anioMin}</div>
+                    </div>
+
+                    <p className="text-sm text-slate-300 leading-relaxed">{mejora.descripcion}</p>
+
+                    {/* Requisitos */}
+                    {estado === "bloqueada-req" && mejora.requiere && (
+                      <div className="text-xs bg-red-900/30 border border-red-500/50 text-red-200 p-3 rounded space-y-1">
+                        <span className="font-bold block">Requisitos necesarios:</span>
+                        <div className="space-y-1">
+                          {mejora.requiere.map(req => (
+                            <div key={req} className="text-xs">
+                              • {nombreReq(req)}
+                            </div>
+                          ))}
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      {/* Efectos */}
-                      <div className="grid grid-cols-4 gap-2 text-xs">
+                    {/* Efectos */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold text-slate-300">Efectos:</div>
+                      <div className="grid grid-cols-2 gap-2">
                         {Object.entries(mejora.efectos).map(([stat, value]) => (
                           <div
                             key={stat}
                             className="bg-slate-800 p-2 rounded text-center border border-slate-700"
                           >
-                            <div className="font-bold">{value > 0 ? "+" : ""}{value}</div>
-                            <div className="text-slate-400 capitalize">{stat}</div>
+                            <div className="font-bold text-sm">{value > 0 ? "+" : ""}{value}</div>
+                            <div className="text-xs text-slate-400 capitalize">{stat}</div>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="text-right ml-6">
-                      <div className="text-3xl mb-2">
-                        {CATEGORIA_INFO[mejora.categoria].icono}
+                    {/* Renta */}
+                    {mejora.rentaInfluencia && (
+                      <div className="text-xs bg-cyan-900/20 border border-cyan-500/30 p-2 rounded">
+                        💰 Genera <span className="font-bold">{mejora.rentaInfluencia}</span> influencia/año
                       </div>
-                      <Button
-                        onClick={() => {
-                          onComprar(mejora)
-                          setSelectedNode(null)
-                        }}
-                        disabled={estado !== "disponible"}
-                        className={cn(
-                          "font-mono text-xs px-4 py-2",
-                          yaComprada
-                            ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
-                            : "bg-cyan-500 text-slate-950 hover:bg-cyan-400"
-                        )}
-                      >
-                        {yaComprada
-                          ? "✓ Desplegado"
-                          : estado === "sin-fondos"
-                          ? `Costo: ${mejora.costo}`
-                          : "Comprar"}
-                      </Button>
-                    </div>
-                  </div>
+                    )}
 
-                  {/* Renta de influencia */}
-                  {mejora.rentaInfluencia && (
-                    <div className="text-xs bg-cyan-900/20 border border-cyan-500/30 p-2 rounded">
-                      💰 Genera <span className="font-bold">{mejora.rentaInfluencia}</span> influencia por año
-                    </div>
-                  )}
-                </div>
-              )
-            })()}
+                    {/* Botón Comprar */}
+                    <Button
+                      onClick={() => {
+                        onComprar(mejora)
+                        setSelectedNode(null)
+                      }}
+                      disabled={estado !== "disponible"}
+                      className={cn(
+                        "w-full font-mono text-xs py-2 mt-4",
+                        yaComprada
+                          ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/10"
+                          : "bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                      )}
+                    >
+                      {yaComprada
+                        ? "✓ Desplegado"
+                        : estado === "sin-fondos"
+                        ? `Costo: ${mejora.costo}`
+                        : estado === "bloqueada-anio"
+                        ? `Disponible en ${mejora.anioMin}`
+                        : "Comprar"}
+                    </Button>
+
+                    {estado === "sin-fondos" && (
+                      <div className="text-xs text-yellow-400/70 text-center">
+                        Necesitas {mejora.costo - influencia} monedas más
+                      </div>
+                    )}
+                  </div>
+                )
+              })()
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <Sparkles className="size-12 text-slate-600 mb-3" />
+                <p className="text-sm text-slate-400">Selecciona una mejora para ver detalles</p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </DialogContent>
     </Dialog>
   )
