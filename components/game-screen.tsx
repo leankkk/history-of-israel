@@ -6,6 +6,7 @@ import { IntroScreen } from "@/components/intro-screen"
 import { EndScreen } from "@/components/end-screen"
 import { StatsPanel } from "@/components/stats-panel"
 import { Shop } from "@/components/shop"
+import { WarEventModal } from "@/components/war-event-modal"
 import { ANIO_FINAL, ANIO_INICIAL, ERAS } from "@/lib/game-data"
 import { Progress } from "@/components/ui/progress"
 import { Pause, Play, FastForward, Sparkles } from "lucide-react"
@@ -51,6 +52,14 @@ export function GameScreen() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+      {/* Modal de evento de guerra */}
+      <WarEventModal
+        evento={game.eventoActual}
+        activo={game.mostrarEventoModal}
+        compradas={game.compradas}
+        onResolve={game.procesarResultadoEvento}
+      />
+
       {/* Barra superior de control temporal */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
