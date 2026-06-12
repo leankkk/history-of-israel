@@ -48,15 +48,18 @@ export function useGame() {
   // Estado para eventos de guerra
   const [eventoActual, setEventoActual] = useState<Evento | null>(null)
   const [mostrarEventoModal, setMostrarEventoModal] = useState(false)
-  const [eventosOcurridos, setEventosOcurridos] = useState<Map<string, boolean>>(new Map())
+  const eventosOcurridos = useRef<Set<string>>(new Set())
+  const guerrasDePartida = useRef<Evento[]>([])
+  const eventoEnProceso = useRef(false)
 
   const acumuladorTiempo = useRef(0)
-  const guerrasDePartida = useRef<Evento[]>([])
 
   const iniciarJuego = useCallback(() => {
     // Generar guerras aleatorias
     const shuffled = [...EVENTOS_OPCIONALES].sort(() => Math.random() - 0.5)
     guerrasDePartida.current = [shuffled[0], shuffled[1], EVENTO_7_OCTUBRE]
+    eventosOcurridos.current = new Set()
+    eventoEnProceso.current = false
     
     setFase("jugando")
     setAnio(ANIO_INICIAL)
@@ -65,14 +68,17 @@ export function useGame() {
     setCompradas([])
     setVelocidad(1)
     setTipoFinal(null)
-    setEventosOcurridos(new Map())
     setMostrarEventoModal(false)
+    setEventoActual(null)
     acumuladorTiempo.current = 0
   }, [])
 
   const reiniciarJuego = useCallback(() => {
     setFase("intro")
     setVelocidad(0)
+    eventoEnProceso.current = false
+    setMostrarEventoModal(false)
+    setEventoActual(null)
   }, [])
 
   const rentaPorAnio = useMemo(() => {
@@ -86,55 +92,67 @@ export function useGame() {
     return base
   }, [compradas])
 
+  // Procesar resultado del evento
+  const procesarResultadoEvento = useCallback(
+    (evento: Evento, victoria: boolean) => {
+      try {
+        // Validar que el resultado es consistente con las mejoras
+        const tieneRequisitos = evento.necesita.every(req => compradas.includes(req))
+        const resultadoReal = tieneRequisitos ? true : false
+        
+        // Si elige victoria sin requisitos o derrota con requisitos, se aplica el resultado real
+        const resultadoFinal = victoria === resultadoReal ? victoria : resultadoReal
+
+        // Aplicar efectos
+        const efectos = resultadoFinal ? evento.efectosVictoria : evento.efectosDerrota
+        
+        setStats((s) => {
+          const next = { ...s }
+          for (const [k, v] of Object.entries(efectos)) {
+            if (k !== "monedas") {
+              const key = k as keyof Stats
+              next[key] = Math.max(0, next[key] + (v as number))
+            }
+          }
+          return next
+        })
+
+        if (efectos.monedas) {
+          setInfluencia((prev) => Math.max(0, prev + efectos.monedas!))
+        }
+
+        // Registrar evento como ocurrido
+        eventosOcurridos.current.add(evento.id)
+        
+        // Cerrar modal
+        setMostrarEventoModal(false)
+        setEventoActual(null)
+        eventoEnProceso.current = false
+      } catch (error) {
+        console.error("Error procesando evento:", error)
+        setMostrarEventoModal(false)
+        setEventoActual(null)
+        eventoEnProceso.current = false
+      }
+    },
+    [compradas]
+  )
+
   // Detectar eventos de guerra
   useEffect(() => {
-    if (fase !== "jugando" || !guerrasDePartida.current.length) return
+    if (fase !== "jugando" || eventoEnProceso.current || !guerrasDePartida.current.length) return
 
     for (const evento of guerrasDePartida.current) {
-      if (anio === evento.anio && !eventosOcurridos.get(evento.id)) {
+      if (anio === evento.anio && !eventosOcurridos.current.has(evento.id)) {
+        eventoEnProceso.current = true
         setEventoActual(evento)
         setMostrarEventoModal(true)
         // Pausar el juego cuando aparece un evento
         setVelocidad(0)
+        break // Solo mostrar un evento a la vez
       }
     }
   }, [anio, fase])
-
-  // Procesar resultado del evento
-  const procesarResultadoEvento = useCallback(
-    (evento: Evento, victoria: boolean) => {
-      // Validar que el resultado es consistente con las mejoras
-      const tieneRequisitos = evento.necesita.every(req => compradas.includes(req))
-      const resultadoReal = tieneRequisitos ? true : false
-      
-      // Si elige victoria sin requisitos o derrota con requisitos, se aplica el resultado real
-      const resultadoFinal = victoria === resultadoReal ? victoria : resultadoReal
-
-      // Aplicar efectos
-      const efectos = resultadoFinal ? evento.efectosVictoria : evento.efectosDerrota
-      
-      setStats((s) => {
-        const next = { ...s }
-        for (const [k, v] of Object.entries(efectos)) {
-          if (k !== "monedas") {
-            const key = k as keyof Stats
-            next[key] = Math.max(0, next[key] + (v as number))
-          }
-        }
-        return next
-      })
-
-      if (efectos.monedas) {
-        setInfluencia((prev) => Math.max(0, prev + efectos.monedas!))
-      }
-
-      // Registrar evento como ocurrido
-      setEventosOcurridos((prev) => new Map(prev).set(evento.id, true))
-      setMostrarEventoModal(false)
-      setEventoActual(null)
-    },
-    [compradas]
-  )
 
   useEffect(() => {
     if (fase !== "jugando" || velocidad === 0) return
