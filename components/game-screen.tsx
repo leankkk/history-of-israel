@@ -252,46 +252,60 @@ function TreeModal({open,onClose,compradas,mejoras,influencia,anio,onComprar,ult
   const mejoraSel = sel?(sel===NODO_RAIZ.id?NODO_RAIZ:mejoras.find(m=>m.id===sel)):null
   const estadoSel = mejoraSel&&mejoraSel.id!==NODO_RAIZ.id?estadoMejora(mejoraSel,compradas,influencia,anio):"comprada"
 
-  // ── Layout: Israel a la izquierda, 4 filas horizontales ──
-  const NW=100, NH=60, HGAP=24, VGAP=16
-  const ROW_BASE: Record<Categoria,number> = {militar:40,economia:200,diplomacia:370,sociedad:540}
-  const COL_START=200, COL_W=NW+HGAP
-  const RAIZ_X=40, RAIZ_Y=340
+  // ── Layout: Israel centro-izquierda, 4 bandas horizontales sin solapamiento ──
+  const NW=110, NH=64, HGAP=28, VGAP=14
+  const COL_START=210, COL_W=NW+HGAP
 
-  // Posiciones topológicas: col = profundidad en el grafo
-  const posNodo: Record<string,{x:number,y:number}> = {}
-  posNodo[NODO_RAIZ.id]={x:RAIZ_X,y:RAIZ_Y}
-
+  // PASO 1: profundidad topológica de cada nodo
+  const colDeTodo: Record<string,number> = {}
   cats.forEach(cat=>{
-    const mejorasCat=mejoras.filter(m=>m.categoria===cat).sort((a,b)=>a.anioMin-b.anioMin)
-    const colDe:Record<string,number>={}
-    mejorasCat.forEach(m=>{
-      if(!m.requiere||m.requiere.length===0){colDe[m.id]=0;return}
-      const maxPadre=Math.max(...m.requiere.map(r=>colDe[r]??0))
-      colDe[m.id]=maxPadre+1
-    })
-    const porCol:Record<number,string[]>={}
-    mejorasCat.forEach(m=>{
-      const c=colDe[m.id]??0
-      if(!porCol[c])porCol[c]=[]
-      porCol[c].push(m.id)
-    })
-    const baseY=ROW_BASE[cat]
-    Object.entries(porCol).forEach(([colStr,ids])=>{
-      const col=parseInt(colStr)
-      ids.forEach((id,rowIdx)=>{
-        posNodo[id]={
-          x:COL_START+col*COL_W,
-          y:baseY+rowIdx*(NH+VGAP)
-        }
-      })
+    const mc=mejoras.filter(m=>m.categoria===cat).sort((a,b)=>a.anioMin-b.anioMin)
+    mc.forEach(m=>{
+      if(!m.requiere||!m.requiere.length){colDeTodo[m.id]=0;return}
+      colDeTodo[m.id]=Math.max(...m.requiere.map(r=>colDeTodo[r]??0))+1
     })
   })
 
-  const allX=Object.values(posNodo).map(p=>p.x+NW)
-  const allY=Object.values(posNodo).map(p=>p.y+NH)
-  const W=Math.max(...allX)+60
-  const H=Math.max(...allY)+60
+  // PASO 2: altura real necesaria por categoría (máx nodos en una columna)
+  const alturaCat: Record<string,number> = {}
+  cats.forEach(cat=>{
+    const mc=mejoras.filter(m=>m.categoria===cat)
+    const porCol: Record<number,number>={}
+    mc.forEach(m=>{ const c=colDeTodo[m.id]??0; porCol[c]=(porCol[c]??0)+1 })
+    const maxEnCol=Math.max(1,...Object.values(porCol))
+    alturaCat[cat]=maxEnCol*(NH+VGAP)+VGAP*2
+  })
+
+  // PASO 3: baseY acumulado por categoría
+  const PAD_TOP=40, PAD_ENTRE=30
+  const baseYCat: Record<string,number> = {}
+  let acumY=PAD_TOP
+  cats.forEach(cat=>{ baseYCat[cat]=acumY; acumY+=alturaCat[cat]+PAD_ENTRE })
+  const totalH=acumY+PAD_TOP
+
+  // PASO 4: posición exacta por nodo — centrado verticalmente en su banda
+  const posNodo: Record<string,{x:number,y:number}> = {}
+  cats.forEach(cat=>{
+    const mc=mejoras.filter(m=>m.categoria===cat).sort((a,b)=>a.anioMin-b.anioMin)
+    const porCol: Record<number,string[]>={}
+    mc.forEach(m=>{ const c=colDeTodo[m.id]??0; if(!porCol[c])porCol[c]=[]; porCol[c].push(m.id) })
+    const baseY=baseYCat[cat]
+    const catH=alturaCat[cat]
+    Object.entries(porCol).forEach(([colStr,ids])=>{
+      const col=parseInt(colStr)
+      const bloqueH=ids.length*(NH+VGAP)-VGAP
+      const startY=baseY+(catH-bloqueH)/2
+      ids.forEach((id,i)=>{ posNodo[id]={x:COL_START+col*COL_W, y:startY+i*(NH+VGAP)} })
+    })
+  })
+
+  // Raíz centrada verticalmente en todo el canvas
+  const RAIZ_X=30
+  const RAIZ_Y=totalH/2-36
+  posNodo[NODO_RAIZ.id]={x:RAIZ_X,y:RAIZ_Y}
+
+  const W=Math.max(...Object.values(posNodo).map(p=>p.x+NW))+80
+  const H=totalH
 
   // Edges
   type Edge={from:string,to:string,ambos:boolean,padreComp:boolean,ilum:boolean}
@@ -330,9 +344,9 @@ function TreeModal({open,onClose,compradas,mejoras,influencia,anio,onComprar,ult
       </div>
 
       <div style={{display:"flex",flex:1,overflow:"hidden"}}>
-        {/* SVG canvas */}
-        <div style={{flex:1,overflow:"auto",background:"#050810"}}>
-          <svg width={W} height={H} style={{display:"block",minWidth:"100%"}}>
+        {/* SVG canvas — scroll solo horizontal */}
+        <div style={{flex:1,overflowX:"auto",overflowY:"auto",background:"#050810"}}>
+          <svg width={W} height={H} style={{display:"block",minWidth:W,minHeight:H}}>
             <defs>
               <filter id="gf1"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               <filter id="gf2"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -340,20 +354,22 @@ function TreeModal({open,onClose,compradas,mejoras,influencia,anio,onComprar,ult
 
             {/* Bandas de fondo por categoría */}
             {cats.map(cat=>{
-              const mejorasCat=mejoras.filter(m=>m.categoria===cat)
-              if(!mejorasCat.length) return null
-              const ys=mejorasCat.map(m=>posNodo[m.id]?.y??9999)
-              const minY=Math.min(...ys)-14
-              const maxY=Math.max(...ys)+NH+14
+              const baseY=baseYCat[cat]
+              const catH=alturaCat[cat]
+              const midY=baseY+catH/2
               return <g key={cat}>
-                <rect x={COL_START-24} y={minY} width={W-COL_START+14} height={maxY-minY}
-                  fill={`${CAT[cat]}07`} rx={8}/>
-                <text x={COL_START-14} y={(minY+maxY)/2+5} textAnchor="middle" fontSize="13"
-                  fill={CAT[cat]} opacity="0.6">{CATEGORIA_INFO[cat].icono}</text>
-                <text x={COL_START-14} y={(minY+maxY)/2+18} textAnchor="middle" fontSize="8"
-                  fill={CAT[cat]} opacity="0.4" fontFamily="Inter" fontWeight="700"
-                  style={{writingMode:"horizontal-tb"}}>
-                  {CATEGORIA_INFO[cat].nombre.slice(0,3).toUpperCase()}
+                {/* Banda de color tenue */}
+                <rect x={COL_START-20} y={baseY} width={W-COL_START+10} height={catH}
+                  fill={`${CAT[cat]}08`} rx={8}/>
+                {/* Separador horizontal entre bandas */}
+                <line x1={COL_START-20} y1={baseY} x2={W-10} y2={baseY}
+                  stroke={`${CAT[cat]}20`} strokeWidth="1"/>
+                {/* Label categoría en el margen izquierdo */}
+                <text x={COL_START-60} y={midY-6} textAnchor="middle" fontSize="16"
+                  fill={CAT[cat]} opacity="0.7">{CATEGORIA_INFO[cat].icono}</text>
+                <text x={COL_START-60} y={midY+10} textAnchor="middle" fontSize="8"
+                  fill={CAT[cat]} opacity="0.5" fontFamily="Inter" fontWeight="700">
+                  {CATEGORIA_INFO[cat].nombre.toUpperCase().slice(0,4)}
                 </text>
               </g>
             })}
