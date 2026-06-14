@@ -349,7 +349,7 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   const [extMsg, setExtMsg] = useState("")
   // Torre
   const [agenteT, setAgenteT] = useState({...POS_SPAWN_T})
-  const [guardiaTorre, setGuardiaTorre] = useState({x:3,y:4,dx:1,dy:0})
+  const [guardiaTorre, setGuardiaTorre] = useState({x:7,y:4,dx:-1,dy:0})
   const [torreDetectado, setTorreDetectado] = useState(false)
   const [torreEnPanel, setTorreEnPanel] = useState(false)
   // Lights Out puzzle: 4 switches, ON=true
@@ -381,18 +381,30 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     return()=>clearInterval(t)
   },[escena])
 
-  // ─── TIMER GLOBAL — pausa durante el puzzle de la torre ────────
+  // ─── TIMER POR ESCENA — cada escena tiene su propio tiempo ────
   useEffect(()=>{
-    if(escena!=="exterior"&&escena!=="torre"&&escena!=="edificio") return
-    if(torreEnPanel && !puzzleResuelto) return // pausado durante el puzzle
+    clearInterval(timerRef.current)
+    if(escena==="exterior")  setTiempo(120) // 2 minutos para el exterior
+    if(escena==="torre")     setTiempo(90)  // 90s para llegar al panel
+    if(escena==="edificio")  setTiempo(90)  // 90s para el edificio
+    if(escena==="cinematica"||escena==="salida"||escena==="fin") return
+
     timerRef.current=setInterval(()=>{
       setTiempo(t=>{
-        if(t<=1){onResultado(false);return 0}
+        if(t<=1){ clearInterval(timerRef.current); onResultado(false); return 0 }
         return t-1
       })
     },1000)
     return()=>clearInterval(timerRef.current)
-  },[escena,torreEnPanel,puzzleResuelto,onResultado])
+  },[escena, onResultado])
+
+  // Pausar timer durante el puzzle Lights Out
+  useEffect(()=>{
+    if(torreEnPanel && !puzzleResuelto){
+      clearInterval(timerRef.current)
+      setTiempo(45) // 45s para resolver el puzzle, sin presión
+    }
+  },[torreEnPanel, puzzleResuelto])
 
   // ─── GUARDIAS EXTERIOR ───────────────────────────────────
   useEffect(()=>{
@@ -459,37 +471,36 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     return()=>window.removeEventListener("keydown",onKey)
   },[escena,extDetectado,selExt])
 
-  // ─── GUARDIA TORRE ─ patrulla filas 3-6, nunca llega al panel ──
+  // ─── GUARDIA TORRE ─ patrulla solo filas 4-6, lejos del panel ──
   useEffect(()=>{
     if(escena!=="torre"||torreDetectado) return
     const t=setInterval(()=>{
       setGuardiaTorre(prev=>{
         const nx=prev.x+prev.dx; const ny=prev.y+prev.dy
-        // Restringir a filas 3-6 para que nunca bloquee el panel (fila 1)
-        if(nx>0&&nx<9&&ny>=3&&ny<=6&&MAPA_TORRE[ny]?.[nx]===0)
+        // Solo filas 4-6: el jugador puede pasar por filas 1-3 sin peligro
+        if(nx>0&&nx<9&&ny>=4&&ny<=6&&MAPA_TORRE[ny]?.[nx]===0)
           return{...prev,x:nx,y:ny}
         return{...prev,dx:-prev.dx,dy:-prev.dy}
       })
-    },750)
+    },900) // más lento también
     return()=>clearInterval(t)
   },[escena,torreDetectado])
 
-  // Detección torre — solo contacto directo (misma celda o adyacente ortogonal)
+  // Detección torre — solo si están en la misma celda exacta
   useEffect(()=>{
-    if(escena!=="torre"||torreDetectado) return
-    const dist=Math.abs(agenteT.x-guardiaTorre.x)+Math.abs(agenteT.y-guardiaTorre.y)
-    if(dist===0){ // mismo lugar = capturado
+    if(escena!=="torre"||torreDetectado||torreEnPanel) return
+    if(agenteT.x===guardiaTorre.x && agenteT.y===guardiaTorre.y){
       setTorreDetectado(true)
       setTimeout(()=>onResultado(false),1200)
     }
-  },[guardiaTorre,agenteT,escena,torreDetectado,onResultado])
+  },[guardiaTorre,agenteT,escena,torreDetectado,torreEnPanel,onResultado])
 
-  // Llegada al panel — dar 45 segundos extra para el puzzle
+  // Llegada al panel
   useEffect(()=>{
     if(escena!=="torre"||torreEnPanel) return
     if(agenteT.x===POS_PANEL.x&&agenteT.y===POS_PANEL.y){
       setTorreEnPanel(true)
-      setTiempo(45) // tiempo fijo para el puzzle
+      // El timer se pausa automáticamente via el useEffect de torreEnPanel
     }
   },[agenteT,escena,torreEnPanel])
 
