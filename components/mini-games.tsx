@@ -287,19 +287,19 @@ type GuardiaE = { x:number; y:number; dx:number; dy:number }
 const MAPA_EXT = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,1,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+  [1,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1], // x=15,16 libres para torre
   [1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1],
-  [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1], // fila 4: pista libre
-  [1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+  [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1],
+  [1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1],
   [1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1],
-  [1,0,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1],
+  [1,0,0,0,1,0,1,0,0,1,0,0,1,0,0,0,0,1], // x=14,15,16 libres para edificio
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 ]
 // Posiciones clave en el exterior
 const POS_AVION   = {x:2,  y:5}   // spawn de los 3 grupos
-const POS_TORRE   = {x:15, y:2}   // objetivo G1
-const POS_EDIFICIO= {x:15, y:7}   // objetivo G2+G3
+const POS_TORRE   = {x:15, y:2}   // objetivo G1 (ahora celda libre)
+const POS_EDIFICIO= {x:15, y:7}   // objetivo G2+G3 (ahora celda libre)
 const EXT_W = 18, EXT_H = 10, EC2 = 40
 
 // ─── CUARTO TORRE 8×6 ────────────────────────────────────────
@@ -420,14 +420,17 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   useEffect(()=>{
     if(escena!=="exterior") return
     const g1enTorre  = gruposExt[0].x===POS_TORRE.x    && gruposExt[0].y===POS_TORRE.y
+    // G2 y G3 pueden estar en la misma celda o en celdas adyacentes al edificio
     const g2enEdif   = gruposExt[1].x===POS_EDIFICIO.x && gruposExt[1].y===POS_EDIFICIO.y
     const g3enEdif   = gruposExt[2].x===POS_EDIFICIO.x && gruposExt[2].y===POS_EDIFICIO.y
-    if(g1enTorre && g2enEdif && g3enEdif){
-      setEscena("torre") // empieza torre en paralelo — mostramos torre primero
+    // Para G3 también vale la celda de al lado
+    const g3cerca    = Math.abs(gruposExt[2].x-POS_EDIFICIO.x)+Math.abs(gruposExt[2].y-POS_EDIFICIO.y)<=1
+    if(g1enTorre && g2enEdif && (g3enEdif||g3cerca)){
+      setEscena("torre")
     } else if(g1enTorre && !g2enEdif){
-      setExtMsg("G1 en torre. Mové G2 y G3 al edificio.")
-    } else if((g2enEdif||g3enEdif) && !g1enTorre){
-      setExtMsg("G2/G3 en edificio. Mové G1 a la torre.")
+      setExtMsg("✓ G1 en torre. Mové G2 y G3 al edificio.")
+    } else if((g2enEdif||g3cerca) && !g1enTorre){
+      setExtMsg("✓ G2/G3 en edificio. Mové G1 a la 🗼 torre.")
     }
   },[gruposExt,escena])
 

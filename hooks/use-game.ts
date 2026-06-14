@@ -169,8 +169,8 @@ export function useGame() {
 
   // ─── CHEQUEAR MINI-JUEGOS ─────────────────────────────────
   const chequearMiniJuegos = useCallback((anioActual: number, comp: string[]): MiniJuegoTipo | null => {
-    // Laberinto Entebbe — 1976, una sola vez
-    if (anioActual >= 1976 && !miniJuegosOcurridos.current.has("laberinto_entebbe")) {
+    // Operación Entebbe — 1976, una sola vez
+    if (anioActual >= 1976 && !miniJuegosOcurridos.current.has("entebbe")) {
       return "entebbe"
     }
     // Camp David — 1979, una sola vez, si no fue comprado ya
@@ -300,12 +300,12 @@ export function useGame() {
   const resolverMiniJuego = useCallback((tipo: MiniJuegoTipo, exito: boolean, datos?: { gananciaPorAnio?: number }) => {
     if (!tipo) return
 
-    // Marcar como ocurrido
+    // Marcar como ocurrido — SIEMPRE antes de procesar resultado
     if (tipo === "misil") {
       const keyMisil = `misil_${Math.floor((anio - 2011) / 8)}`
       miniJuegosOcurridos.current.add(keyMisil)
     } else {
-      miniJuegosOcurridos.current.add(tipo)
+      miniJuegosOcurridos.current.add(tipo!) // marca "entebbe", "camp_david", etc.
     }
 
     if (exito) {
