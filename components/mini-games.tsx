@@ -532,7 +532,7 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
       const[dx,dy]=dirs[e.key]
       setAgenteT(prev=>{
         const nx=prev.x+dx; const ny=prev.y+dy
-        if(nx<0||nx>=8||ny<0||ny>=6||MAPA_TORRE[ny][nx]!==0) return prev
+        if(nx<0||nx>=10||ny<0||ny>=8||MAPA_TORRE[ny]?.[nx]!==0) return prev
         return{x:nx,y:ny}
       })
     }
