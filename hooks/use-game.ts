@@ -228,8 +228,11 @@ export function useGame() {
           miniJuegoEncontrado = mj
           break
         }
-        // Chequear guerra
-        const ev = guerrasDePartida.current.find(e => e.anio === a && !eventosOcurridos.current.has(e.id))
+        // Chequear guerra — usar >= para no saltear guerras con año exacto
+        // (cubre casos donde el año de la guerra coincide con el año actual)
+        const ev = guerrasDePartida.current.find(
+          e => a >= e.anio && !eventosOcurridos.current.has(e.id)
+        )
         anioFinal = a
         if (ev) { eventoEncontrado = ev; break }
       }

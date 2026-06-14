@@ -571,16 +571,22 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export function seleccionarGuerras(): Evento[] {
-  // Pool A: EXACTAMENTE 2 de 3 (Independencia, 6 Días, Yom Kipur)
-  // Garantizamos distribución real: elegimos 1 índice a excluir
-  const excluirA = Math.floor(Math.random() * GUERRAS_POOL_A.length)
+  // Pool A: elegir 2 de 3 — excluir uno aleatoriamente
+  // [0]=Independencia 1948, [1]=6Días 1967, [2]=YomKipur 1973
+  const excluirA = Math.floor(Math.random() * 3)
   const dosDeA = GUERRAS_POOL_A.filter((_, i) => i !== excluirA)
+  if (dosDeA.length !== 2) throw new Error("Pool A selection failed")
 
-  // Pool B: EXACTAMENTE 2 de 3 (Suez, Líbano 82, Líbano 2006)
-  const excluirB = Math.floor(Math.random() * GUERRAS_POOL_B.length)
+  // Pool B: elegir 2 de 3 — excluir uno aleatoriamente
+  // [0]=Suez 1956, [1]=Líbano1982, [2]=Líbano2006
+  const excluirB = Math.floor(Math.random() * 3)
   const dosDeB = GUERRAS_POOL_B.filter((_, i) => i !== excluirB)
+  if (dosDeB.length !== 2) throw new Error("Pool B selection failed")
 
-  return [...dosDeA, ...dosDeB, EVENTO_7_OCTUBRE].sort((a, b) => a.anio - b.anio)
+  // Ordenar por año: las guerras deben aparecer en orden cronológico
+  const todas = [...dosDeA, ...dosDeB, EVENTO_7_OCTUBRE]
+  todas.sort((a, b) => a.anio - b.anio)
+  return todas
 }
 
 // Calcula requisitos dinámicos para cada guerra basándose en qué mejoras
@@ -656,10 +662,11 @@ export function calcularRequisitosGuerras(guerras: Evento[], mejoras: Mejora[]):
       }
     }
 
-    // Si no encontró nada válido, usar las obligatorias más básicas
+    // Si no encontró nada válido, usar mejoras obligatorias básicas siempre presentes
     if (elegido.length === 0) {
-      const basicas = ["mil_fdi","mil_haganah","mil_spitfire"].filter(id => idsDisponibles.has(id))
-      elegido = basicas.length > 0 ? [basicas[0]] : []
+      // Estas 3 son SIEMPRE obligatorias — siempre están en el árbol
+      const siemprePresentes = ["mil_fdi","mil_haganah","mil_spitfire"]
+      elegido = [siemprePresentes.find(id => idsDisponibles.has(id)) ?? "mil_fdi"]
     }
 
     return {

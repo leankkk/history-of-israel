@@ -302,18 +302,20 @@ const POS_TORRE   = {x:15, y:2}   // objetivo G1 (ahora celda libre)
 const POS_EDIFICIO= {x:15, y:7}   // objetivo G2+G3 (ahora celda libre)
 const EXT_W = 18, EXT_H = 10, EC2 = 40
 
-// ─── CUARTO TORRE 8×6 ────────────────────────────────────────
+// ─── CUARTO TORRE 10×8 — más espacio, guardia no bloquea panel ──
 const MAPA_TORRE = [
-  [1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,1],
-  [1,0,1,0,1,0,0,1],
-  [1,0,0,0,0,0,0,1],
-  [1,0,0,0,1,0,0,1],
-  [1,1,1,1,1,1,1,1],
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,1,1,0,0,1,1,0,1],
+  [1,0,1,0,0,0,0,1,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,1,0,1,1,0,1,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1],
 ]
-const POS_PANEL   = {x:6, y:2}  // panel de control (objetivo)
-const POS_SPAWN_T = {x:1, y:4}  // spawn del agente en la torre
-const TC = 60 // cell size torre
+const POS_PANEL   = {x:8, y:1}  // panel arriba a la derecha — siempre accesible
+const POS_SPAWN_T = {x:1, y:6}  // spawn abajo izquierda
+const TC = 52 // cell size torre
 
 // ─── CUARTO EDIFICIO 10×7 ────────────────────────────────────
 const MAPA_EDIF = [
@@ -347,7 +349,7 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   const [extMsg, setExtMsg] = useState("")
   // Torre
   const [agenteT, setAgenteT] = useState({...POS_SPAWN_T})
-  const [guardiaTorre, setGuardiaTorre] = useState({x:5,y:2,dx:-1,dy:0})
+  const [guardiaTorre, setGuardiaTorre] = useState({x:3,y:4,dx:1,dy:0})
   const [torreDetectado, setTorreDetectado] = useState(false)
   const [torreEnPanel, setTorreEnPanel] = useState(false)
   // Lights Out puzzle: 4 switches, ON=true
@@ -379,9 +381,10 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     return()=>clearInterval(t)
   },[escena])
 
-  // ─── TIMER GLOBAL — empieza solo en exterior, no en cinemática ni salida ────
+  // ─── TIMER GLOBAL — pausa durante el puzzle de la torre ────────
   useEffect(()=>{
     if(escena!=="exterior"&&escena!=="torre"&&escena!=="edificio") return
+    if(torreEnPanel && !puzzleResuelto) return // pausado durante el puzzle
     timerRef.current=setInterval(()=>{
       setTiempo(t=>{
         if(t<=1){onResultado(false);return 0}
@@ -389,7 +392,7 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
       })
     },1000)
     return()=>clearInterval(timerRef.current)
-  },[escena,onResultado])
+  },[escena,torreEnPanel,puzzleResuelto,onResultado])
 
   // ─── GUARDIAS EXTERIOR ───────────────────────────────────
   useEffect(()=>{
@@ -456,34 +459,37 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     return()=>window.removeEventListener("keydown",onKey)
   },[escena,extDetectado,selExt])
 
-  // ─── GUARDIA TORRE ───────────────────────────────────────
+  // ─── GUARDIA TORRE ─ patrulla filas 3-6, nunca llega al panel ──
   useEffect(()=>{
     if(escena!=="torre"||torreDetectado) return
     const t=setInterval(()=>{
       setGuardiaTorre(prev=>{
         const nx=prev.x+prev.dx; const ny=prev.y+prev.dy
-        if(nx>0&&nx<7&&ny>0&&ny<5&&MAPA_TORRE[ny][nx]===0)
+        // Restringir a filas 3-6 para que nunca bloquee el panel (fila 1)
+        if(nx>0&&nx<9&&ny>=3&&ny<=6&&MAPA_TORRE[ny]?.[nx]===0)
           return{...prev,x:nx,y:ny}
         return{...prev,dx:-prev.dx,dy:-prev.dy}
       })
-    },700)
+    },750)
     return()=>clearInterval(t)
   },[escena,torreDetectado])
 
-  // Detección torre
+  // Detección torre — solo contacto directo (misma celda o adyacente ortogonal)
   useEffect(()=>{
     if(escena!=="torre"||torreDetectado) return
-    if(Math.abs(agenteT.x-guardiaTorre.x)+Math.abs(agenteT.y-guardiaTorre.y)<=1){
+    const dist=Math.abs(agenteT.x-guardiaTorre.x)+Math.abs(agenteT.y-guardiaTorre.y)
+    if(dist===0){ // mismo lugar = capturado
       setTorreDetectado(true)
       setTimeout(()=>onResultado(false),1200)
     }
   },[guardiaTorre,agenteT,escena,torreDetectado,onResultado])
 
-  // Llegada al panel
+  // Llegada al panel — dar 45 segundos extra para el puzzle
   useEffect(()=>{
     if(escena!=="torre"||torreEnPanel) return
     if(agenteT.x===POS_PANEL.x&&agenteT.y===POS_PANEL.y){
       setTorreEnPanel(true)
+      setTiempo(45) // tiempo fijo para el puzzle
     }
   },[agenteT,escena,torreEnPanel])
 
@@ -717,39 +723,40 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
       <p style={{color:"#7a8fa6",fontSize:12}}>Llega al panel sin que te vea el guardia. Luego apagá las luces.</p>
       {!torreEnPanel ? (
         <>
-          <svg width={8*TC} height={6*TC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
-            <rect width={8*TC} height={6*TC} fill="#040810"/>
-            {MAPA_TORRE.map((row,y)=>row.map((cell,x)=>(
-              cell===1?<rect key={`${x}-${y}`} x={x*TC} y={y*TC} width={TC} height={TC} fill="#0a1830"/>:null
-            )))}
-            {/* Panel */}
-            <g>
-              <rect x={POS_PANEL.x*TC} y={POS_PANEL.y*TC} width={TC} height={TC} fill="#1a100a"/>
-              <text x={POS_PANEL.x*TC+TC/2} y={POS_PANEL.y*TC+TC/2+6} textAnchor="middle" fontSize="22">🖥</text>
-            </g>
-            {/* Guardia torre */}
-            <g>
-              <circle cx={guardiaTorre.x*TC+TC/2} cy={guardiaTorre.y*TC+TC/2} r={TC*0.9} fill="#e0505015"/>
-              <circle cx={guardiaTorre.x*TC+TC/2} cy={guardiaTorre.y*TC+TC/2} r={14} fill="#e05050"/>
-              <text x={guardiaTorre.x*TC+TC/2} y={guardiaTorre.y*TC+TC/2+5} textAnchor="middle" fontSize="13">👁</text>
-            </g>
-            {/* Agente */}
-            {!torreDetectado&&<g>
-              <circle cx={agenteT.x*TC+TC/2} cy={agenteT.y*TC+TC/2} r={14} fill="#f0c030"/>
-              <text x={agenteT.x*TC+TC/2} y={agenteT.y*TC+TC/2+5} textAnchor="middle" fontSize="13">🕵</text>
-            </g>}
-            {torreDetectado&&<g>
-              <rect width={8*TC} height={6*TC} fill="#e0505033"/>
-              <text x={4*TC} y={3*TC} textAnchor="middle" fontSize="16" fill="#e05050" fontWeight="700">¡DETECTADO!</text>
-            </g>}
-          </svg>
+          <svg width={10*TC} height={8*TC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
+        <rect width={10*TC} height={8*TC} fill="#040810"/>
+        {MAPA_TORRE.map((row,y)=>row.map((cell,x)=>(
+          cell===1?<rect key={`${x}-${y}`} x={x*TC} y={y*TC} width={TC} height={TC} fill="#0a1830"/>:null
+        )))}
+        {Array.from({length:10},(_,x)=><line key={`v${x}`} x1={x*TC} y1={0} x2={x*TC} y2={8*TC} stroke="#0d1525" strokeWidth="0.5"/>)}
+        {Array.from({length:8},(_,y)=><line key={`h${y}`} x1={0} y1={y*TC} x2={10*TC} y2={y*TC} stroke="#0d1525" strokeWidth="0.5"/>)}
+        <g>
+          <rect x={POS_PANEL.x*TC} y={POS_PANEL.y*TC} width={TC} height={TC} fill="#1a2a10"/>
+          <text x={POS_PANEL.x*TC+TC/2} y={POS_PANEL.y*TC+TC/2+8} textAnchor="middle" fontSize="26">🖥</text>
+        </g>
+        <rect x={POS_SPAWN_T.x*TC} y={POS_SPAWN_T.y*TC} width={TC} height={TC} fill="#f0c03010"/>
+        <g>
+          <circle cx={guardiaTorre.x*TC+TC/2} cy={guardiaTorre.y*TC+TC/2} r={TC*0.45} fill="#e0505015"/>
+          <circle cx={guardiaTorre.x*TC+TC/2} cy={guardiaTorre.y*TC+TC/2} r={13} fill="#e05050"/>
+          <text x={guardiaTorre.x*TC+TC/2} y={guardiaTorre.y*TC+TC/2+5} textAnchor="middle" fontSize="12">👁</text>
+        </g>
+        {!torreDetectado&&<g>
+          <circle cx={agenteT.x*TC+TC/2} cy={agenteT.y*TC+TC/2} r={13} fill="#f0c030"/>
+          <text x={agenteT.x*TC+TC/2} y={agenteT.y*TC+TC/2+5} textAnchor="middle" fontSize="12">🕵</text>
+        </g>}
+        {torreDetectado&&<g>
+          <rect width={10*TC} height={8*TC} fill="#e0505033"/>
+          <text x={5*TC} y={4*TC} textAnchor="middle" fontSize="16" fill="#e05050" fontWeight="700">¡DETECTADO!</text>
+        </g>}
+      </svg>
           <p style={{color:"#446688",fontSize:11}}>WASD para moverte · Llegá al 🖥 sin ser visto</p>
         </>
       ) : (
         /* PUZZLE LIGHTS OUT */
         <div style={{textAlign:"center"}}>
-          <p style={{color:"#40c080",fontSize:13,marginBottom:6}}>✓ En el panel. Apagá todas las luces del aeropuerto.</p>
-          <p style={{color:"#556677",fontSize:11,marginBottom:20}}>Cada switch que tocás también cambia los adyacentes.</p>
+          <p style={{color:"#40c080",fontSize:14,fontWeight:700,marginBottom:6}}>✓ Panel de control encontrado.</p>
+          <p style={{color:"#c8d8e8",fontSize:13,marginBottom:4}}>Encendé todas las luces del aeropuerto para confundir a los guardias ugandeses.</p>
+          <p style={{color:"#f0c030",fontSize:12,marginBottom:20}}>💡 Cada botón que tocás también cambia el de la izquierda y el de la derecha.</p>
           <div style={{display:"flex",gap:16,justifyContent:"center",marginBottom:20}}>
             {switches.map((on,i)=>(
               <button key={i} onClick={()=>!puzzleResuelto&&toggleSwitch(i)}
@@ -765,8 +772,9 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
               </button>
             ))}
           </div>
-          {puzzleResuelto&&<p style={{color:"#40c080",fontWeight:700,fontSize:15}}>✓ ¡Luces apagadas! Pasando al edificio…</p>}
-          <p style={{color:"#33485e",fontSize:11}}>Estado: {switches.map(s=>s?"ON":"OFF").join(" · ")}</p>
+          {puzzleResuelto&&<p style={{color:"#40c080",fontWeight:700,fontSize:15}}>✓ ¡Todas las luces encendidas! Pasando al edificio…</p>}
+          <p style={{color:"#33485e",fontSize:11,marginTop:8}}>Estado actual: {switches.map((s,i)=>`${i+1}:${s?"💡":"⬛"}`).join("  ")}</p>
+          <p style={{color:tiempo<10?"#e05050":"#f0c030",fontFamily:"monospace",fontSize:16,fontWeight:700,marginTop:8}}>⏱ {tiempo}s para resolver</p>
         </div>
       )}
       <span style={{color:tiempo<30?"#e05050":"#f0c030",fontFamily:"monospace"}}>⏱ {tiempo}s</span>
