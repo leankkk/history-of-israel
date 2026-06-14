@@ -318,19 +318,21 @@ const POS_SPAWN_T = {x:1, y:6}  // spawn abajo izquierda
 const TC = 52 // cell size torre
 
 // ─── CUARTO EDIFICIO 10×7 ────────────────────────────────────
+// Edificio más ancho (12x8), pasillos amplios, guardias con rutas claras
 const MAPA_EDIF = [
-  [1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,1],
-  [1,0,1,0,1,0,1,0,0,1],
-  [1,0,0,0,0,0,0,0,0,1],
-  [1,0,1,0,1,0,1,0,0,1],
-  [1,0,0,0,0,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,1,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,1,1,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,1,1,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1],
 ]
-const POS_REHENES  = {x:8, y:3}  // objetivo G3
-const POS_SPAWN_G2 = {x:1, y:1}
-const POS_SPAWN_G3 = {x:1, y:5}
-const EDC = 52 // cell size edificio
+const POS_REHENES  = {x:10, y:3}  // objetivo G3 — derecha del mapa
+const POS_SPAWN_G2 = {x:1,  y:2}  // G2 entra arriba
+const POS_SPAWN_G3 = {x:1,  y:5}  // G3 entra abajo
+const EDC = 48 // cell size edificio
 
 export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   const [escena, setEscena] = useState<EntebbeEscena>("cinematica")
@@ -360,7 +362,8 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   const [g2pos, setG2pos] = useState({...POS_SPAWN_G2})
   const [g3pos, setG3pos] = useState({...POS_SPAWN_G3})
   const [guardiasEdif, setGuardiasEdif] = useState<GuardiaE[]>([
-    {x:5,y:2,dx:1,dy:0},{x:7,y:4,dx:-1,dy:0}
+    {x:2,y:2,dx:1,dy:0},  // patrulla fila 2, solo x=1..5 (mitad izquierda)
+    {x:2,y:5,dx:1,dy:0},  // patrulla fila 5, solo x=1..5 (mitad izquierda)
   ])
   const [edifDetectado, setEdifDetectado] = useState(false)
   const [rehenesLiberados, setRehenesLiberados] = useState(false)
@@ -554,18 +557,18 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     return()=>clearInterval(t)
   },[escena,edifDetectado])
 
-  // Detección edificio
+  // Detección edificio — solo misma celda exacta
   useEffect(()=>{
     if(escena!=="edificio"||edifDetectado) return
     const posiciones=[g2pos,g3pos]
-    const det=posiciones.some(p=>guardiasEdif.some(g=>Math.abs(p.x-g.x)+Math.abs(p.y-g.y)<=1))
+    const det=posiciones.some(p=>guardiasEdif.some(g=>p.x===g.x&&p.y===g.y))
     if(det){setEdifDetectado(true);setTimeout(()=>onResultado(false),1200)}
   },[guardiasEdif,g2pos,g3pos,escena,edifDetectado,onResultado])
 
   // G3 llega a rehenes
   useEffect(()=>{
     if(escena!=="edificio"||rehenesLiberados) return
-    if(g3pos.x===POS_REHENES.x&&g3pos.y===POS_REHENES.y){
+    if(Math.abs(g3pos.x-POS_REHENES.x)+Math.abs(g3pos.y-POS_REHENES.y)<=1){
       setRehenesLiberados(true)
       setTimeout(()=>setEscena("salida"),600)
     }
@@ -816,15 +819,17 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
         </div>
       </div>
       <p style={{color:"#7a8fa6",fontSize:12}}>G2 despeja el camino. G3 llega a los rehenes 🔒.</p>
-      <svg width={10*EDC} height={7*EDC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
-        <rect width={10*EDC} height={7*EDC} fill="#040810"/>
+      <svg width={12*EDC} height={8*EDC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
+        <rect width={12*EDC} height={8*EDC} fill="#040810"/>
         {MAPA_EDIF.map((row,y)=>row.map((cell,x)=>(
-          cell===1?<rect key={`${x}-${y}`} x={x*EDC} y={y*EDC} width={EDC} height={EDC} fill="#0a1830"/>:null
+          cell===0
+            ?<rect key={`f${x}-${y}`} x={x*EDC} y={y*EDC} width={EDC} height={EDC} fill="#0d1a2a"/>
+            :<rect key={`w${x}-${y}`} x={x*EDC} y={y*EDC} width={EDC} height={EDC} fill="#0a1830" stroke="#061020" strokeWidth="0.5"/>
         )))}
         {/* Rehenes */}
         <g>
-          <rect x={POS_REHENES.x*EDC} y={POS_REHENES.y*EDC} width={EDC} height={EDC} fill="#6090e022"/>
-          <text x={POS_REHENES.x*EDC+EDC/2} y={POS_REHENES.y*EDC+EDC/2+6} textAnchor="middle" fontSize="22">🔒</text>
+          <rect x={POS_REHENES.x*EDC} y={POS_REHENES.y*EDC} width={EDC} height={EDC} fill="#6090e033"/>
+          <text x={POS_REHENES.x*EDC+EDC/2} y={POS_REHENES.y*EDC+EDC/2+8} textAnchor="middle" fontSize="24">🔒</text>
         </g>
         {/* Guardias edificio */}
         {guardiasEdif.map((g,i)=>(
