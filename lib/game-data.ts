@@ -610,11 +610,12 @@ export function calcularRequisitosGuerras(guerras: Evento[], mejoras: Mejora[]):
       ["mil_reservas"],
       ["mil_fdi"],
     ],
-    // Suez: capacidad aérea o naval
+    // Suez: capacidad aérea — solo mejoras disponibles ANTES de 1956
     crisis_suez: [
-      ["mil_aviacion"],
-      ["mil_marina"],
-      ["mil_fdi"],
+      ["mil_aviacion"],   // 1955
+      ["mil_reservas"],   // 1950
+      ["mil_haganah"],    // 1948
+      ["mil_fdi"],        // 1948
     ],
     // Líbano 82: fuerza terrestre
     libano_1982: [
@@ -632,26 +633,39 @@ export function calcularRequisitosGuerras(guerras: Evento[], mejoras: Mejora[]):
     ],
   }
 
+  // También indexar por anioMin para filtrar mejoras alcanzables antes de la guerra
+  const anioMinPorId: Record<string, number> = {}
+  mejoras.forEach(m => { anioMinPorId[m.id] = m.anioMin })
+
   return guerras.map(guerra => {
-    if (guerra.id === "7_octubre") return guerra // el 7 de octubre no cambia
+    if (guerra.id === "7_octubre") return guerra
 
     const opciones = candidatos[guerra.id]
     if (!opciones) return guerra
 
-    // Elegir el conjunto de requisitos más exigente que esté disponible en el árbol
-    let elegido: string[] = opciones[opciones.length - 1] // fallback: el más fácil
+    // Filtrar: el requisito debe estar en el árbol Y ser alcanzable antes del año de la guerra
+    let elegido: string[] = []
     for (const opcion of opciones) {
-      // Si AL MENOS UNO de los requisitos está en el árbol, es válido
-      if (opcion.some(req => idsDisponibles.has(req))) {
-        elegido = opcion.filter(req => idsDisponibles.has(req))
+      const validos = opcion.filter(req =>
+        idsDisponibles.has(req) &&
+        (anioMinPorId[req] ?? 9999) < guerra.anio  // debe poder comprarse ANTES de la guerra
+      )
+      if (validos.length > 0) {
+        elegido = validos
         break
       }
+    }
+
+    // Si no encontró nada válido, usar las obligatorias más básicas
+    if (elegido.length === 0) {
+      const basicas = ["mil_fdi","mil_haganah","mil_spitfire"].filter(id => idsDisponibles.has(id))
+      elegido = basicas.length > 0 ? [basicas[0]] : []
     }
 
     return {
       ...guerra,
       necesita: elegido,
-      necesitaOR: true, // siempre OR — alcanza con tener una
+      necesitaOR: true,
     }
   })
 }
