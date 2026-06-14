@@ -277,323 +277,606 @@ export function MiniJuegoMisil({ onResultado, oleada = 1 }: MisileProps) {
 
 interface EntebbeProps { onResultado: (exito: boolean) => void }
 
-// Mapa del aeropuerto de Entebbe 20×14
-// 0=libre 1=pared 2=zona_segura(spawn) 3=terminal_rehenes 4=torre 5=pista
-const MAPA_ENTEBBE = [
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [1,0,1,1,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,1],
-  [1,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,0,1],
-  [1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,1], // fila 4: spawn izq(2), torre derecha(4)
-  [1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,0,0,1],
-  [1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,0,0,1],
-  [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1],
-  [1,0,1,1,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,1],
-  [1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], // fila 9: spawn izq(2)
-  [1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,0,5,1], // 5=pista
-  [1,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,5,1],
-  [1,2,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,5,1], // fila 12: spawn izq(2), terminal(3)
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+// ─── TIPOS ───────────────────────────────────────────────────
+type EntebbeEscena = "cinematica"|"exterior"|"torre"|"edificio"|"salida"|"fin"
+type GrupoPos = { x:number; y:number }
+type GuardiaE = { x:number; y:number; dx:number; dy:number }
+
+// ─── MAPA EXTERIOR 18×10 ─────────────────────────────────────
+// 0=libre 1=pared T=torre(meta G1) E=edificio(meta G2/G3) P=avion(spawn/salida)
+const MAPA_EXT = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,1,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+  [1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1],
+  [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1], // fila 4: pista libre
+  [1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+  [1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1],
+  [1,0,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 ]
+// Posiciones clave en el exterior
+const POS_AVION   = {x:2,  y:5}   // spawn de los 3 grupos
+const POS_TORRE   = {x:15, y:2}   // objetivo G1
+const POS_EDIFICIO= {x:15, y:7}   // objetivo G2+G3
+const EXT_W = 18, EXT_H = 10, EC2 = 40
 
-const EC = 34 // cell size
-const EW = 20*EC
-const EH = 14*EC
+// ─── CUARTO TORRE 8×6 ────────────────────────────────────────
+const MAPA_TORRE = [
+  [1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,1],
+  [1,0,1,0,1,0,0,1],
+  [1,0,0,0,0,0,0,1],
+  [1,0,0,0,1,0,0,1],
+  [1,1,1,1,1,1,1,1],
+]
+const POS_PANEL   = {x:6, y:2}  // panel de control (objetivo)
+const POS_SPAWN_T = {x:1, y:4}  // spawn del agente en la torre
+const TC = 60 // cell size torre
 
-type Grupo = { x:number; y:number; objetivo: "torre"|"pista"|"terminal"; completado:boolean; huyendo:boolean }
-type Guardia = { x:number; y:number; dx:number; dy:number }
+// ─── CUARTO EDIFICIO 10×7 ────────────────────────────────────
+const MAPA_EDIF = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,1,0,1,0,1,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,1,0,1,0,1,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1],
+]
+const POS_REHENES  = {x:8, y:3}  // objetivo G3
+const POS_SPAWN_G2 = {x:1, y:1}
+const POS_SPAWN_G3 = {x:1, y:5}
+const EDC = 52 // cell size edificio
 
 export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
-  const [fase, setFase] = useState<"intro"|"jugando"|"fin">("intro")
-  const [seleccionado, setSeleccionado] = useState<0|1|2>(0)
-  const [grupos, setGrupos] = useState<Grupo[]>([
-    { x:1, y:4,  objetivo:"torre",    completado:false, huyendo:false },
-    { x:1, y:9,  objetivo:"pista",    completado:false, huyendo:false },
-    { x:1, y:12, objetivo:"terminal", completado:false, huyendo:false },
+  const [escena, setEscena] = useState<EntebbeEscena>("cinematica")
+  const [cinFrame, setCinFrame] = useState(0) // 0-60 frames de cinemática
+  // Exterior
+  const [selExt, setSelExt] = useState<0|1|2>(0)
+  const [gruposExt, setGruposExt] = useState<GrupoPos[]>([
+    {...POS_AVION},{...POS_AVION},{...POS_AVION}
   ])
-  const [guardias, setGuardias] = useState<Guardia[]>([
-    { x:8,  y:3,  dx:1,  dy:0 },
-    { x:14, y:7,  dx:0,  dy:1 },
-    { x:6,  y:10, dx:-1, dy:0 },
-    { x:11, y:5,  dx:0,  dy:-1 },
+  const [guardiasExt, setGuardiasExt] = useState<GuardiaE[]>([
+    {x:8,y:2,dx:1,dy:0},{x:10,y:7,dx:-1,dy:0},{x:5,y:5,dx:0,dy:1}
   ])
+  const [extDetectado, setExtDetectado] = useState(false)
+  const [extMsg, setExtMsg] = useState("")
+  // Torre
+  const [agenteT, setAgenteT] = useState({...POS_SPAWN_T})
+  const [guardiaTorre, setGuardiaTorre] = useState({x:5,y:2,dx:-1,dy:0})
+  const [torreDetectado, setTorreDetectado] = useState(false)
+  const [torreEnPanel, setTorreEnPanel] = useState(false)
+  // Lights Out puzzle: 4 switches, ON=true
+  const [switches, setSwitches] = useState([false,false,false,false])
+  const [puzzleResuelto, setPuzzleResuelto] = useState(false)
+  // Edificio
+  const [selEdif, setSelEdif] = useState<0|1>(0) // 0=G2 delante, 1=G3 detras
+  const [g2pos, setG2pos] = useState({...POS_SPAWN_G2})
+  const [g3pos, setG3pos] = useState({...POS_SPAWN_G3})
+  const [guardiasEdif, setGuardiasEdif] = useState<GuardiaE[]>([
+    {x:5,y:2,dx:1,dy:0},{x:7,y:4,dx:-1,dy:0}
+  ])
+  const [edifDetectado, setEdifDetectado] = useState(false)
+  const [rehenesLiberados, setRehenesLiberados] = useState(false)
+  // Salida
+  const [salidaFrame, setSalidaFrame] = useState(0)
   const [tiempo, setTiempo] = useState(180)
-  const [detectado, setDetectado] = useState<number|null>(null) // índice del grupo detectado
-  const [terminado, setTerminado] = useState(false)
   const timerRef = useRef<NodeJS.Timeout>()
-  const guardiaTimerRef = useRef<NodeJS.Timeout>()
+  const animRef  = useRef<NodeJS.Timeout>()
 
-  const OBJETIVOS: Record<string, {x:number,y:number}> = {
-    torre:    {x:18, y:4},
-    pista:    {x:18, y:11},
-    terminal: {x:13, y:12},
-  }
+  // ─── CINEMÁTICA (4 segundos) ─────────────────────────────
+  useEffect(()=>{
+    if(escena!=="cinematica") return
+    let f=0
+    const t=setInterval(()=>{
+      f++; setCinFrame(f)
+      if(f>=60){clearInterval(t);setEscena("exterior")}
+    },66)
+    return()=>clearInterval(t)
+  },[escena])
 
-  const celibra = (x:number,y:number) => MAPA_ENTEBBE[y]?.[x]
-
-  // Chequear si un guardia ve a un grupo (radio 2 + cono)
-  const guardiaVe = (g:Guardia, gr:Grupo):boolean => {
-    const dx = gr.x - g.x; const dy = gr.y - g.y
-    if (Math.abs(dx)+Math.abs(dy) <= 1) return true
-    if (g.dx===1  && dx>0 && dx<=3 && dy===0) return true
-    if (g.dx===-1 && dx<0 && dx>=-3 && dy===0) return true
-    if (g.dy===1  && dy>0 && dy<=3 && dx===0) return true
-    if (g.dy===-1 && dy<0 && dy>=-3 && dx===0) return true
-    return false
-  }
-
-  // Mover guardias cada 900ms
-  useEffect(() => {
-    if (fase !== "jugando" || terminado) return
-    guardiaTimerRef.current = setInterval(() => {
-      setGuardias(prev => prev.map(g => {
-        const nx=g.x+g.dx; const ny=g.y+g.dy
-        if (celibra(nx,ny)===0||celibra(nx,ny)===3||celibra(nx,ny)===4||celibra(nx,ny)===5) {
-          return {...g, x:nx, y:ny}
-        }
-        // Girar: intentar perpendicular
-        const opciones:Guardia[] = [
-          {...g,dx:g.dy,dy:-g.dx},{...g,dx:-g.dy,dy:g.dx},{...g,dx:-g.dx,dy:-g.dy}
-        ]
-        for (const op of opciones) {
-          const nnx=g.x+op.dx; const nny=g.y+op.dy
-          if (celibra(nnx,nny)===0||celibra(nnx,nny)===3) return op
-        }
-        return g
-      }))
-    }, 900)
-    return () => clearInterval(guardiaTimerRef.current)
-  }, [fase, terminado])
-
-  // Chequear detección después de que se muevan los guardias
-  useEffect(() => {
-    if (terminado || fase!=="jugando") return
-    setGrupos(prev => {
-      const next = prev.map((gr,i) => {
-        if (gr.huyendo||gr.completado) return gr
-        const visto = guardias.some(g => guardiaVe(g, gr))
-        if (visto && detectado===null) {
-          setDetectado(i)
-          setTimeout(()=>{
-            // El grupo huye de vuelta al spawn
-            setGrupos(grs => grs.map((g2,j) => j===i ? {...g2, huyendo:true, x:1, y:[4,9,12][i]} : g2))
-            setDetectado(null)
-          }, 1500)
-        }
-        return gr
-      })
-      return next
-    })
-  }, [guardias])
-
-  // Timer
-  useEffect(() => {
-    if (fase!=="jugando"||terminado) return
-    timerRef.current = setInterval(()=>{
+  // ─── TIMER GLOBAL ────────────────────────────────────────
+  useEffect(()=>{
+    if(escena==="cinematica"||escena==="fin") return
+    timerRef.current=setInterval(()=>{
       setTiempo(t=>{
-        if (t<=1){setTerminado(true);setTimeout(()=>onResultado(false),600);return 0}
+        if(t<=1){onResultado(false);return 0}
         return t-1
       })
     },1000)
-    return ()=>clearInterval(timerRef.current)
-  },[fase,terminado,onResultado])
+    return()=>clearInterval(timerRef.current)
+  },[escena,onResultado])
 
-  // Chequear victoria
+  // ─── GUARDIAS EXTERIOR ───────────────────────────────────
   useEffect(()=>{
-    if (terminado) return
-    if (grupos.every(g=>g.completado)){
-      setTerminado(true)
-      clearInterval(timerRef.current)
-      setTimeout(()=>onResultado(true),800)
+    if(escena!=="exterior"||extDetectado) return
+    const t=setInterval(()=>{
+      setGuardiasExt(prev=>prev.map(g=>{
+        const nx=g.x+g.dx; const ny=g.y+g.dy
+        if(nx>0&&nx<EXT_W-1&&ny>0&&ny<EXT_H-1&&MAPA_EXT[ny][nx]===0)
+          return {...g,x:nx,y:ny}
+        return {...g,dx:-g.dx,dy:-g.dy}
+      }))
+    },800)
+    return()=>clearInterval(t)
+  },[escena,extDetectado])
+
+  // Detección exterior
+  useEffect(()=>{
+    if(escena!=="exterior"||extDetectado) return
+    const detectado=gruposExt.some(gr=>
+      guardiasExt.some(g=>Math.abs(gr.x-g.x)+Math.abs(gr.y-g.y)<=1)
+    )
+    if(detectado){
+      setExtDetectado(true)
+      setExtMsg("¡Detectado! Misión abortada.")
+      setTimeout(()=>onResultado(false),1500)
     }
-  },[grupos,terminado,onResultado])
+  },[guardiasExt,gruposExt,escena,extDetectado,onResultado])
 
-  // Controles WASD
+  // Chequear llegada objetivos exterior
   useEffect(()=>{
-    if (fase!=="jugando"||terminado) return
-    const onKey = (e:KeyboardEvent) => {
-      // Cambiar grupo seleccionado con 1/2/3
-      if (e.key==="1") setSeleccionado(0)
-      if (e.key==="2") setSeleccionado(1)
-      if (e.key==="3") setSeleccionado(2)
+    if(escena!=="exterior") return
+    const g1enTorre  = gruposExt[0].x===POS_TORRE.x    && gruposExt[0].y===POS_TORRE.y
+    const g2enEdif   = gruposExt[1].x===POS_EDIFICIO.x && gruposExt[1].y===POS_EDIFICIO.y
+    const g3enEdif   = gruposExt[2].x===POS_EDIFICIO.x && gruposExt[2].y===POS_EDIFICIO.y
+    if(g1enTorre && g2enEdif && g3enEdif){
+      setEscena("torre") // empieza torre en paralelo — mostramos torre primero
+    } else if(g1enTorre && !g2enEdif){
+      setExtMsg("G1 en torre. Mové G2 y G3 al edificio.")
+    } else if((g2enEdif||g3enEdif) && !g1enTorre){
+      setExtMsg("G2/G3 en edificio. Mové G1 a la torre.")
+    }
+  },[gruposExt,escena])
 
-      const dirs:Record<string,[number,number]> = {
+  // ─── CONTROLES EXTERIOR ──────────────────────────────────
+  useEffect(()=>{
+    if(escena!=="exterior"||extDetectado) return
+    const onKey=(e:KeyboardEvent)=>{
+      if(["1","2","3"].includes(e.key)) setSelExt((parseInt(e.key)-1) as 0|1|2)
+      const dirs:Record<string,[number,number]>={
         "w":[0,-1],"ArrowUp":[0,-1],"s":[0,1],"ArrowDown":[0,1],
         "a":[-1,0],"ArrowLeft":[-1,0],"d":[1,0],"ArrowRight":[1,0]
       }
-      if (!dirs[e.key]) return
-      e.preventDefault()
-      const [dx,dy] = dirs[e.key]
-
-      setGrupos(prev => prev.map((gr,i) => {
-        if (i!==seleccionado||gr.huyendo) return gr
-        const nx=gr.x+dx; const ny=gr.y+dy
-        const cell=celibra(nx,ny)
-        if (cell===1||cell===undefined) return gr
-
-        // Chequear si llegó al objetivo
-        const obj=OBJETIVOS[gr.objetivo]
-        const llegó = nx===obj.x && ny===obj.y
-        if (llegó && !gr.completado) {
-          return {...gr, x:nx, y:ny, completado:true}
-        }
-        return {...gr, x:nx, y:ny}
+      if(!dirs[e.key]) return; e.preventDefault()
+      const[dx,dy]=dirs[e.key]
+      setGruposExt(prev=>prev.map((g,i)=>{
+        if(i!==selExt) return g
+        const nx=g.x+dx; const ny=g.y+dy
+        if(nx<0||nx>=EXT_W||ny<0||ny>=EXT_H||MAPA_EXT[ny][nx]!==0) return g
+        return{x:nx,y:ny}
       }))
     }
-    window.addEventListener("keydown", onKey)
-    return ()=>window.removeEventListener("keydown", onKey)
-  },[fase,terminado,seleccionado])
+    window.addEventListener("keydown",onKey)
+    return()=>window.removeEventListener("keydown",onKey)
+  },[escena,extDetectado,selExt])
 
-  const GRUPO_INFO = [
-    {color:"#f0c030", label:"G1", objetivo:"Torre de control",  icono:"📡"},
-    {color:"#40c080", label:"G2", objetivo:"Pista de aterrizaje", icono:"✈️"},
-    {color:"#6090e0", label:"G3", objetivo:"Terminal — Rehenes",  icono:"🚁"},
-  ]
+  // ─── GUARDIA TORRE ───────────────────────────────────────
+  useEffect(()=>{
+    if(escena!=="torre"||torreDetectado) return
+    const t=setInterval(()=>{
+      setGuardiaTorre(prev=>{
+        const nx=prev.x+prev.dx; const ny=prev.y+prev.dy
+        if(nx>0&&nx<7&&ny>0&&ny<5&&MAPA_TORRE[ny][nx]===0)
+          return{...prev,x:nx,y:ny}
+        return{...prev,dx:-prev.dx,dy:-prev.dy}
+      })
+    },700)
+    return()=>clearInterval(t)
+  },[escena,torreDetectado])
 
-  if (fase==="intro") return (
-    <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.97)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+  // Detección torre
+  useEffect(()=>{
+    if(escena!=="torre"||torreDetectado) return
+    if(Math.abs(agenteT.x-guardiaTorre.x)+Math.abs(agenteT.y-guardiaTorre.y)<=1){
+      setTorreDetectado(true)
+      setTimeout(()=>onResultado(false),1200)
+    }
+  },[guardiaTorre,agenteT,escena,torreDetectado,onResultado])
+
+  // Llegada al panel
+  useEffect(()=>{
+    if(escena!=="torre"||torreEnPanel) return
+    if(agenteT.x===POS_PANEL.x&&agenteT.y===POS_PANEL.y){
+      setTorreEnPanel(true)
+    }
+  },[agenteT,escena,torreEnPanel])
+
+  // Lights Out: toggle switch i y sus vecinos
+  const toggleSwitch=(i:number)=>{
+    setSwitches(prev=>{
+      const n=[...prev]
+      n[i]=!n[i]
+      if(i>0)   n[i-1]=!n[i-1]
+      if(i<3)   n[i+1]=!n[i+1]
+      const allOn=n.every(Boolean)
+      if(allOn){
+        setPuzzleResuelto(true)
+        setTimeout(()=>setEscena("edificio"),800)
+      }
+      return n
+    })
+  }
+
+  // Controles torre
+  useEffect(()=>{
+    if(escena!=="torre"||torreDetectado||torreEnPanel) return
+    const onKey=(e:KeyboardEvent)=>{
+      const dirs:Record<string,[number,number]>={
+        "w":[0,-1],"ArrowUp":[0,-1],"s":[0,1],"ArrowDown":[0,1],
+        "a":[-1,0],"ArrowLeft":[-1,0],"d":[1,0],"ArrowRight":[1,0]
+      }
+      if(!dirs[e.key]) return; e.preventDefault()
+      const[dx,dy]=dirs[e.key]
+      setAgenteT(prev=>{
+        const nx=prev.x+dx; const ny=prev.y+dy
+        if(nx<0||nx>=8||ny<0||ny>=6||MAPA_TORRE[ny][nx]!==0) return prev
+        return{x:nx,y:ny}
+      })
+    }
+    window.addEventListener("keydown",onKey)
+    return()=>window.removeEventListener("keydown",onKey)
+  },[escena,torreDetectado,torreEnPanel])
+
+  // ─── GUARDIAS EDIFICIO ───────────────────────────────────
+  useEffect(()=>{
+    if(escena!=="edificio"||edifDetectado) return
+    const t=setInterval(()=>{
+      setGuardiasEdif(prev=>prev.map(g=>{
+        const nx=g.x+g.dx; const ny=g.y+g.dy
+        if(nx>0&&nx<9&&ny>0&&ny<6&&MAPA_EDIF[ny][nx]===0)
+          return{...g,x:nx,y:ny}
+        return{...g,dx:-g.dx,dy:-g.dy}
+      }))
+    },750)
+    return()=>clearInterval(t)
+  },[escena,edifDetectado])
+
+  // Detección edificio
+  useEffect(()=>{
+    if(escena!=="edificio"||edifDetectado) return
+    const posiciones=[g2pos,g3pos]
+    const det=posiciones.some(p=>guardiasEdif.some(g=>Math.abs(p.x-g.x)+Math.abs(p.y-g.y)<=1))
+    if(det){setEdifDetectado(true);setTimeout(()=>onResultado(false),1200)}
+  },[guardiasEdif,g2pos,g3pos,escena,edifDetectado,onResultado])
+
+  // G3 llega a rehenes
+  useEffect(()=>{
+    if(escena!=="edificio"||rehenesLiberados) return
+    if(g3pos.x===POS_REHENES.x&&g3pos.y===POS_REHENES.y){
+      setRehenesLiberados(true)
+      setTimeout(()=>setEscena("salida"),600)
+    }
+  },[g3pos,escena,rehenesLiberados])
+
+  // Controles edificio
+  useEffect(()=>{
+    if(escena!=="edificio"||edifDetectado) return
+    const onKey=(e:KeyboardEvent)=>{
+      if(e.key==="1") setSelEdif(0)
+      if(e.key==="2") setSelEdif(1)
+      const dirs:Record<string,[number,number]>={
+        "w":[0,-1],"ArrowUp":[0,-1],"s":[0,1],"ArrowDown":[0,1],
+        "a":[-1,0],"ArrowLeft":[-1,0],"d":[1,0],"ArrowRight":[1,0]
+      }
+      if(!dirs[e.key]) return; e.preventDefault()
+      const[dx,dy]=dirs[e.key]
+      const mover=(prev:{x:number,y:number})=>{
+        const nx=prev.x+dx; const ny=prev.y+dy
+        if(nx<0||nx>=10||ny<0||ny>=7||MAPA_EDIF[ny][nx]!==0) return prev
+        return{x:nx,y:ny}
+      }
+      if(selEdif===0) setG2pos(mover)
+      else setG3pos(mover)
+    }
+    window.addEventListener("keydown",onKey)
+    return()=>window.removeEventListener("keydown",onKey)
+  },[escena,edifDetectado,selEdif])
+
+  // ─── SALIDA (animación automática 3s) ────────────────────
+  useEffect(()=>{
+    if(escena!=="salida") return
+    let f=0
+    const t=setInterval(()=>{
+      f++; setSalidaFrame(f)
+      if(f>=45){clearInterval(t);onResultado(true)}
+    },66)
+    return()=>clearInterval(t)
+  },[escena,onResultado])
+
+  const GRUPO_COLOR = ["#f0c030","#40c080","#6090e0"]
+  const GRUPO_LABEL = ["G1","G2","G3"]
+
+  // ════════════════════════════════════════
+  // RENDER
+  // ════════════════════════════════════════
+
+  // CINEMÁTICA
+  if(escena==="cinematica") return(
+    <div style={{position:"fixed",inset:0,zIndex:400,background:"#000",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
       <style>{FONTS}</style>
-      <div style={{maxWidth:560,width:"100%",background:"#070f1c",border:"1px solid #f0c03055",borderRadius:12,padding:"32px 28px",textAlign:"center"}}>
-        <div style={{fontSize:48,marginBottom:8}}>🇮🇱</div>
-        <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:12,letterSpacing:3,textTransform:"uppercase",marginBottom:8}}>Operación Entebbe · 4 de Julio 1976</p>
-        <h2 style={{fontFamily:"'Cinzel',serif",color:"#e8dcc8",fontSize:22,fontWeight:700,marginBottom:14}}>Aeropuerto de Entebbe, Uganda</h2>
-        <p style={{color:"#7a8fa6",fontSize:13,lineHeight:1.7,marginBottom:20}}>
-          103 rehenes israelíes están retenidos en la terminal. Tres grupos de comandos de Sayeret Matkal deben coordinarse para neutralizar la torre de control, asegurar la pista y rescatar a los rehenes.
-        </p>
-        <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20,textAlign:"left"}}>
-          {GRUPO_INFO.map((g,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",gap:12,background:"#0d1525",borderRadius:8,padding:"10px 14px",border:`1px solid ${g.color}33`}}>
-              <span style={{fontSize:20}}>{g.icono}</span>
-              <div>
-                <span style={{color:g.color,fontWeight:700,fontSize:13}}>{g.label}</span>
-                <span style={{color:"#8898aa",fontSize:12}}> → {g.objetivo}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p style={{color:"#446688",fontSize:12,marginBottom:16}}>
-          Presioná <kbd style={{background:"#1a2535",borderRadius:3,padding:"1px 6px",color:"#c8d8e8"}}>1</kbd>{" "}
-          <kbd style={{background:"#1a2535",borderRadius:3,padding:"1px 6px",color:"#c8d8e8"}}>2</kbd>{" "}
-          <kbd style={{background:"#1a2535",borderRadius:3,padding:"1px 6px",color:"#c8d8e8"}}>3</kbd> para seleccionar grupo · WASD/flechas para mover · 180 segundos
-        </p>
-        <div style={{display:"flex",gap:12,justifyContent:"center"}}>
-          <button onClick={()=>setFase("jugando")}
-            style={{background:"#1a4b8c",color:"#fff",border:"1px solid #3a7bd5",borderRadius:8,padding:"12px 28px",fontWeight:700,fontSize:14,cursor:"pointer"}}>
-            ⚔️ Iniciar Operación
-          </button>
-          <button onClick={()=>onResultado(false)}
-            style={{background:"#0d1525",color:"#556677",border:"1px solid #1e3050",borderRadius:8,padding:"12px 20px",fontSize:13,cursor:"pointer"}}>
-            Omitir
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-
-  return (
-    <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10}}>
-      <style>{FONTS}</style>
-
-      {/* Header */}
-      <div style={{display:"flex",alignItems:"center",gap:24}}>
-        <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:12,letterSpacing:2,textTransform:"uppercase"}}>⚔️ Operación Entebbe</p>
-        <span style={{color:tiempo<30?"#e05050":"#f0c030",fontFamily:"monospace",fontWeight:700,fontSize:16}}>⏱ {tiempo}s</span>
-        <div style={{display:"flex",gap:8}}>
-          {grupos.map((g,i)=>(
-            <div key={i} onClick={()=>setSeleccionado(i as 0|1|2)}
-              style={{
-                padding:"4px 10px",borderRadius:6,cursor:"pointer",fontSize:12,fontWeight:700,
-                background:seleccionado===i?`${GRUPO_INFO[i].color}22`:"#0d1525",
-                border:`1px solid ${g.completado?"#40c080":g.huyendo?"#e05050":seleccionado===i?GRUPO_INFO[i].color:"#1e3050"}`,
-                color:g.completado?"#40c080":g.huyendo?"#e05050":GRUPO_INFO[i].color,
-              }}>
-              {GRUPO_INFO[i].label} {g.completado?"✓":g.huyendo?"↩":""}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Mapa SVG */}
-      <svg width={EW} height={EH} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
-        <rect width={EW} height={EH} fill="#050c18"/>
-
-        {/* Celdas del mapa */}
-        {MAPA_ENTEBBE.map((row,y)=>row.map((cell,x)=>{
-          if (cell===1) return <rect key={`${x}-${y}`} x={x*EC} y={y*EC} width={EC} height={EC} fill="#0a1830"/>
-          if (cell===4) return <g key={`${x}-${y}`}>
-            <rect x={x*EC} y={y*EC} width={EC} height={EC} fill="#1a100a"/>
-            <text x={x*EC+EC/2} y={y*EC+EC/2+5} textAnchor="middle" fontSize="14">📡</text>
-          </g>
-          if (cell===5) return <rect key={`${x}-${y}`} x={x*EC} y={y*EC} width={EC} height={EC} fill="#0d1a28" stroke="#1a3a5a" strokeWidth="0.5"/>
-          if (cell===3) return <g key={`${x}-${y}`}>
-            <rect x={x*EC} y={y*EC} width={EC} height={EC} fill="#1a0808"/>
-            <text x={x*EC+EC/2} y={y*EC+EC/2+5} textAnchor="middle" fontSize="14">🔒</text>
-          </g>
-          return null
-        }))}
-
-        {/* Objetivos marcados */}
-        {Object.entries(OBJETIVOS).map(([key,pos])=>{
-          const gi = ["torre","pista","terminal"].indexOf(key)
-          const gr = grupos[gi]
-          if (gr?.completado) return null
-          return <circle key={key} cx={pos.x*EC+EC/2} cy={pos.y*EC+EC/2} r={EC/2-3}
-            fill="none" stroke={GRUPO_INFO[gi].color} strokeWidth="2" strokeDasharray="4 3" opacity="0.6">
-            <animate attributeName="stroke-dashoffset" values="0;-14" dur="1s" repeatCount="indefinite"/>
-          </circle>
-        })}
-
-        {/* Conos de visión de guardias */}
-        {guardias.map((g,i)=>{
-          const cone = g.dx!==0
-            ? (g.dx>0?[1,2,3]:[-1,-2,-3]).map(d=>({x:g.x+d,y:g.y}))
-            : (g.dy>0?[1,2,3]:[-1,-2,-3]).map(d=>({x:g.x,y:g.y+d}))
-          return <g key={i}>
-            {cone.map((c,ci)=>{
-              const cell=MAPA_ENTEBBE[c.y]?.[c.x]
-              if (cell===undefined||cell===1) return null
-              return <rect key={ci} x={c.x*EC} y={c.y*EC} width={EC} height={EC} fill="#e0505020"/>
-            })}
-            <circle cx={g.x*EC+EC/2} cy={g.y*EC+EC/2} r={EC*1.1} fill="#e0505015"/>
-            <circle cx={g.x*EC+EC/2} cy={g.y*EC+EC/2} r={9} fill="#e05050"/>
-            <text x={g.x*EC+EC/2} y={g.y*EC+EC/2+4} textAnchor="middle" fontSize="9" fill="#fff">👁</text>
-          </g>
-        })}
-
-        {/* Grupos de comandos */}
-        {grupos.map((gr,i)=>(
-          <g key={i} onClick={()=>setSeleccionado(i as 0|1|2)} style={{cursor:"pointer"}}>
-            {seleccionado===i && !gr.completado && (
-              <circle cx={gr.x*EC+EC/2} cy={gr.y*EC+EC/2} r={EC/2}
-                fill="none" stroke={GRUPO_INFO[i].color} strokeWidth="2" opacity="0.6">
-                <animate attributeName="r" values={`${EC/2-2};${EC/2+2};${EC/2-2}`} dur="1s" repeatCount="indefinite"/>
-              </circle>
-            )}
-            <circle cx={gr.x*EC+EC/2} cy={gr.y*EC+EC/2} r={10}
-              fill={gr.completado?"#40c080":gr.huyendo?"#e05050":GRUPO_INFO[i].color}/>
-            <text x={gr.x*EC+EC/2} y={gr.y*EC+EC/2+4} textAnchor="middle" fontSize="9" fill="#000" fontWeight="700">{i+1}</text>
-          </g>
+      <svg width={600} height={320} style={{display:"block"}}>
+        {/* Cielo nocturno */}
+        <rect width={600} height={320} fill="#000"/>
+        {Array.from({length:40},(_,i)=>(
+          <circle key={i} cx={(i*137)%580+10} cy={(i*97)%100+10} r={0.8} fill="#ffffff" opacity={0.6}/>
         ))}
-
-        {/* Overlay detectado */}
-        {detectado!==null && (
-          <g>
-            <rect width={EW} height={EH} fill="#e0505022"/>
-            <text x={EW/2} y={EH/2} textAnchor="middle" fontSize="16" fill="#e05050" fontWeight="700">
-              ¡GRUPO {detectado+1} DETECTADO! Huyendo al punto de partida…
-            </text>
+        {/* Pista (aparece gradualmente) */}
+        <rect x={0} y={220} width={600} height={100} fill="#0a1020" opacity={Math.min(cinFrame/20,1)}/>
+        {/* Luces de pista */}
+        {Array.from({length:10},(_,i)=>(
+          <rect key={i} x={i*60+10} y={215} width={4} height={8}
+            fill="#f0c030" opacity={Math.min(cinFrame/30,1)}/>
+        ))}
+        {/* Avión (viene de derecha, aterriza) */}
+        {(()=>{
+          const prog = Math.min(cinFrame/50, 1)
+          const ax = 650 - prog*480
+          const ay = 50  + prog*160
+          const scale = 0.5 + prog*0.5
+          return <g transform={`translate(${ax},${ay}) scale(${scale})`}>
+            {/* Fuselaje */}
+            <ellipse cx={0} cy={0} rx={40} ry={8} fill="#c8d8e8"/>
+            {/* Ala */}
+            <polygon points="-10,-4 20,-4 30,12 -10,12" fill="#a0b0c0"/>
+            {/* Cola */}
+            <polygon points="-35,-4 -25,-4 -25,-20 -35,-4" fill="#a0b0c0"/>
+            {/* Motores */}
+            <ellipse cx={5} cy={10} rx={8} ry={3} fill="#808080"/>
+            {/* Luces */}
+            <circle cx={40} cy={0} r={3} fill="#ff4444" opacity={cinFrame%10<5?1:0.2}/>
           </g>
-        )}
+        })()}
+        {/* Texto */}
+        <text x={300} y={170} textAnchor="middle" fontSize="14" fill="#f0c030"
+          opacity={Math.max(0,(cinFrame-30)/20)} fontFamily="Cinzel,serif">
+          Entebbe, Uganda — 04:00hs
+        </text>
       </svg>
-
-      <p style={{color:"#446688",fontSize:11}}>
-        <kbd style={{background:"#1a2535",borderRadius:3,padding:"1px 5px",color:"#c8d8e8"}}>1</kbd>{" "}
-        <kbd style={{background:"#1a2535",borderRadius:3,padding:"1px 5px",color:"#c8d8e8"}}>2</kbd>{" "}
-        <kbd style={{background:"#1a2535",borderRadius:3,padding:"1px 5px",color:"#c8d8e8"}}>3</kbd>{" "}
-        seleccioná grupo · WASD/flechas para mover · Alcanzá los objetivos sin ser detectado
+      <p style={{color:"#f0c03077",fontSize:12,marginTop:12,fontFamily:"Inter"}}>
+        Operación Entebbe · Las luces se apagan…
       </p>
     </div>
   )
+
+  // EXTERIOR
+  if(escena==="exterior") return(
+    <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10}}>
+      <style>{FONTS}</style>
+      <div style={{display:"flex",alignItems:"center",gap:20,marginBottom:4}}>
+        <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:12,letterSpacing:2,textTransform:"uppercase"}}>⚔️ Operación Entebbe — Exterior</p>
+        <span style={{color:tiempo<30?"#e05050":"#f0c030",fontFamily:"monospace",fontWeight:700}}>⏱ {tiempo}s</span>
+        <div style={{display:"flex",gap:6}}>
+          {[0,1,2].map(i=>(
+            <button key={i} onClick={()=>setSelExt(i as 0|1|2)}
+              style={{padding:"3px 10px",borderRadius:5,fontSize:12,fontWeight:700,cursor:"pointer",
+                background:selExt===i?`${GRUPO_COLOR[i]}22`:"#0d1525",
+                border:`1px solid ${selExt===i?GRUPO_COLOR[i]:"#1e3050"}`,
+                color:GRUPO_COLOR[i]}}>
+              {GRUPO_LABEL[i]}{i===0?" →🗼":i===1?" →🏢":" →🏢"}
+            </button>
+          ))}
+        </div>
+      </div>
+      {extMsg&&<p style={{color:"#f0c030",fontSize:12}}>{extMsg}</p>}
+      <svg width={EXT_W*EC2} height={EXT_H*EC2} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
+        <rect width={EXT_W*EC2} height={EXT_H*EC2} fill="#05100a"/>
+        {MAPA_EXT.map((row,y)=>row.map((cell,x)=>{
+          if(cell===1) return<rect key={`${x}-${y}`} x={x*EC2} y={y*EC2} width={EC2} height={EC2} fill="#0a1830"/>
+          return null
+        }))}
+        {/* Objetivos */}
+        <g>
+          <rect x={POS_TORRE.x*EC2} y={POS_TORRE.y*EC2} width={EC2} height={EC2} fill="#f0c03022"/>
+          <text x={POS_TORRE.x*EC2+EC2/2} y={POS_TORRE.y*EC2+EC2/2+5} textAnchor="middle" fontSize="16">🗼</text>
+        </g>
+        <g>
+          <rect x={POS_EDIFICIO.x*EC2} y={POS_EDIFICIO.y*EC2} width={EC2} height={EC2} fill="#6090e022"/>
+          <text x={POS_EDIFICIO.x*EC2+EC2/2} y={POS_EDIFICIO.y*EC2+EC2/2+5} textAnchor="middle" fontSize="16">🏢</text>
+        </g>
+        {/* Avión en spawn */}
+        <text x={POS_AVION.x*EC2+EC2/2} y={POS_AVION.y*EC2+EC2/2+5} textAnchor="middle" fontSize="16">✈️</text>
+        {/* Guardias */}
+        {guardiasExt.map((g,i)=>(
+          <g key={i}>
+            <circle cx={g.x*EC2+EC2/2} cy={g.y*EC2+EC2/2} r={EC2*0.9} fill="#e0505010"/>
+            <circle cx={g.x*EC2+EC2/2} cy={g.y*EC2+EC2/2} r={10} fill="#e05050"/>
+            <text x={g.x*EC2+EC2/2} y={g.y*EC2+EC2/2+4} textAnchor="middle" fontSize="10">👁</text>
+          </g>
+        ))}
+        {/* Grupos */}
+        {gruposExt.map((gr,i)=>(
+          <g key={i} onClick={()=>setSelExt(i as 0|1|2)} style={{cursor:"pointer"}}>
+            {selExt===i&&<circle cx={gr.x*EC2+EC2/2} cy={gr.y*EC2+EC2/2} r={EC2/2-2}
+              fill="none" stroke={GRUPO_COLOR[i]} strokeWidth="2" opacity="0.6">
+              <animate attributeName="r" values={`${EC2/2-4};${EC2/2};${EC2/2-4}`} dur="1s" repeatCount="indefinite"/>
+            </circle>}
+            <circle cx={gr.x*EC2+EC2/2} cy={gr.y*EC2+EC2/2} r={10} fill={GRUPO_COLOR[i]}/>
+            <text x={gr.x*EC2+EC2/2} y={gr.y*EC2+EC2/2+4} textAnchor="middle" fontSize="9" fill="#000" fontWeight="700">{i+1}</text>
+          </g>
+        ))}
+        {extDetectado&&<g>
+          <rect width={EXT_W*EC2} height={EXT_H*EC2} fill="#e0505033"/>
+          <text x={EXT_W*EC2/2} y={EXT_H*EC2/2} textAnchor="middle" fontSize="16" fill="#e05050" fontWeight="700">¡DETECTADO! Misión abortada.</text>
+        </g>}
+      </svg>
+      <p style={{color:"#446688",fontSize:11}}>1/2/3 seleccioná grupo · WASD para mover · Llevá G1 a 🗼 y G2+G3 a 🏢</p>
+    </div>
+  )
+
+  // TORRE
+  if(escena==="torre") return(
+    <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:12}}>
+      <style>{FONTS}</style>
+      <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:12,letterSpacing:2,textTransform:"uppercase"}}>🗼 Torre de Control — G1</p>
+      <p style={{color:"#7a8fa6",fontSize:12}}>Llega al panel sin que te vea el guardia. Luego apagá las luces.</p>
+      {!torreEnPanel ? (
+        <>
+          <svg width={8*TC} height={6*TC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
+            <rect width={8*TC} height={6*TC} fill="#040810"/>
+            {MAPA_TORRE.map((row,y)=>row.map((cell,x)=>(
+              cell===1?<rect key={`${x}-${y}`} x={x*TC} y={y*TC} width={TC} height={TC} fill="#0a1830"/>:null
+            )))}
+            {/* Panel */}
+            <g>
+              <rect x={POS_PANEL.x*TC} y={POS_PANEL.y*TC} width={TC} height={TC} fill="#1a100a"/>
+              <text x={POS_PANEL.x*TC+TC/2} y={POS_PANEL.y*TC+TC/2+6} textAnchor="middle" fontSize="22">🖥</text>
+            </g>
+            {/* Guardia torre */}
+            <g>
+              <circle cx={guardiaTorre.x*TC+TC/2} cy={guardiaTorre.y*TC+TC/2} r={TC*0.9} fill="#e0505015"/>
+              <circle cx={guardiaTorre.x*TC+TC/2} cy={guardiaTorre.y*TC+TC/2} r={14} fill="#e05050"/>
+              <text x={guardiaTorre.x*TC+TC/2} y={guardiaTorre.y*TC+TC/2+5} textAnchor="middle" fontSize="13">👁</text>
+            </g>
+            {/* Agente */}
+            {!torreDetectado&&<g>
+              <circle cx={agenteT.x*TC+TC/2} cy={agenteT.y*TC+TC/2} r={14} fill="#f0c030"/>
+              <text x={agenteT.x*TC+TC/2} y={agenteT.y*TC+TC/2+5} textAnchor="middle" fontSize="13">🕵</text>
+            </g>}
+            {torreDetectado&&<g>
+              <rect width={8*TC} height={6*TC} fill="#e0505033"/>
+              <text x={4*TC} y={3*TC} textAnchor="middle" fontSize="16" fill="#e05050" fontWeight="700">¡DETECTADO!</text>
+            </g>}
+          </svg>
+          <p style={{color:"#446688",fontSize:11}}>WASD para moverte · Llegá al 🖥 sin ser visto</p>
+        </>
+      ) : (
+        /* PUZZLE LIGHTS OUT */
+        <div style={{textAlign:"center"}}>
+          <p style={{color:"#40c080",fontSize:13,marginBottom:6}}>✓ En el panel. Apagá todas las luces del aeropuerto.</p>
+          <p style={{color:"#556677",fontSize:11,marginBottom:20}}>Cada switch que tocás también cambia los adyacentes.</p>
+          <div style={{display:"flex",gap:16,justifyContent:"center",marginBottom:20}}>
+            {switches.map((on,i)=>(
+              <button key={i} onClick={()=>!puzzleResuelto&&toggleSwitch(i)}
+                style={{
+                  width:70,height:70,borderRadius:10,fontSize:24,cursor:"pointer",
+                  background:on?"#f0c030":"#0d1525",
+                  border:`2px solid ${on?"#f0c030":"#1e3050"}`,
+                  color:on?"#000":"#33485e",
+                  transition:"all 0.15s",
+                  boxShadow:on?"0 0 16px #f0c03088":"none",
+                }}>
+                {on?"💡":"⬛"}
+              </button>
+            ))}
+          </div>
+          {puzzleResuelto&&<p style={{color:"#40c080",fontWeight:700,fontSize:15}}>✓ ¡Luces apagadas! Pasando al edificio…</p>}
+          <p style={{color:"#33485e",fontSize:11}}>Estado: {switches.map(s=>s?"ON":"OFF").join(" · ")}</p>
+        </div>
+      )}
+      <span style={{color:tiempo<30?"#e05050":"#f0c030",fontFamily:"monospace"}}>⏱ {tiempo}s</span>
+    </div>
+  )
+
+  // EDIFICIO
+  if(escena==="edificio") return(
+    <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10}}>
+      <style>{FONTS}</style>
+      <div style={{display:"flex",alignItems:"center",gap:20}}>
+        <p style={{fontFamily:"'Cinzel',serif",color:"#6090e0",fontSize:12,letterSpacing:2,textTransform:"uppercase"}}>🏢 Terminal — G2 y G3</p>
+        <span style={{color:tiempo<30?"#e05050":"#f0c030",fontFamily:"monospace",fontWeight:700}}>⏱ {tiempo}s</span>
+        <div style={{display:"flex",gap:8}}>
+          {["G2 (delante)","G3 (detrás)"].map((label,i)=>(
+            <button key={i} onClick={()=>setSelEdif(i as 0|1)}
+              style={{padding:"3px 10px",borderRadius:5,fontSize:12,fontWeight:700,cursor:"pointer",
+                background:selEdif===i?`${GRUPO_COLOR[i+1]}22`:"#0d1525",
+                border:`1px solid ${selEdif===i?GRUPO_COLOR[i+1]:"#1e3050"}`,
+                color:GRUPO_COLOR[i+1]}}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p style={{color:"#7a8fa6",fontSize:12}}>G2 despeja el camino. G3 llega a los rehenes 🔒.</p>
+      <svg width={10*EDC} height={7*EDC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
+        <rect width={10*EDC} height={7*EDC} fill="#040810"/>
+        {MAPA_EDIF.map((row,y)=>row.map((cell,x)=>(
+          cell===1?<rect key={`${x}-${y}`} x={x*EDC} y={y*EDC} width={EDC} height={EDC} fill="#0a1830"/>:null
+        )))}
+        {/* Rehenes */}
+        <g>
+          <rect x={POS_REHENES.x*EDC} y={POS_REHENES.y*EDC} width={EDC} height={EDC} fill="#6090e022"/>
+          <text x={POS_REHENES.x*EDC+EDC/2} y={POS_REHENES.y*EDC+EDC/2+6} textAnchor="middle" fontSize="22">🔒</text>
+        </g>
+        {/* Guardias edificio */}
+        {guardiasEdif.map((g,i)=>(
+          <g key={i}>
+            <circle cx={g.x*EDC+EDC/2} cy={g.y*EDC+EDC/2} r={EDC*0.9} fill="#e0505010"/>
+            <circle cx={g.x*EDC+EDC/2} cy={g.y*EDC+EDC/2} r={13} fill="#e05050"/>
+            <text x={g.x*EDC+EDC/2} y={g.y*EDC+EDC/2+5} textAnchor="middle" fontSize="12">👁</text>
+          </g>
+        ))}
+        {/* G2 */}
+        {!edifDetectado&&<g onClick={()=>setSelEdif(0)} style={{cursor:"pointer"}}>
+          {selEdif===0&&<circle cx={g2pos.x*EDC+EDC/2} cy={g2pos.y*EDC+EDC/2} r={EDC/2-2}
+            fill="none" stroke={GRUPO_COLOR[1]} strokeWidth="2" opacity="0.5">
+            <animate attributeName="r" values={`${EDC/2-4};${EDC/2};${EDC/2-4}`} dur="1s" repeatCount="indefinite"/>
+          </circle>}
+          <circle cx={g2pos.x*EDC+EDC/2} cy={g2pos.y*EDC+EDC/2} r={12} fill={GRUPO_COLOR[1]}/>
+          <text x={g2pos.x*EDC+EDC/2} y={g2pos.y*EDC+EDC/2+5} textAnchor="middle" fontSize="11" fill="#000" fontWeight="700">G2</text>
+        </g>}
+        {/* G3 */}
+        {!edifDetectado&&<g onClick={()=>setSelEdif(1)} style={{cursor:"pointer"}}>
+          {selEdif===1&&<circle cx={g3pos.x*EDC+EDC/2} cy={g3pos.y*EDC+EDC/2} r={EDC/2-2}
+            fill="none" stroke={GRUPO_COLOR[2]} strokeWidth="2" opacity="0.5">
+            <animate attributeName="r" values={`${EDC/2-4};${EDC/2};${EDC/2-4}`} dur="1s" repeatCount="indefinite"/>
+          </circle>}
+          <circle cx={g3pos.x*EDC+EDC/2} cy={g3pos.y*EDC+EDC/2} r={12} fill={GRUPO_COLOR[2]}/>
+          <text x={g3pos.x*EDC+EDC/2} y={g3pos.y*EDC+EDC/2+5} textAnchor="middle" fontSize="11" fill="#000" fontWeight="700">G3</text>
+        </g>}
+        {edifDetectado&&<g>
+          <rect width={10*EDC} height={7*EDC} fill="#e0505033"/>
+          <text x={5*EDC} y={3.5*EDC} textAnchor="middle" fontSize="16" fill="#e05050" fontWeight="700">¡DETECTADO! Misión abortada.</text>
+        </g>}
+        {rehenesLiberados&&<g>
+          <rect width={10*EDC} height={7*EDC} fill="#40c08022"/>
+          <text x={5*EDC} y={3.5*EDC} textAnchor="middle" fontSize="16" fill="#40c080" fontWeight="700">✓ ¡Rehenes liberados! Corriendo al avión…</text>
+        </g>}
+      </svg>
+      <p style={{color:"#446688",fontSize:11}}>1/2 seleccioná comando · WASD para mover · G3 debe llegar al 🔒</p>
+    </div>
+  )
+
+  // SALIDA
+  if(escena==="salida") return(
+    <div style={{position:"fixed",inset:0,zIndex:400,background:"#000",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
+      <style>{FONTS}</style>
+      <svg width={600} height={320} style={{display:"block"}}>
+        <rect width={600} height={320} fill="#000"/>
+        {Array.from({length:40},(_,i)=>(
+          <circle key={i} cx={(i*137)%580+10} cy={(i*97)%100+10} r={0.8} fill="#fff" opacity={0.5}/>
+        ))}
+        <rect x={0} y={220} width={600} height={100} fill="#0a1020"/>
+        {Array.from({length:10},(_,i)=>(
+          <rect key={i} x={i*60+10} y={215} width={4} height={8} fill="#f0c030"/>
+        ))}
+        {/* Avión despegando */}
+        {(()=>{
+          const prog=Math.min(salidaFrame/45,1)
+          const ax = 80 + prog*600
+          const ay = 220 - prog*180
+          return <g transform={`translate(${ax},${ay}) scale(0.8)`}>
+            <ellipse cx={0} cy={0} rx={40} ry={8} fill="#c8d8e8"/>
+            <polygon points="-10,-4 20,-4 30,12 -10,12" fill="#a0b0c0"/>
+            <polygon points="-35,-4 -25,-4 -25,-20 -35,-4" fill="#a0b0c0"/>
+            <ellipse cx={5} cy={10} rx={8} ry={3} fill="#808080"/>
+          </g>
+        })()}
+        <text x={300} y={160} textAnchor="middle" fontSize="16" fill="#40c080"
+          opacity={Math.min(salidaFrame/15,1)} fontFamily="Cinzel,serif" fontWeight="700">
+          ✓ Operación Entebbe — Exitosa
+        </text>
+        <text x={300} y={185} textAnchor="middle" fontSize="12" fill="#7a8fa6"
+          opacity={Math.min(Math.max(salidaFrame-10,0)/15,1)} fontFamily="Inter">
+          103 rehenes rescatados. El mundo entero aplaudió de pie.
+        </text>
+      </svg>
+    </div>
+  )
+
+  return null
 }
 
 // ============================================================
