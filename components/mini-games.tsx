@@ -736,9 +736,13 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
         <>
           <svg width={10*TC} height={8*TC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
         <rect width={10*TC} height={8*TC} fill="#040810"/>
+        {/* Fondo de celdas libres (piso) */}
         {MAPA_TORRE.map((row,y)=>row.map((cell,x)=>(
-          cell===1?<rect key={`${x}-${y}`} x={x*TC} y={y*TC} width={TC} height={TC} fill="#0a1830"/>:null
+          cell===0
+            ? <rect key={`f${x}-${y}`} x={x*TC} y={y*TC} width={TC} height={TC} fill="#0d1a2a"/>
+            : <rect key={`w${x}-${y}`} x={x*TC} y={y*TC} width={TC} height={TC} fill="#0a1830" stroke="#061020" strokeWidth="0.5"/>
         )))}
+        {/* Grid */}
         {Array.from({length:10},(_,x)=><line key={`v${x}`} x1={x*TC} y1={0} x2={x*TC} y2={8*TC} stroke="#0d1525" strokeWidth="0.5"/>)}
         {Array.from({length:8},(_,y)=><line key={`h${y}`} x1={0} y1={y*TC} x2={10*TC} y2={y*TC} stroke="#0d1525" strokeWidth="0.5"/>)}
         <g>
