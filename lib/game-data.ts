@@ -560,12 +560,100 @@ export function generarArbol(): Mejora[] {
   }))
 }
 
+// Fisher-Yates shuffle — verdaderamente aleatorio
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export function seleccionarGuerras(): Evento[] {
-  const shuffledA = [...GUERRAS_POOL_A].sort(() => Math.random() - 0.5)
-  const dosDeA = shuffledA.slice(0, 2)
-  const shuffledB = [...GUERRAS_POOL_B].sort(() => Math.random() - 0.5)
-  const dosDeB = shuffledB.slice(0, 2)
+  // Pool A: EXACTAMENTE 2 de 3 (Independencia, 6 Días, Yom Kipur)
+  // Garantizamos distribución real: elegimos 1 índice a excluir
+  const excluirA = Math.floor(Math.random() * GUERRAS_POOL_A.length)
+  const dosDeA = GUERRAS_POOL_A.filter((_, i) => i !== excluirA)
+
+  // Pool B: EXACTAMENTE 2 de 3 (Suez, Líbano 82, Líbano 2006)
+  const excluirB = Math.floor(Math.random() * GUERRAS_POOL_B.length)
+  const dosDeB = GUERRAS_POOL_B.filter((_, i) => i !== excluirB)
+
   return [...dosDeA, ...dosDeB, EVENTO_7_OCTUBRE].sort((a, b) => a.anio - b.anio)
+}
+
+// Calcula requisitos dinámicos para cada guerra basándose en qué mejoras
+// están disponibles en el árbol generado para esta partida
+export function calcularRequisitosGuerras(guerras: Evento[], mejoras: Mejora[]): Evento[] {
+  const idsDisponibles = new Set(mejoras.map(m => m.id))
+
+  // Mapeo de candidatos por guerra — ordenados de más a menos exigente
+  const candidatos: Record<string, string[][]> = {
+    // Independencia: necesita organización militar básica
+    guerra_independencia: [
+      ["mil_fdi","mil_haganah"],   // ambas = ideal
+      ["mil_fdi"],                  // al menos FDI
+      ["mil_haganah"],              // al menos milicias
+    ],
+    // 6 Días: necesita capacidad ofensiva
+    guerra_6_dias: [
+      ["mil_aviacion","mil_inteligencia"],
+      ["mil_aviacion","mil_reservas"],
+      ["mil_aviacion"],
+      ["mil_fdi","mil_reservas"],
+    ],
+    // Yom Kipur: necesita defensa organizada
+    yom_kipur: [
+      ["mil_blindados","mil_reservas"],
+      ["mil_merkava","mil_reservas"],
+      ["mil_reservas"],
+      ["mil_fdi"],
+    ],
+    // Suez: capacidad aérea o naval
+    crisis_suez: [
+      ["mil_aviacion"],
+      ["mil_marina"],
+      ["mil_fdi"],
+    ],
+    // Líbano 82: fuerza terrestre
+    libano_1982: [
+      ["mil_aviacion","mil_blindados"],
+      ["mil_blindados"],
+      ["mil_aviacion"],
+      ["mil_reservas"],
+    ],
+    // Líbano 2006: defensa moderna
+    libano_2006: [
+      ["mil_cupula","mil_aviacion"],
+      ["mil_merkava","mil_aviacion"],
+      ["mil_aviacion"],
+      ["mil_reservas"],
+    ],
+  }
+
+  return guerras.map(guerra => {
+    if (guerra.id === "7_octubre") return guerra // el 7 de octubre no cambia
+
+    const opciones = candidatos[guerra.id]
+    if (!opciones) return guerra
+
+    // Elegir el conjunto de requisitos más exigente que esté disponible en el árbol
+    let elegido: string[] = opciones[opciones.length - 1] // fallback: el más fácil
+    for (const opcion of opciones) {
+      // Si AL MENOS UNO de los requisitos está en el árbol, es válido
+      if (opcion.some(req => idsDisponibles.has(req))) {
+        elegido = opcion.filter(req => idsDisponibles.has(req))
+        break
+      }
+    }
+
+    return {
+      ...guerra,
+      necesita: elegido,
+      necesitaOR: true, // siempre OR — alcanza con tener una
+    }
+  })
 }
 
 export let MEJORAS: Mejora[] = generarArbol()

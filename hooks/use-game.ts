@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react"
 import {
   ANIO_FINAL, ANIO_INICIAL, ESTADO_INICIAL_STATS, FINALES,
   EVENTO_7_OCTUBRE, GUERRAS_POOL_A, GUERRAS_POOL_B,
-  NODO_RAIZ, TRIVIA, generarArbol, seleccionarGuerras,
+  NODO_RAIZ, TRIVIA, generarArbol, seleccionarGuerras, calcularRequisitosGuerras,
   type Evento, type Mejora, type PreguntaTrivia, type Stats, type TipoFinal,
 } from "@/lib/game-data"
 
@@ -311,10 +311,10 @@ export function useGame() {
     if (exito) {
       switch (tipo) {
         case "entebbe":
-          setInfluencia(inf => inf + 80)
-          setStats(s => ({...s, militar: s.militar + 12, sociedad: s.sociedad + 8}))
-          setApoyo(prev => Math.min(100, prev + 15))
-          agregarNotif("✊ Operación Entebbe exitosa. +80🪙 +12 Militar +8 Sociedad +15% apoyo", "victoria")
+          // No da dinero — es una operación militar, el beneficio es político
+          setStats(s => ({...s, militar: s.militar + 14, sociedad: s.sociedad + 10, diplomacia: s.diplomacia + 6}))
+          setApoyo(prev => Math.min(100, prev + 20))
+          agregarNotif("✊ Entebbe exitosa. +14 Militar +10 Sociedad +6 Diplomacia +20% apoyo", "victoria")
           break
         case "laberinto_8200":
           setInfluencia(inf => inf + 60)
@@ -504,7 +504,9 @@ export function useGame() {
   // ─── INICIAR / REINICIAR ──────────────────────────────────
   const iniciarJuego = useCallback(() => {
     const nuevoArbol = generarArbol()
-    guerrasDePartida.current = seleccionarGuerras()
+    const guerrasBase = seleccionarGuerras()
+    // Calcular requisitos dinámicos basados en el árbol generado
+    guerrasDePartida.current = calcularRequisitosGuerras(guerrasBase, nuevoArbol)
     eventosOcurridos.current = new Set()
     lastNotifAnio.current    = {}
     aniosTriviaPasados.current = new Set()
