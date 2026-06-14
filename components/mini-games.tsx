@@ -336,7 +336,9 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   // Exterior
   const [selExt, setSelExt] = useState<0|1|2>(0)
   const [gruposExt, setGruposExt] = useState<GrupoPos[]>([
-    {...POS_AVION},{...POS_AVION},{...POS_AVION}
+    {x:POS_AVION.x,   y:POS_AVION.y-1}, // G1 — arriba
+    {x:POS_AVION.x,   y:POS_AVION.y},   // G2 — centro
+    {x:POS_AVION.x,   y:POS_AVION.y+1}, // G3 — abajo
   ])
   const [guardiasExt, setGuardiasExt] = useState<GuardiaE[]>([
     {x:8,y:2,dx:1,dy:0},{x:10,y:7,dx:-1,dy:0},{x:5,y:5,dx:0,dy:1}
@@ -377,9 +379,9 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     return()=>clearInterval(t)
   },[escena])
 
-  // ─── TIMER GLOBAL ────────────────────────────────────────
+  // ─── TIMER GLOBAL — empieza solo en exterior, no en cinemática ni salida ────
   useEffect(()=>{
-    if(escena==="cinematica"||escena==="fin") return
+    if(escena!=="exterior"&&escena!=="torre"&&escena!=="edificio") return
     timerRef.current=setInterval(()=>{
       setTiempo(t=>{
         if(t<=1){onResultado(false);return 0}
@@ -416,20 +418,18 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     }
   },[guardiasExt,gruposExt,escena,extDetectado,onResultado])
 
-  // Chequear llegada objetivos exterior
+  // Chequear llegada objetivos exterior — cualquier celda adyacente cuenta
   useEffect(()=>{
     if(escena!=="exterior") return
-    const g1enTorre  = gruposExt[0].x===POS_TORRE.x    && gruposExt[0].y===POS_TORRE.y
-    // G2 y G3 pueden estar en la misma celda o en celdas adyacentes al edificio
-    const g2enEdif   = gruposExt[1].x===POS_EDIFICIO.x && gruposExt[1].y===POS_EDIFICIO.y
-    const g3enEdif   = gruposExt[2].x===POS_EDIFICIO.x && gruposExt[2].y===POS_EDIFICIO.y
-    // Para G3 también vale la celda de al lado
-    const g3cerca    = Math.abs(gruposExt[2].x-POS_EDIFICIO.x)+Math.abs(gruposExt[2].y-POS_EDIFICIO.y)<=1
-    if(g1enTorre && g2enEdif && (g3enEdif||g3cerca)){
-      setEscena("torre")
-    } else if(g1enTorre && !g2enEdif){
+    const dist=(a:{x:number,y:number},b:{x:number,y:number})=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y)
+    const g1cerca = dist(gruposExt[0], POS_TORRE)    <= 1
+    const g2cerca = dist(gruposExt[1], POS_EDIFICIO) <= 1
+    const g3cerca = dist(gruposExt[2], POS_EDIFICIO) <= 2
+    if(g1cerca && g2cerca && g3cerca){
+      setTimeout(()=>setEscena("torre"), 300)
+    } else if(g1cerca && !g2cerca){
       setExtMsg("✓ G1 en torre. Mové G2 y G3 al edificio.")
-    } else if((g2enEdif||g3cerca) && !g1enTorre){
+    } else if((g2cerca||g3cerca) && !g1cerca){
       setExtMsg("✓ G2/G3 en edificio. Mové G1 a la 🗼 torre.")
     }
   },[gruposExt,escena])
