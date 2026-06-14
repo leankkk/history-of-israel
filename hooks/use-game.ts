@@ -34,18 +34,28 @@ function esAnioTrivia(anio: number) {
 }
 
 // Efectos en apoyo por mejora comprada
+// Solo mejoras con impacto POSITIVO visible para la población suben el apoyo
+// Las militares puras no suben (el pueblo no las ve), algunas bajan
 const APOYO_POR_MEJORA: Record<string, number> = {
-  soc_universidades: 8, soc_salud: 10, soc_aliyah: 12, soc_retorno: 6,
-  soc_kibutz: 5, soc_hebreo: 4, soc_cultura: 6, soc_inmigracion: 7,
-  soc_negev_dev: 5, soc_derechos: 8, soc_weizmann: 5, soc_iddanim: 6,
-  soc_medioambiente: 5, soc_biotech: 4, soc_longevidad: 4, soc_gov_digital: 5,
-  soc_tv: 3, soc_radio: 3,
-  eco_startup: 6, eco_chips: 4, eco_yozma: 5, eco_unicornios: 7,
-  eco_mobileye: 5, eco_waze: 4, eco_pharma: 6, eco_desalacion: 5,
-  dip_campdavid: 8, dip_oslo: 6, dip_abraham: 10, dip_rabin: 7,
-  mil_cupula: 12, mil_fdi: 3, mil_entebbe: 10, mil_opera: 5,
-  // Militares puros bajan un poco el apoyo social
-  mil_dimona: -3, mil_ciber: -2, mil_david_sling: -2,
+  // Sociedad — impacto directo y visible
+  soc_universidades: 9, soc_salud: 12, soc_aliyah: 14, soc_retorno: 7,
+  soc_kibutz: 6, soc_hebreo: 5, soc_cultura: 7, soc_inmigracion: 8,
+  soc_negev_dev: 6, soc_derechos: 10, soc_weizmann: 5, soc_iddanim: 7,
+  soc_medioambiente: 6, soc_biotech: 5, soc_longevidad: 5, soc_gov_digital: 6,
+  soc_tv: 4, soc_radio: 4,
+  // Economía — la gente nota cuando le va bien
+  eco_startup: 7, eco_chips: 5, eco_yozma: 6, eco_unicornios: 8,
+  eco_mobileye: 6, eco_waze: 5, eco_pharma: 7, eco_desalacion: 6,
+  eco_turismo: 4, eco_goteo: 5, eco_gas: 5, eco_bolsa: 3,
+  // Diplomacia — paz = apoyo popular
+  dip_campdavid: 10, dip_oslo: 7, dip_abraham: 12, dip_rabin: 9,
+  dip_jordania: 6, dip_sadat: 8,
+  // Militar: solo las que el pueblo VE y aprecia (Cúpula, victorias visibles)
+  mil_cupula: 14, // La gente VE los misiles interceptados — muy popular
+  // El resto del ejército NO sube apoyo (el pueblo no lo discute en la calle)
+  // Militares secretas/pesadas bajan un poco por presupuesto percibido
+  mil_dimona: -4, mil_arrow: -2, mil_david_sling: -3, mil_f35: -3,
+  mil_ciber: -2, mil_ofeq: -2,
 }
 
 export function useGame() {
@@ -121,11 +131,14 @@ export function useGame() {
   const calcularDerivaApoyo = useCallback((comp: string[], anioActual: number): number => {
     const militares = comp.filter(id => id.startsWith("mil_")).length
     const sociales  = comp.filter(id => id.startsWith("soc_")).length
+    const economicas = comp.filter(id => id.startsWith("eco_")).length
     let deriva = 0
-    // Desbalance militar pesa negativamente
-    if (militares > sociales + 3) deriva -= (militares - sociales - 3) * 0.8
-    // Años sin mejoras sociales bajan apoyo
-    return Math.round(deriva)
+    // Exceso militar sin balance social/económico: baja apoyo
+    const exceso = militares - (sociales + economicas)
+    if (exceso > 2) deriva -= (exceso - 2) * 1.2 // más agresivo
+    // Bonus pequeño por equilibrio
+    if (sociales >= 3 && economicas >= 3) deriva += 0.5
+    return Math.round(Math.max(-4, Math.min(2, deriva)))
   }, [])
 
   // ─── NOTIF MEJORAS ────────────────────────────────────────
@@ -175,8 +188,8 @@ export function useGame() {
     if (anioActual >= 2012 && !miniJuegosOcurridos.current.has("laberinto_8200") && comp.includes("mil_ciber")) {
       return "laberinto_8200"
     }
-    // Startup pitch — 2000, una sola vez
-    if (anioActual >= 2000 && !miniJuegosOcurridos.current.has("startup_pitch") && comp.includes("eco_startup")) {
+    // Startup pitch — 2000, una sola vez (sin requisito de mejora)
+    if (anioActual >= 2000 && !miniJuegosOcurridos.current.has("startup_pitch")) {
       return "startup_pitch"
     }
     return null
@@ -373,7 +386,14 @@ export function useGame() {
       else if (defensas === 1) efectos = { militar:-20, economia:-12, sociedad:-28, monedas:-35 }
       else efectos = ev.efectosDerrota
     } else {
-      tieneReqs = ev.necesita.length === 0 || ev.necesita.some(r => compradas.includes(r))
+      if (ev.necesita.length === 0) {
+        tieneReqs = true
+      } else if ((ev as any).necesitaOR) {
+        // Basta con tener UNA de las mejoras requeridas
+        tieneReqs = ev.necesita.some(r => compradas.includes(r))
+      } else {
+        tieneReqs = ev.necesita.every(r => compradas.includes(r))
+      }
       efectos = tieneReqs ? ev.efectosVictoria : ev.efectosDerrota
     }
 

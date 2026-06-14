@@ -537,7 +537,7 @@ export function MiniJuegoCampDavid({ onResultado }: CampDavidProps) {
     // Egipto quiere que Israel ceda bastante (balance > 2)
     // Pero Israel no puede ceder todo (balance < 8)
     // Zona de éxito: balance entre 2 y 7
-    if (balance >= 2 && balance <= 7 && pEgipto >= 4 && pIsrael >= 2) {
+    if (balance >= 1 && balance <= 7 && pEgipto >= 3 && pIsrael >= 2) {
       setEgiptoReaccion("Anwar Sadat acepta. La paz es posible.")
       setFase("resultado")
       setTimeout(() => onResultado(true), 2500)
@@ -587,7 +587,7 @@ export function MiniJuegoCampDavid({ onResultado }: CampDavidProps) {
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:16,fontSize:12,color:"#556677"}}>
               <span>Israel: {pIsrael}pts</span>
               <span style={{color: balance>=2&&balance<=7?"#40c080":"#e05050"}}>
-                {balance < 2 ? "Israel cede poco — Egipto rechazará" : balance > 7 ? "Israel cede demasiado" : "✓ Zona de acuerdo posible"}
+                {balance < 1 ? "Israel cede poco — Egipto rechazará" : balance > 7 ? "Israel cede demasiado" : "✓ Zona de acuerdo posible"}
               </span>
               <span>Egipto: {pEgipto}pts</span>
             </div>

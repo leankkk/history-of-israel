@@ -27,6 +27,7 @@ export interface Evento {
   efectosVictoria: Partial<Stats> & { monedas?: number }
   efectosDerrota: Partial<Stats> & { monedas?: number }
   imagen?: string; regionesAfectadas?: string[]
+  necesitaOR?: boolean
 }
 
 export interface PreguntaTrivia {
@@ -65,7 +66,7 @@ export const MEJORA_A_FOCO: Record<string, string> = {
   mil_spitfire:"norte", mil_haganah:"norte", mil_fdi:"jerusalem", mil_reservas:"norte",
   mil_aviacion:"haifa", mil_blindados:"norte", mil_especiales:"norte",
   mil_dimona:"dimona", mil_inteligencia:"jerusalem", mil_opera:"dimona",
-  mil_entebbe:"jerusalem", mil_marina:"haifa", mil_merkava:"norte",
+  mil_marina:"haifa", mil_merkava:"norte",
   mil_ofeq:"dimona", mil_arrow:"tel_aviv", mil_dolphin:"haifa",
   mil_trophy:"norte", mil_barrera:"jerusalem", mil_drones:"dimona",
   mil_cupula:"tel_aviv", mil_f35:"haifa", mil_ciber:"tel_aviv", mil_david_sling:"tel_aviv",
@@ -151,10 +152,6 @@ export const POOL: Mejora[] = [
   { id:"mil_dimona", nombre:"Programa secreto Dimona", descripcion:"Capacidad nuclear: la disuasión definitiva que nadie confirma oficialmente.", categoria:"militar", costo:140, anioMin:1965, requiere:["mil_aviacion"], efectos:{militar:22}, nivel:5, rentaInfluencia:2,
     imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Negev_Nuclear_Research_Center.jpg/320px-Negev_Nuclear_Research_Center.jpg",
     notificaciones:["El reactor de Dimona opera bajo estricto secreto de Estado.","La ambigüedad nuclear israelí disuadió posibles ataques."] },
-
-  { id:"mil_entebbe", nombre:"Operación Entebbe", descripcion:"1976: comandos israelíes vuelan 4.000 km para rescatar 103 rehenes en Uganda. Una operación que asombró al mundo.", categoria:"militar", costo:85, anioMin:1976, requiere:["mil_especiales","mil_inteligencia"], efectos:{militar:16, sociedad:8}, nivel:6, rentaInfluencia:1.5,
-    imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Entebbe_raid_1976.jpg/320px-Entebbe_raid_1976.jpg",
-    notificaciones:["El aniversario de Entebbe se celebra como símbolo de la determinación israelí.","La operación Entebbe inspiró doctrinas de rescate de rehenes en todo el mundo."] },
 
   { id:"mil_opera", nombre:"Operación Ópera", descripcion:"1981: la Fuerza Aérea destruye el reactor nuclear de Irak antes de que entre en operación. Una misión kamikaze exitosa.", categoria:"militar", costo:100, anioMin:1981, requiere:["mil_aviacion","mil_inteligencia"], efectos:{militar:20, diplomacia:-8}, nivel:6, rentaInfluencia:1.5,
     imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Osirak_before_and_after.jpg/320px-Osirak_before_and_after.jpg",
@@ -428,6 +425,7 @@ export const GUERRAS_POOL_A: Evento[] = [
     imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/1948_Arab-Israeli_War.jpg/320px-1948_Arab-Israeli_War.jpg",
     regionesAfectadas:["norte","jerusalem","neguev"],
     necesita:["mil_haganah","mil_fdi"],
+    necesitaOR:true,
     textoVictoria:"Israel derrota a cinco ejércitos árabes. Los acuerdos de armisticio definen las fronteras del Estado. El mundo se asombra.",
     textoDerrota:"Sin organización militar unificada, las pérdidas son enormes. La nación sobrevive a duras penas.",
     efectosVictoria:{militar:18, monedas:80}, efectosDerrota:{militar:-15, sociedad:-8, monedas:-50},
@@ -437,7 +435,8 @@ export const GUERRAS_POOL_A: Evento[] = [
     descripcion:"En apenas 6 días, Israel derrota a Egipto, Jordania y Siria. Jerusalén reunificada. El mapa de la región cambia para siempre.",
     imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Six-Day_War_Negev_brigade.jpg/320px-Six-Day_War_Negev_brigade.jpg",
     regionesAfectadas:["norte","jerusalem"],
-    necesita:["mil_aviacion","mil_inteligencia"],
+    necesita:["mil_fdi","mil_reservas","mil_aviacion"],
+    necesitaOR:true,
     textoVictoria:"Victoria aplastante en 6 días. Israel captura el Sinaí, Gaza, Cisjordania y los Altos del Golán. Jerusalén reunificada.",
     textoDerrota:"Sin superioridad aérea e inteligencia, el resultado es costoso en vidas y territorio.",
     efectosVictoria:{militar:28, diplomacia:6, monedas:130}, efectosDerrota:{militar:-18, monedas:-70},
@@ -448,6 +447,7 @@ export const GUERRAS_POOL_A: Evento[] = [
     imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Yom_Kippur_War_tank.jpg/320px-Yom_Kippur_War_tank.jpg",
     regionesAfectadas:["norte","neguev","dimona"],
     necesita:["mil_blindados","mil_reservas"],
+    necesitaOR:true,
     textoVictoria:"Contraataque exitoso. Israel rodea al 3er ejército egipcio. Las pérdidas son enormes pero la victoria llega.",
     textoDerrota:"Sin blindados ni reservistas organizados, el frente casi cede. Una herida que tardará décadas en cicatrizar.",
     efectosVictoria:{militar:22, sociedad:-10, monedas:100}, efectosDerrota:{militar:-20, sociedad:-18, monedas:-80},
@@ -480,7 +480,8 @@ export const GUERRAS_POOL_B: Evento[] = [
     descripcion:"Hezbollah secuestra soldados y llueven 4.000 cohetes sobre el norte. Israel responde durante 34 días.",
     imagen:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Lebanon_War_1982.jpg/320px-Lebanon_War_1982.jpg",
     regionesAfectadas:["norte","haifa"],
-    necesita:["mil_merkava","mil_aviacion"],
+    necesita:["mil_aviacion","mil_reservas","mil_merkava"],
+    necesitaOR:true,
     textoVictoria:"Alto el fuego bajo la ONU. Hezbollah debilitado. La disuasión se restablece en el norte.",
     textoDerrota:"Sin capacidad coordinada, los objetivos estratégicos no se logran. Hezbollah queda fortalecido.",
     efectosVictoria:{militar:12, diplomacia:-7, monedas:55}, efectosDerrota:{militar:-14, monedas:-45},
