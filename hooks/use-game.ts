@@ -9,7 +9,7 @@ import {
 } from "@/lib/game-data"
 
 export type FaseJuego = "intro" | "jugando" | "fin"
-export type MiniJuegoTipo = "misil" | "laberinto_entebbe" | "laberinto_8200" | "camp_david" | "startup_pitch" | null
+export type MiniJuegoTipo = "misil" | "entebbe" | "laberinto_8200" | "camp_david" | "startup_pitch" | null
 
 export interface Notificacion {
   id: string; texto: string
@@ -171,7 +171,7 @@ export function useGame() {
   const chequearMiniJuegos = useCallback((anioActual: number, comp: string[]): MiniJuegoTipo | null => {
     // Laberinto Entebbe — 1976, una sola vez
     if (anioActual >= 1976 && !miniJuegosOcurridos.current.has("laberinto_entebbe")) {
-      return "laberinto_entebbe"
+      return "entebbe"
     }
     // Camp David — 1979, una sola vez, si no fue comprado ya
     if (anioActual >= 1979 && !miniJuegosOcurridos.current.has("camp_david") && !comp.includes("dip_campdavid")) {
@@ -310,7 +310,7 @@ export function useGame() {
 
     if (exito) {
       switch (tipo) {
-        case "laberinto_entebbe":
+        case "entebbe":
           setInfluencia(inf => inf + 80)
           setStats(s => ({...s, militar: s.militar + 12, sociedad: s.sociedad + 8}))
           setApoyo(prev => Math.min(100, prev + 15))
@@ -344,7 +344,7 @@ export function useGame() {
       }
     } else {
       switch (tipo) {
-        case "laberinto_entebbe":
+        case "entebbe":
           setApoyo(prev => Math.max(0, prev - 18))
           setInfluencia(inf => Math.max(0, inf - 30))
           agregarNotif("💔 Operación Entebbe fallida. −18% apoyo −30🪙", "derrota")

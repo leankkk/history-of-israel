@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react"
 import { useGame } from "@/hooks/use-game"
 import { BarraApoyoPolitico, PopupGolpeEstado } from "@/components/political-bar"
-import { MiniJuegoMisil, MiniJuegoLaberinto, MiniJuegoCampDavid, MiniJuegoStartupPitch } from "@/components/mini-games"
+import { MiniJuegoMisil, MiniJuegoLaberinto, MiniJuegoCampDavid, MiniJuegoStartupPitch, MiniJuegoEntebbe } from "@/components/mini-games"
 import {
   ANIO_FINAL, ANIO_INICIAL, ERAS, MEJORA_A_FOCO,
   CATEGORIA_INFO, FINALES, NODO_RAIZ, FOCOS_MAPA,
@@ -768,8 +768,11 @@ export function GameScreen() {
       {game.miniJuegoActivo === "misil" && (
         <MiniJuegoMisil onResultado={(e)=>game.resolverMiniJuego("misil",e)} oleada={Math.floor((game.anio-2011)/8)+1}/>
       )}
-      {(game.miniJuegoActivo === "laberinto_entebbe" || game.miniJuegoActivo === "laberinto_8200") && (
-        <MiniJuegoLaberinto tipo={game.miniJuegoActivo} onResultado={(e)=>game.resolverMiniJuego(game.miniJuegoActivo!,e)}/>
+      {game.miniJuegoActivo === "entebbe" && (
+        <MiniJuegoEntebbe onResultado={(e)=>game.resolverMiniJuego("entebbe",e)}/>
+      )}
+      {game.miniJuegoActivo === "laberinto_8200" && (
+        <MiniJuegoLaberinto tipo="laberinto_8200" onResultado={(e)=>game.resolverMiniJuego("laberinto_8200",e)}/>
       )}
       {game.miniJuegoActivo === "camp_david" && (
         <MiniJuegoCampDavid onResultado={(e)=>game.resolverMiniJuego("camp_david",e)}/>
