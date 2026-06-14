@@ -565,12 +565,12 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     if(det){setEdifDetectado(true);setTimeout(()=>onResultado(false),1200)}
   },[guardiasEdif,g2pos,g3pos,escena,edifDetectado,onResultado])
 
-  // G3 llega a rehenes
+  // Solo G3 necesita llegar a los rehenes — G2 es solo cobertura
   useEffect(()=>{
     if(escena!=="edificio"||rehenesLiberados) return
     if(Math.abs(g3pos.x-POS_REHENES.x)+Math.abs(g3pos.y-POS_REHENES.y)<=1){
       setRehenesLiberados(true)
-      setTimeout(()=>setEscena("salida"),600)
+      setTimeout(()=>setEscena("salida"),800)
     }
   },[g3pos,escena,rehenesLiberados])
 
@@ -818,7 +818,7 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
           ))}
         </div>
       </div>
-      <p style={{color:"#7a8fa6",fontSize:12}}>G2 despeja el camino. G3 llega a los rehenes 🔒.</p>
+      <p style={{color:"#7a8fa6",fontSize:12}}>Solo G3 necesita llegar al 🔒. G2 es cobertura — quedá con él donde quieras.</p>
       <svg width={12*EDC} height={8*EDC} style={{border:"1px solid #1e3050",borderRadius:6,display:"block"}}>
         <rect width={12*EDC} height={8*EDC} fill="#040810"/>
         {MAPA_EDIF.map((row,y)=>row.map((cell,x)=>(
@@ -866,7 +866,7 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
           <text x={5*EDC} y={3.5*EDC} textAnchor="middle" fontSize="16" fill="#40c080" fontWeight="700">✓ ¡Rehenes liberados! Corriendo al avión…</text>
         </g>}
       </svg>
-      <p style={{color:"#446688",fontSize:11}}>1/2 seleccioná comando · WASD para mover · G3 debe llegar al 🔒</p>
+      <p style={{color:"#446688",fontSize:11}}>1/2 para seleccionar · WASD para mover · Solo G3 necesita llegar al 🔒</p>
     </div>
   )
 
