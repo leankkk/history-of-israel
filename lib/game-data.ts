@@ -518,8 +518,7 @@ export const TRIVIA: PreguntaTrivia[] = [
   { pregunta:"¿Cómo se llama el tanque de batalla diseñado y fabricado en Israel?", opciones:["Patton","Challenger","Leclerc","Merkava"], correcta:3, bonus:55, penalidad:25 },
   { pregunta:"¿Qué significa 'Aliyah' en hebreo?", opciones:["Ejército","Inmigración a Israel","Paz","Ciudad santa"], correcta:1, bonus:45, penalidad:20 },
   { pregunta:"¿En qué país estaban los rehenes que rescató Israel en la Operación Entebbe?", opciones:["Kenia","Tanzania","Uganda","Etiopía"], correcta:2, bonus:60, penalidad:25 },
-]
-
+,
   // === 50 PREGUNTAS ADICIONALES ===
   { pregunta:"¿Quién fue el primer Presidente del Estado de Israel?", opciones:["David Ben-Gurión","Chaim Weizmann","Moshe Sharett","Levi Eshkol"], correcta:1, bonus:55, penalidad:25 },
   { pregunta:"¿En qué año se fundó el Technion de Haifa?", opciones:["1912","1924","1931","1948"], correcta:0, bonus:65, penalidad:30 },
