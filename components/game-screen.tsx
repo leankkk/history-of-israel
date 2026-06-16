@@ -3,7 +3,9 @@
 import { useState, useCallback, useEffect } from "react"
 import { useGame } from "@/hooks/use-game"
 import { BarraApoyoPolitico, PopupGolpeEstado } from "@/components/political-bar"
-import { MiniJuegoMisil, MiniJuegoLaberinto, MiniJuegoCampDavid, MiniJuegoStartupPitch, MiniJuegoEntebbe } from "@/components/mini-games"
+import { MiniJuegoMisil, MiniJuegoCampDavid, MiniJuegoStartupPitch } from "@/components/mini-games"
+import { MiniJuegoEntebbe } from "@/components/entebbe-visual"
+import { MiniJuegoAnagram8200 } from "@/components/anagram-8200"
 import { MiniJuegoYomKipur } from "@/components/yom-kipur-map"
 import { MiniJuegoMossad } from "@/components/mossad-papers"
 import {
@@ -899,8 +901,8 @@ export function GameScreen() {
       {game.miniJuegoActivo === "entebbe" && (
         <MiniJuegoEntebbe onResultado={(e)=>game.resolverMiniJuego("entebbe",e)}/>
       )}
-      {game.miniJuegoActivo === "laberinto_8200" && (
-        <MiniJuegoLaberinto tipo="laberinto_8200" onResultado={(e)=>game.resolverMiniJuego("laberinto_8200",e)}/>
+      {game.miniJuegoActivo === "anagram_8200" && (
+        <MiniJuegoAnagram8200 onResultado={(e)=>game.resolverMiniJuego("anagram_8200",e)}/>
       )}
       {game.miniJuegoActivo === "camp_david" && (
         <MiniJuegoCampDavid onResultado={(e)=>game.resolverMiniJuego("camp_david",e)}/>

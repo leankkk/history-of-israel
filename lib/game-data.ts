@@ -647,47 +647,48 @@ export function calcularRequisitosGuerras(guerras: Evento[], mejoras: Mejora[]):
   const idsDisponibles = new Set(mejoras.map(m => m.id))
 
   // Mapeo de candidatos por guerra — ordenados de más a menos exigente
+  // Candidatos por guerra — todos con anioMin < año de la guerra
+  // Se filtran automáticamente por anioMin después
   const candidatos: Record<string, string[][]> = {
-    // Independencia: necesita organización militar básica
+    // Independencia 1948: solo mejoras de 1948
     guerra_independencia: [
-      ["mil_fdi","mil_haganah"],   // ambas = ideal
-      ["mil_fdi"],                  // al menos FDI
-      ["mil_haganah"],              // al menos milicias
+      ["mil_haganah"],   // 1948
+      ["mil_spitfire"],  // 1948
+      ["mil_fdi"],       // 1948
     ],
-    // 6 Días: necesita capacidad ofensiva
+    // 6 Días 1967: mejoras hasta 1960
     guerra_6_dias: [
-      ["mil_aviacion","mil_inteligencia"],
-      ["mil_aviacion","mil_reservas"],
-      ["mil_aviacion"],
-      ["mil_fdi","mil_reservas"],
+      ["mil_aviacion"],   // 1955 ✓
+      ["mil_blindados"],  // 1960 ✓
+      ["mil_reservas"],   // 1950 ✓
+      ["mil_inteligencia"], // 1967 — excluido por filtro anioMin
     ],
-    // Yom Kipur: necesita defensa organizada
+    // Yom Kipur 1973: mejoras hasta 1970
     yom_kipur: [
-      ["mil_blindados","mil_reservas"],
-      ["mil_merkava","mil_reservas"],
-      ["mil_reservas"],
-      ["mil_fdi"],
+      ["mil_reservas","mil_aviacion"], // 1950+1955
+      ["mil_aviacion","mil_marina"],   // 1955+1972
+      ["mil_reservas"],                // 1950
+      ["mil_aviacion"],                // 1955
     ],
-    // Suez: capacidad aérea — solo mejoras disponibles ANTES de 1956
+    // Suez 1956: solo mejoras de 1948-1955
     crisis_suez: [
-      ["mil_aviacion"],   // 1955
-      ["mil_reservas"],   // 1950
-      ["mil_haganah"],    // 1948
-      ["mil_fdi"],        // 1948
+      ["mil_aviacion"],  // 1955 ✓
+      ["mil_reservas"],  // 1950 ✓
+      ["mil_haganah"],   // 1948 ✓
     ],
-    // Líbano 82: fuerza terrestre
+    // Líbano 1982: requiere capacidad ofensiva real (post-1967)
     libano_1982: [
-      ["mil_aviacion","mil_blindados"],
-      ["mil_blindados"],
-      ["mil_aviacion"],
-      ["mil_reservas"],
+      ["mil_merkava","mil_especiales"], // 1979+1965
+      ["mil_merkava","mil_aviacion"],   // 1979+1955
+      ["mil_aviacion","mil_blindados"], // 1955+1960
+      ["mil_merkava"],                  // 1979 mínimo
     ],
-    // Líbano 2006: defensa moderna
+    // Líbano 2006: mejoras del 2000-2005
     libano_2006: [
-      ["mil_cupula","mil_aviacion"],
-      ["mil_merkava","mil_aviacion"],
-      ["mil_aviacion"],
-      ["mil_reservas"],
+      ["mil_drones","mil_merkava"],    // 2010 — excluido por filtro
+      ["mil_ofeq","mil_merkava"],      // 1988+1979 ✓
+      ["mil_arrow","mil_aviacion"],    // 1991+1955 ✓
+      ["mil_merkava"],                 // 1979 ✓
     ],
   }
 

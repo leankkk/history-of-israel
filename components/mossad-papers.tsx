@@ -26,7 +26,7 @@ interface Persona {
   razonSospecha: string
 }
 
-// Pool de inocentes
+// Pool de inocentes — diverso, de todo el mundo
 const INOCENTES_POOL: Omit<Persona,"esTerrorista"|"razonSospecha">[] = [
   {
     nombre:"David Müller", edad:34, nacionalidad:"Alemán",
@@ -89,6 +89,30 @@ const INOCENTES_POOL: Omit<Persona,"esTerrorista"|"razonSospecha">[] = [
     }
   },
   {
+    nombre:"Robert Kessler", edad:38, nacionalidad:"Austriaco",
+    descripcion:"Hombre rubio con mochila, aspecto de turista europeo.",
+    respuestas:{
+      destino:"Soy periodista, cubro el conflicto israelí-palestino.",
+      hospedaje:"Hotel American Colony en Jerusalén.",
+      duracion:"Diez días.",
+      trabajo:"Corresponsal del diario Der Standard de Viena.",
+      contactos:"Sí, contactos en la prensa local israelí.",
+      viajes:"Vine de Viena vía Atenas.",
+    }
+  },
+  {
+    nombre:"Liu Wei", edad:29, nacionalidad:"Chino",
+    descripcion:"Hombre joven con laptop, parece ingeniero o programador.",
+    respuestas:{
+      destino:"Conferencia de startups tecnológicas en Tel Aviv.",
+      hospedaje:"Airbnb en Florentin, Tel Aviv.",
+      duracion:"Cinco días.",
+      trabajo:"Desarrollador de software en una empresa de Shanghái.",
+      contactos:"Sí, conocidos del ecosistema tech de Tel Aviv.",
+      viajes:"Vine de Shanghái vía Dubái.",
+    }
+  },
+  {
     nombre:"Marie Dupont", edad:39, nacionalidad:"Francesa",
     descripcion:"Mujer de aspecto profesional, portafolio en mano.",
     respuestas:{
@@ -114,7 +138,7 @@ const INOCENTES_POOL: Omit<Persona,"esTerrorista"|"razonSospecha">[] = [
   },
 ]
 
-// Pool de terroristas (con inconsistencias detectables)
+// Pool de terroristas — de distintas nacionalidades y orígenes
 const TERRORISTAS_POOL: Omit<Persona,"esTerrorista">[] = [
   {
     nombre:"Karim Nassar", edad:29, nacionalidad:"Libanés",
@@ -168,6 +192,32 @@ const TERRORISTAS_POOL: Omit<Persona,"esTerrorista">[] = [
       viajes:"Vine directo desde Yemen... con escalas normales.",
     }
   },
+  {
+    nombre:"Viktor Petrov", edad:44, nacionalidad:"Ruso",
+    descripcion:"Hombre corpulento, documentos perfectos pero demasiado nuevos.",
+    razonSospecha:"Su pasaporte fue emitido hace solo 2 meses pero dice haber viajado a 15 países. Sus respuestas sobre su 'empresa de exportaciones' son vagas y contradictorias.",
+    respuestas:{
+      destino:"Negocios de exportación de tecnología agrícola.",
+      hospedaje:"Hotel Dan Tel Aviv.",
+      duracion:"Cuatro días.",
+      trabajo:"Director de exportaciones en Moscú... empresa privada.",
+      contactos:"Sí, varios contactos del sector agrícola israelí.",
+      viajes:"He viajado mucho... Irán, Siria, varios países del Medio Oriente.",
+    }
+  },
+  {
+    nombre:"Marco Ferretti", edad:33, nacionalidad:"Italiano",
+    descripcion:"Hombre de aspecto mediterráneo, nervioso, evita preguntas directas.",
+    razonSospecha:"Dice ser turista pero no sabe nombrar ningún lugar que quiera visitar. Su 'hotel' no existe en los registros de Tel Aviv.",
+    respuestas:{
+      destino:"Turismo, conocer la cultura israelí.",
+      hospedaje:"Un hotel pequeño... en el centro de Tel Aviv, no recuerdo el nombre.",
+      duracion:"Una semana.",
+      trabajo:"Trabajo en importaciones... negocios varios.",
+      contactos:"No, es mi primera vez.",
+      viajes:"Vine desde Roma... con escala en Beirut por temas de vuelos.",
+    }
+  },
 ]
 
 function generarSesion() {
@@ -184,10 +234,8 @@ function generarSesion() {
   // Mezclar las 3 personas
   const personas: Persona[] = [terrorista, ...inocentes].sort(() => Math.random() - 0.5)
 
-  // Elegir 3 preguntas de las 6 disponibles para cada persona
-  const preguntasPorPersona = personas.map(() =>
-    [...PREGUNTAS_DISPONIBLES].sort(()=>Math.random()-0.5).slice(0,3)
-  )
+  // Todas las 6 preguntas disponibles para cada persona — jugador elige 3
+  const preguntasPorPersona = personas.map(() => PREGUNTAS_DISPONIBLES)
 
   return { personas, preguntasPorPersona }
 }
@@ -307,20 +355,25 @@ export function MiniJuegoMossad({ onResultado }: MossadProps) {
         {/* Preguntas disponibles */}
         <div>
           <p style={{color:"#f0c030",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>
-            Seleccioná una pregunta ({hechasEstaPersona}/3 realizadas)
+            🔍 Seleccioná 3 preguntas de las 6 disponibles ({hechasEstaPersona}/3 elegidas)
           </p>
+          <p style={{color:"#f0c030",fontSize:11,marginBottom:6}}>Elegí 3 preguntas para hacer ({hechasEstaPersona}/3):</p>
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
             {preguntasDisponibles.map(pq=>{
               const yaHecha = preguntasHechas.includes(`${personaIdx}-${pq.id}`)
               const esActual = preguntaActual === pq.id
+              const puedeHacer = !yaHecha && hechasEstaPersona < 3
               return (
-                <button key={pq.id} onClick={()=>!yaHecha&&hechasEstaPersona<3&&hacerPregunta(pq.id)}
-                  disabled={yaHecha||hechasEstaPersona>=3}
-                  style={{textAlign:"left",padding:"10px 14px",borderRadius:8,cursor:(!yaHecha&&hechasEstaPersona<3)?"pointer":"default",
+                <button key={pq.id} onClick={()=>puedeHacer&&hacerPregunta(pq.id)}
+                  style={{textAlign:"left",padding:"10px 14px",borderRadius:8,
+                    cursor:puedeHacer?"pointer":"default",
                     background:esActual?"#0d2535":yaHecha?"#0a1a0a":"#0a1520",
-                    border:`1px solid ${esActual?"#3a7bd5":yaHecha?"#1a3a1a":"#1e3050"}`,
-                    color:esActual?"#6090e0":yaHecha?"#40c08088":"#8898aa",fontSize:13,transition:"all 0.2s"}}>
-                  {yaHecha?"✓ ":""}{pq.texto}
+                    border:`1px solid ${esActual?"#3a7bd5":yaHecha?"#1a3a1a":puedeHacer?"#2a4060":"#1e3050"}`,
+                    color:esActual?"#6090e0":yaHecha?"#40c08088":puedeHacer?"#c8d8e8":"#33485e",
+                    fontSize:13,transition:"all 0.2s",opacity:!puedeHacer&&!yaHecha?0.4:1}}>
+                  <span style={{marginRight:8,opacity:0.5}}>{yaHecha?"✓":"→"}</span>{pq.texto}
+                  {yaHecha&&<span style={{color:"#40c08066",fontSize:11,marginLeft:8}}>(hecha)</span>}
+                  {hechasEstaPersona>=3&&!yaHecha&&<span style={{color:"#556677",fontSize:11,marginLeft:8}}>(ya elegiste 3)</span>}
                 </button>
               )
             })}

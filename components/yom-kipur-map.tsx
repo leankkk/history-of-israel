@@ -58,7 +58,7 @@ function calcularFuerzaDefensa(asig: AsignacionFrente, unidades: Unidad[]): numb
   return total
 }
 
-// Mapa SVG simplificado de Israel con los 3 frentes
+// Mapa con Leaflet + OpenStreetMap
 function MapaYomKipur({ asignaciones, onClickFrente, frenteSeleccionado, resultado }:{
   asignaciones: Record<Frente, AsignacionFrente>
   onClickFrente: (f: Frente) => void
@@ -70,94 +70,58 @@ function MapaYomKipur({ asignaciones, onClickFrente, frenteSeleccionado, resulta
     return a.paracaidistas + a.aerea + a.blindados + a.infanteria
   }
 
+  const mapRef = useRef<HTMLDivElement>(null)
+  const leafletRef = useRef<any>(null)
+
+  useEffect(()=>{
+    if(!mapRef.current||leafletRef.current) return
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    document.head.appendChild(link)
+    const script = document.createElement("script")
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    script.onload = ()=>{
+      const L = (window as any).L
+      if(!L||!mapRef.current) return
+      const map = L.map(mapRef.current,{center:[31.5,35.2],zoom:6,zoomControl:false,dragging:false,scrollWheelZoom:false})
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OSM"}).addTo(map)
+      leafletRef.current = map
+    }
+    document.head.appendChild(script)
+    return()=>{ if(leafletRef.current){leafletRef.current.remove();leafletRef.current=null} }
+  },[])
+
+  const positions: Record<Frente,{top:string,left:string}> = {
+    norte:{top:"15%",left:"65%"}, sur:{top:"68%",left:"10%"}, este:{top:"42%",left:"70%"}
+  }
+
   return (
-    <svg viewBox="0 0 400 700" style={{width:"100%",height:"100%"}}>
-      <defs>
-        <radialGradient id="yk-ocean" cx="30%" cy="50%">
-          <stop offset="0%" stopColor="#071828"/>
-          <stop offset="100%" stopColor="#030810"/>
-        </radialGradient>
-        <filter id="yk-glow">
-          <feGaussianBlur stdDeviation="3" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-
-      {/* Fondo mar */}
-      <rect width="400" height="700" fill="url(#yk-ocean)"/>
-
-      {/* Territorio Israel */}
-      <path d="M 160 90 Q 175 94 183 106 Q 192 120 190 134 Q 187 148 183 162 Q 179 176 185 186 Q 192 196 196 208 Q 200 222 194 235 Q 190 244 192 254 Q 196 266 194 278 Q 191 292 188 305 Q 184 320 183 335 Q 180 350 179 366 Q 176 382 174 398 Q 171 416 168 434 Q 164 454 162 474 Q 159 496 160 518 Q 161 540 158 562 Q 155 582 153 602 Q 151 618 152 634 L 143 638 Q 140 622 138 604 Q 135 584 133 562 Q 130 538 129 514 Q 128 490 131 466 Q 134 442 130 420 Q 125 396 122 372 Q 118 348 115 324 Q 111 300 110 276 Q 108 252 111 228 Q 114 206 110 184 Q 105 160 108 138 Q 112 114 120 100 Q 132 86 148 83 Q 156 82 160 90 Z"
-        fill="#0d1e3a" stroke="#1a4b8c" strokeWidth="1"/>
-
-      {/* Labels de países vecinos */}
-      <text x="340" y="110" fontSize="9" fill="#e0505066" fontFamily="Inter" textAnchor="middle">SIRIA</text>
-      <text x="340" y="350" fontSize="9" fill="#6090e066" fontFamily="Inter" textAnchor="middle">JORDANIA</text>
-      <text x="80"  y="500" fontSize="9" fill="#e0b03066" fontFamily="Inter" textAnchor="middle">EGIPTO</text>
-      <text x="80"  y="300" fontSize="9" fill="#ffffff22" fontFamily="Inter" textAnchor="middle">MAR MED.</text>
-
-      {/* Flechas de ataque (animadas) */}
-      {!resultado && <>
-        <path d="M 340 120 L 280 160" stroke="#e05050" strokeWidth="2" strokeDasharray="6 3" opacity="0.5" markerEnd="url(#arr-red)"/>
-        <path d="M 340 340 L 270 300" stroke="#6090e0" strokeWidth="2" strokeDasharray="6 3" opacity="0.5"/>
-        <path d="M 90  490 L 140 450" stroke="#e0b030" strokeWidth="2" strokeDasharray="6 3" opacity="0.5"/>
-      </>}
-
-      {/* Zonas de frente clickeables */}
-      {FRENTES.map(f => {
-        const n = totalPorFrente(f.id)
-        const res = resultado?.[f.id]
-        const isSelected = frenteSeleccionado === f.id
-        const borderColor = res === "victoria" ? "#40c080" : res === "derrota" ? "#e05050" : isSelected ? "#fff" : f.color
-
-        return (
-          <g key={f.id} onClick={()=>onClickFrente(f.id)} style={{cursor:"pointer"}}>
-            {/* Zona clickeable */}
-            <circle cx={f.x} cy={f.y} r={38}
-              fill={isSelected ? `${f.color}30` : `${f.color}15`}
-              stroke={borderColor} strokeWidth={isSelected?2.5:1.5}
-              filter={isSelected?"url(#yk-glow)":undefined}/>
-
-            {/* Ícono resultado */}
-            {res && <text x={f.x} y={f.y-20} textAnchor="middle" fontSize="18">
-              {res==="victoria"?"✅":"❌"}
-            </text>}
-
-            {/* Nombre del frente */}
-            <text x={f.x} y={f.y-8} textAnchor="middle" fontSize="9"
-              fill={f.color} fontFamily="Cinzel,serif" fontWeight="700">
-              {f.nombre}
-            </text>
-            <text x={f.x} y={f.y+4} textAnchor="middle" fontSize="8"
-              fill="#8898aa" fontFamily="Inter">
-              vs {f.pais}
-            </text>
-
-            {/* Contador de unidades */}
-            <text x={f.x} y={f.y+17} textAnchor="middle" fontSize="11"
-              fill={n>0?"#f0c030":"#33485e"} fontFamily="monospace" fontWeight="700">
-              {n > 0 ? `${n} 🪖` : "Sin unidades"}
-            </text>
-
-            {/* Descripción geográfica */}
-            <text x={f.x} y={f.y+30} textAnchor="middle" fontSize="7.5"
-              fill="#33485e" fontFamily="Inter">{f.descripcion}</text>
-          </g>
-        )
-      })}
-
-      {/* Leyenda resultado */}
-      {resultado && (
-        <g>
-          <rect x="10" y="640" width="380" height="50" rx="6" fill="#0d1525" stroke="#1e3050"/>
-          {FRENTES.map((f,i)=>(
-            <text key={f.id} x={20+i*130} y="660" fontSize="9" fill={resultado[f.id]==="victoria"?"#40c080":"#e05050"} fontFamily="Inter">
-              {f.nombre}: {resultado[f.id]==="victoria"?"✓ Defendido":"✗ Cedido"}
-            </text>
-          ))}
-        </g>
-      )}
-    </svg>
+    <div style={{position:"relative",width:"100%",height:"100%"}}>
+      <div ref={mapRef} style={{width:"100%",height:"100%",borderRadius:8,overflow:"hidden",minHeight:320}}/>
+      <div style={{position:"absolute",inset:0,pointerEvents:"none"}}>
+        {FRENTES.map(f=>{
+          const n=totalPorFrente(f.id)
+          const res=resultado?.[f.id]
+          const isSel=frenteSeleccionado===f.id
+          return (
+            <button key={f.id} onClick={()=>onClickFrente(f.id)}
+              style={{position:"absolute",...positions[f.id],pointerEvents:"all",
+                background:isSel?`${f.color}44`:"rgba(5,8,16,0.88)",
+                border:`2px solid ${res==="victoria"?"#40c080":res==="derrota"?"#e05050":isSel?f.color:"#1e3050"}`,
+                borderRadius:8,padding:"8px 12px",cursor:"pointer",textAlign:"center",minWidth:110,
+                backdropFilter:"blur(4px)"}}>
+              {res&&<div style={{fontSize:18,marginBottom:2}}>{res==="victoria"?"✅":"❌"}</div>}
+              <div style={{color:f.color,fontSize:10,fontWeight:700,fontFamily:"Cinzel,serif",textTransform:"uppercase"}}>{f.nombre}</div>
+              <div style={{color:"#8898aa",fontSize:9,marginBottom:4}}>vs {f.pais} · {f.descripcion}</div>
+              <div style={{color:n>0?"#f0c030":"#33485e",fontSize:12,fontWeight:700}}>
+                {n>0?`${n} unidades`:"Sin tropas"}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 

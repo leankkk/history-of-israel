@@ -9,7 +9,7 @@ import {
 } from "@/lib/game-data"
 
 export type FaseJuego = "intro" | "jugando" | "fin"
-export type MiniJuegoTipo = "misil" | "entebbe" | "laberinto_8200" | "camp_david" | "startup_pitch" | "yom_kipur" | "mossad" | null
+export type MiniJuegoTipo = "misil" | "entebbe" | "anagram_8200" | "camp_david" | "startup_pitch" | "yom_kipur" | "mossad" | null
 
 export interface Notificacion {
   id: string; texto: string
@@ -187,12 +187,14 @@ export function useGame() {
       }
     }
     // Laberinto 8200 — 2012, una sola vez
-    if (anioActual >= 2012 && !miniJuegosOcurridos.current.has("laberinto_8200") && comp.includes("mil_ciber")) {
-      return "laberinto_8200"
+    if (anioActual >= 2012 && !miniJuegosOcurridos.current.has("anagram_8200") && comp.includes("mil_ciber")) {
+      return "anagram_8200"
     }
-    // Yom Kipur — mapa de defensa, solo si la guerra de Yom Kipur está en esta partida
-    if (anioActual >= 1973 && !miniJuegosOcurridos.current.has("yom_kipur") &&
-        guerrasDePartida.current.some(g => g.id === "yom_kipur")) {
+    // Yom Kipur — mapa de defensa aparece EN 1973, reemplaza el evento de guerra
+    // Solo aparece si la guerra está en esta partida Y aún no ocurrió como evento
+    if (anioActual === 1973 && !miniJuegosOcurridos.current.has("yom_kipur") &&
+        guerrasDePartida.current.some(g => g.id === "yom_kipur") &&
+        !eventosOcurridos.current.has("yom_kipur")) {
       return "yom_kipur"
     }
     // Mossad Papers Please — aparece en 2010
@@ -330,25 +332,21 @@ export function useGame() {
           setApoyo(prev => Math.min(100, prev + 20))
           agregarNotif("✊ Entebbe exitosa. +14 Militar +10 Sociedad +6 Diplomacia +20% apoyo", "victoria")
           break
-        case "laberinto_8200":
-          setInfluencia(inf => inf + 60)
-          setStats(s => ({...s, militar: s.militar + 15}))
+        case "anagram_8200":
+          setStats(s => ({...s, militar: s.militar + 12, diplomacia: s.diplomacia + 5}))
           setApoyo(prev => Math.min(100, prev + 8))
-          agregarNotif("💻 Unidad 8200: misión completada. +60🪙 +15 Militar", "victoria")
+          agregarNotif("💻 Unidad 8200: códigos descifrados. +12 Militar +5 Diplomacia", "victoria")
           break
         case "misil":
-          setInfluencia(inf => inf + 50)
           setStats(s => ({...s, militar: s.militar + 8}))
           setApoyo(prev => Math.min(100, prev + 12))
-          agregarNotif("🚀 Intercepción exitosa. +50🪙 +8 Militar +12% apoyo", "victoria")
+          agregarNotif("🚀 Intercepción exitosa. +8 Militar +12% apoyo", "victoria")
           break
         case "camp_david":
-          setInfluencia(inf => inf + 100)
           setStats(s => ({...s, diplomacia: s.diplomacia + 20, militar: s.militar - 3}))
           setApoyo(prev => Math.min(100, prev + 10))
-          // Desbloquear Camp David como mejora ya comprada
           setCompradas(prev => prev.includes("dip_campdavid") ? prev : [...prev, "dip_campdavid"])
-          agregarNotif("🕊️ Camp David firmado. La paz es posible. +100🪙 +20 Diplomacia", "victoria")
+          agregarNotif("🕊️ Camp David firmado. +20 Diplomacia +10% apoyo", "victoria")
           break
         case "startup_pitch":
           const gpAnio = datos?.gananciaPorAnio ?? 20
@@ -360,6 +358,7 @@ export function useGame() {
           }
           break
         case "yom_kipur":
+          eventosOcurridos.current.add("yom_kipur") // marcar guerra como resuelta
           setApoyo(prev => Math.min(100, prev + 18))
           setStats(s => ({...s, militar: s.militar + 16, sociedad: s.sociedad - 8}))
           agregarNotif("✊ Yom Kipur: los frentes resistieron. +16 Militar +18% apoyo", "victoria")
@@ -377,10 +376,9 @@ export function useGame() {
           setInfluencia(inf => Math.max(0, inf - 30))
           agregarNotif("💔 Operación Entebbe fallida. −18% apoyo −30🪙", "derrota")
           break
-        case "laberinto_8200":
-          setApoyo(prev => Math.max(0, prev - 12))
-          setInfluencia(inf => Math.max(0, inf - 20))
-          agregarNotif("⚠️ Misión 8200 comprometida. −12% apoyo", "derrota")
+        case "anagram_8200":
+          setApoyo(prev => Math.max(0, prev - 10))
+          agregarNotif("⚠️ Códigos no descifrados. −10% apoyo", "derrota")
           break
         case "misil":
           setApoyo(prev => Math.max(0, prev - 15))
@@ -395,6 +393,7 @@ export function useGame() {
           agregarNotif("📉 Mala inversión. No hubo retornos significativos.", "derrota")
           break
         case "yom_kipur":
+          eventosOcurridos.current.add("yom_kipur") // marcar guerra como resuelta
           setApoyo(prev => Math.max(0, prev - 20))
           setStats(s => ({...s, militar: Math.max(0, s.militar - 8)}))
           agregarNotif("💔 Los frentes cedieron. −20% apoyo −8 Militar", "derrota")
