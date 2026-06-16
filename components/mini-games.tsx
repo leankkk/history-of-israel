@@ -4,12 +4,63 @@ import { useState, useEffect, useRef, useCallback } from "react"
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');`
 
+
+// ─── INTRO REUTILIZABLE PARA CADA MINI-JUEGO ─────────────────
+interface MiniJuegoIntroProps {
+  titulo: string
+  anio: string
+  icono: string
+  descripcion: string
+  instrucciones: string[]
+  colorAccent: string
+  onIniciar: () => void
+  onOmitir: () => void
+  etiqueta?: string
+}
+
+function MiniJuegoIntro({ titulo, anio, icono, descripcion, instrucciones, colorAccent, onIniciar, onOmitir, etiqueta }: MiniJuegoIntroProps) {
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:410,background:"rgba(0,0,0,0.97)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style={{maxWidth:520,width:"100%",background:"#070f1c",border:`1px solid ${colorAccent}55`,borderRadius:12,padding:"28px 24px"}}>
+        <div style={{textAlign:"center",marginBottom:16}}>
+          <div style={{fontSize:48,marginBottom:6}}>{icono}</div>
+          {etiqueta&&<p style={{color:colorAccent,fontSize:10,letterSpacing:3,textTransform:"uppercase",marginBottom:4}}>{etiqueta}</p>}
+          <p style={{fontFamily:"'Cinzel',serif",color:colorAccent,fontSize:11,letterSpacing:3,textTransform:"uppercase",marginBottom:4}}>{anio}</p>
+          <h2 style={{fontFamily:"'Cinzel',serif",color:"#e8dcc8",fontSize:20,fontWeight:700,marginBottom:10}}>{titulo}</h2>
+          <p style={{color:"#7a8fa6",fontSize:13,lineHeight:1.7}}>{descripcion}</p>
+        </div>
+        <div style={{background:"#0a1520",borderRadius:8,padding:"12px 14px",marginBottom:18}}>
+          <p style={{color:colorAccent,fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Cómo jugar</p>
+          {instrucciones.map((inst,i)=>(
+            <div key={i} style={{display:"flex",gap:8,marginBottom:6,alignItems:"flex-start"}}>
+              <span style={{color:colorAccent,flexShrink:0,marginTop:1}}>→</span>
+              <p style={{color:"#8898aa",fontSize:12,lineHeight:1.5}}>{inst}</p>
+            </div>
+          ))}
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <button onClick={onIniciar}
+            style={{flex:1,padding:"12px",background:colorAccent==="'#f0c030'"?`linear-gradient(135deg,#1a4b8c,#2a6bc8)`:`linear-gradient(135deg,${colorAccent}44,${colorAccent}66)`,
+              color:"#fff",border:`1px solid ${colorAccent}`,borderRadius:8,fontWeight:700,fontSize:14,cursor:"pointer"}}>
+            ⚔️ Iniciar misión
+          </button>
+          <button onClick={onOmitir}
+            style={{padding:"12px 16px",background:"#0d1525",color:"#556677",border:"1px solid #1e3050",borderRadius:8,fontSize:13,cursor:"pointer"}}>
+            Omitir
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ============================================================
 // MINI-JUEGO 1: INTERCEPTAR MISIL (Cúpula de Hierro)
 // ============================================================
 interface MisileProps { onResultado: (exito: boolean) => void; oleada?: number }
 
 export function MiniJuegoMisil({ onResultado, oleada = 1 }: MisileProps) {
+  const [mostrarIntro, setMostrarIntro] = useState(true)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stateRef  = useRef({
     // Interceptor (sale desde abajo-izquierda)
@@ -345,13 +396,14 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
     {x:POS_AVION.x,   y:POS_AVION.y+1}, // G3 — abajo
   ])
   const [guardiasExt, setGuardiasExt] = useState<GuardiaE[]>([
-    {x:8,y:2,dx:1,dy:0},{x:10,y:7,dx:-1,dy:0},{x:5,y:5,dx:0,dy:1}
+    {x:10,y:2,dx:1,dy:0},  // arriba-derecha, se mueve hacia la derecha (lejos del spawn)
+    {x:10,y:7,dx:1,dy:0},  // abajo-derecha, se mueve hacia la derecha (lejos del spawn)
   ])
   const [extDetectado, setExtDetectado] = useState(false)
   const [extMsg, setExtMsg] = useState("")
   // Torre
   const [agenteT, setAgenteT] = useState({...POS_SPAWN_T})
-  const [guardiaTorre, setGuardiaTorre] = useState({x:7,y:4,dx:-1,dy:0})
+  const [guardiaTorre, setGuardiaTorre] = useState({x:7,y:6,dx:-1,dy:0}) // fila 6, lejos del panel
   const [torreDetectado, setTorreDetectado] = useState(false)
   const [torreEnPanel, setTorreEnPanel] = useState(false)
   // Lights Out puzzle: 4 switches, ON=true
@@ -362,8 +414,8 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
   const [g2pos, setG2pos] = useState({...POS_SPAWN_G2})
   const [g3pos, setG3pos] = useState({...POS_SPAWN_G3})
   const [guardiasEdif, setGuardiasEdif] = useState<GuardiaE[]>([
-    {x:2,y:2,dx:1,dy:0},  // patrulla fila 2, solo x=1..5 (mitad izquierda)
-    {x:2,y:5,dx:1,dy:0},  // patrulla fila 5, solo x=1..5 (mitad izquierda)
+    {x:4,y:2,dx:1,dy:0},  // fila 2, empieza en x=4 moviéndose hacia la derecha
+    {x:4,y:5,dx:1,dy:0},  // fila 5, empieza en x=4 moviéndose hacia la derecha
   ])
   const [edifDetectado, setEdifDetectado] = useState(false)
   const [rehenesLiberados, setRehenesLiberados] = useState(false)
@@ -419,15 +471,15 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
           return {...g,x:nx,y:ny}
         return {...g,dx:-g.dx,dy:-g.dy}
       }))
-    },800)
+    },1200)
     return()=>clearInterval(t)
   },[escena,extDetectado])
 
-  // Detección exterior
+  // Detección exterior — solo misma celda exacta
   useEffect(()=>{
     if(escena!=="exterior"||extDetectado) return
     const detectado=gruposExt.some(gr=>
-      guardiasExt.some(g=>Math.abs(gr.x-g.x)+Math.abs(gr.y-g.y)<=1)
+      guardiasExt.some(g=>gr.x===g.x&&gr.y===g.y)
     )
     if(detectado){
       setExtDetectado(true)
@@ -674,11 +726,11 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
         <div style={{display:"flex",gap:6}}>
           {[0,1,2].map(i=>(
             <button key={i} onClick={()=>setSelExt(i as 0|1|2)}
-              style={{padding:"3px 10px",borderRadius:5,fontSize:12,fontWeight:700,cursor:"pointer",
+              style={{padding:"4px 12px",borderRadius:5,fontSize:12,fontWeight:700,cursor:"pointer",
                 background:selExt===i?`${GRUPO_COLOR[i]}22`:"#0d1525",
-                border:`1px solid ${selExt===i?GRUPO_COLOR[i]:"#1e3050"}`,
+                border:`2px solid ${selExt===i?GRUPO_COLOR[i]:"#1e3050"}`,
                 color:GRUPO_COLOR[i]}}>
-              {GRUPO_LABEL[i]}{i===0?" →🗼":i===1?" →🏢":" →🏢"}
+              {i+1} — {i===0?"Torre 🗼":i===1?"Edificio 🏢":"Edificio 🏢"}
             </button>
           ))}
         </div>
@@ -807,12 +859,12 @@ export function MiniJuegoEntebbe({ onResultado }: EntebbeProps) {
         <p style={{fontFamily:"'Cinzel',serif",color:"#6090e0",fontSize:12,letterSpacing:2,textTransform:"uppercase"}}>🏢 Terminal — G2 y G3</p>
         <span style={{color:tiempo<30?"#e05050":"#f0c030",fontFamily:"monospace",fontWeight:700}}>⏱ {tiempo}s</span>
         <div style={{display:"flex",gap:8}}>
-          {["G2 (delante)","G3 (detrás)"].map((label,i)=>(
+          {(["G2 — Delante 🟢","G3 — Rehenes 🔵"] as const).map((label,i)=>(
             <button key={i} onClick={()=>setSelEdif(i as 0|1)}
-              style={{padding:"3px 10px",borderRadius:5,fontSize:12,fontWeight:700,cursor:"pointer",
+              style={{padding:"6px 14px",borderRadius:5,fontSize:12,fontWeight:700,cursor:"pointer",
                 background:selEdif===i?`${GRUPO_COLOR[i+1]}22`:"#0d1525",
-                border:`1px solid ${selEdif===i?GRUPO_COLOR[i+1]:"#1e3050"}`,
-                color:GRUPO_COLOR[i+1]}}>
+                border:`2px solid ${selEdif===i?GRUPO_COLOR[i+1]:"#1e3050"}`,
+                color:selEdif===i?GRUPO_COLOR[i+1]:"#556677"}}>
               {label}
             </button>
           ))}
@@ -944,6 +996,7 @@ const CELL = 40
 interface LaberintoProps { tipo: "laberinto_8200"; onResultado: (exito:boolean)=>void }
 
 export function MiniJuegoLaberinto({ tipo, onResultado }: LaberintoProps) {
+  const [mostrarIntro, setMostrarIntro] = useState(true)
   const lab = LABERINTO_8200
   const [jugadorPos, setJugadorPos] = useState({x:1,y:1})
   const [guardias, setGuardias] = useState(()=>lab.guardias.map(g=>({...g})))
@@ -1030,6 +1083,24 @@ export function MiniJuegoLaberinto({ tipo, onResultado }: LaberintoProps) {
     window.addEventListener("keydown",onKey)
     return()=>window.removeEventListener("keydown",onKey)
   },[terminado,lab.mapa,onResultado])
+
+  if (mostrarIntro) return (
+    <MiniJuegoIntro
+      titulo={lab.titulo}
+      anio="2012"
+      icono="💻"
+      colorAccent="#40c080"
+      descripcion={lab.subtitulo}
+      instrucciones={[
+        "Usá WASD o las flechas para moverte por el laberinto",
+        "Evitá las zonas rojas — son el campo de visión de los guardias",
+        "Si un guardia te pisa, la misión falla",
+        "Llegá al 💻 (servidor central) antes de que se acabe el tiempo (60 segundos)",
+      ]}
+      onIniciar={()=>setMostrarIntro(false)}
+      onOmitir={()=>onResultado(false)}
+    />
+  )
 
   return(
     <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.96)",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:10}}>
@@ -1145,7 +1216,7 @@ export function MiniJuegoCampDavid({ onResultado }: CampDavidProps) {
   return (
     <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(0,0,0,0.95)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
       <style>{FONTS}</style>
-      <div style={{maxWidth:680,width:"100%",background:"#070f1c",border:"1px solid #40c08055",borderRadius:12,overflow:"hidden"}}>
+      <div style={{maxWidth:680,width:"100%",maxHeight:"90vh",background:"#070f1c",border:"1px solid #40c08055",borderRadius:12,overflow:"auto",display:"flex",flexDirection:"column"}}>
         {/* Header */}
         <div style={{background:"linear-gradient(135deg,#0a2010,#0e3018)",padding:"20px 24px",borderBottom:"1px solid #1e3050"}}>
           <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:11,letterSpacing:3,textTransform:"uppercase",marginBottom:6}}>🕊️ Camp David · 1979</p>
@@ -1236,16 +1307,16 @@ interface StartupPitchProps { onResultado: (exito: boolean, datos: { gananciaPor
 function calcularGananciaStartup(riesgo: string): { ganancia: number; descripcion: string } {
   const r = Math.random()
   if (riesgo === "Muy alto") {
-    if (r < 0.25) return { ganancia: 200, descripcion: "💎 Éxito extraordinario. La FDA aprobó. Valuación x40." }
-    if (r < 0.55) return { ganancia: 80,  descripcion: "✅ Buen resultado. Socio estratégico adquirió el 30%." }
-    if (r < 0.80) return { ganancia: 0,   descripcion: "⚠️ Sin retorno. La aprobación se demoró indefinidamente." }
-    return { ganancia: -30, descripcion: "❌ Pérdida. La empresa cerró antes de llegar al mercado." }
+    if (r < 0.20) return { ganancia: 60,  descripcion: "💎 Éxito inesperado. La FDA aprobó. Retorno sólido." }
+    if (r < 0.45) return { ganancia: 25,  descripcion: "✅ Resultado positivo. Socio estratégico sumado." }
+    if (r < 0.75) return { ganancia: 0,   descripcion: "⚠️ Sin retorno. La aprobación se demoró indefinidamente." }
+    return { ganancia: -20, descripcion: "❌ Pérdida. La empresa cerró antes de llegar al mercado." }
   }
   if (riesgo === "Alto") {
-    if (r < 0.35) return { ganancia: 120, descripcion: "💎 Gran éxito. Contrato con 3 gobiernos de la OTAN." }
-    if (r < 0.65) return { ganancia: 45,  descripcion: "✅ Resultado positivo. Clientes en Europa y Asia." }
-    if (r < 0.85) return { ganancia: 10,  descripcion: "😐 Resultado modesto. El mercado creció más lento." }
-    return { ganancia: -15, descripcion: "❌ Pérdida parcial. Competidor más grande entró al mercado." }
+    if (r < 0.35) return { ganancia: 45,  descripcion: "💎 Gran resultado. Contrato con gobiernos europeos." }
+    if (r < 0.65) return { ganancia: 25,  descripcion: "✅ Resultado positivo. Clientes en Europa y Asia." }
+    if (r < 0.85) return { ganancia: 8,   descripcion: "😐 Resultado modesto. El mercado creció más lento." }
+    return { ganancia: -10, descripcion: "❌ Pérdida parcial. Competidor más grande entró al mercado." }
   }
   if (riesgo === "Medio") {
     if (r < 0.20) return { ganancia: 70, descripcion: "🚀 Mejor de lo esperado. Expansión a 20 nuevos países." }
@@ -1388,7 +1459,7 @@ export function MiniJuegoStartupPitch({ onResultado }: StartupPitchProps) {
             {resultadoStartup && <div style={{background:"#0d1525",border:"1px solid #1e3050",borderRadius:8,padding:"14px",marginBottom:12}}>
               <p style={{color:"#f0c030",fontSize:14,fontWeight:700,marginBottom:6}}>{resultadoStartup.descripcion}</p>
               <p style={{color:resultadoStartup.ganancia>0?"#40c080":"#e05050",fontSize:18,fontWeight:700}}>
-                {resultadoStartup.ganancia>0?`+${resultadoStartup.ganancia*4} 🪙 en 4 años`:`${resultadoStartup.ganancia*4} 🪙 de pérdida`}
+                {resultadoStartup.ganancia>0?`+${resultadoStartup.ganancia} 🪙 generados`:`${resultadoStartup.ganancia} 🪙 de pérdida`}
               </p>
             </div>}
             {!resultadoStartup && <p style={{color:"#7a8fa6",fontSize:13}}>Calculando resultado...</p>}

@@ -316,10 +316,17 @@ function TriviaModal({pregunta,respuesta,resultado,onResponder,onCerrar,disponib
             </button>
           })}
         </div>
-        {resultado&&<div style={{textAlign:"center",marginBottom:14}}>
+        {resultado&&<div style={{
+          textAlign:"center",marginBottom:14,
+          padding:"12px 16px",borderRadius:8,
+          background:resultado==="correcta"?"#061a0a":"#1a0606",
+          border:`1px solid ${resultado==="correcta"?"#40c080":"#e05050"}`}}>
           {resultado==="correcta"
-            ?<p style={{color:"#40c080",fontWeight:700}}>🎯 ¡Correcto! +{pregunta.bonus} 🪙</p>
-            :<p style={{color:"#e05050",fontWeight:700}}>❌ Correcta: <em>{pregunta.opciones[pregunta.correcta]}</em>. -{pregunta.penalidad} 🪙</p>}
+            ?<p style={{color:"#40c080",fontWeight:700,fontSize:16}}>🎯 ¡Correcto! +{pregunta.bonus} 🪙</p>
+            :<>
+              <p style={{color:"#e05050",fontWeight:700,fontSize:16,marginBottom:4}}>❌ Incorrecto. -{pregunta.penalidad} 🪙</p>
+              <p style={{color:"#8898aa",fontSize:13}}>La respuesta correcta era: <strong style={{color:"#f0c030"}}>{pregunta.opciones[pregunta.correcta]}</strong></p>
+            </>}
         </div>}
         {respuesta!==null
           ?<button onClick={onCerrar} style={{width:"100%",padding:11,background:"#1a4b8c",color:"#fff",border:"none",borderRadius:8,fontWeight:600,cursor:"pointer"}}>Continuar</button>
@@ -936,8 +943,8 @@ export function GameScreen() {
           </div>
           <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
             <div style={{textAlign:"right"}}>
-              <div style={{fontFamily:"monospace",color:"#f0c030",fontSize:22,fontWeight:700}}>🪙 {game.influencia}</div>
-              <div style={{color:"#446688",fontSize:10}}>+{game.rentaPorAnio} / año</div>
+              <div style={{fontFamily:"monospace",color:"#f0c030",fontSize:22,fontWeight:700}}><span style={{color:"#f0c030",fontFamily:"monospace",fontWeight:700}}>₪</span> {game.influencia}</div>
+              <div style={{color:"#446688",fontSize:10}}>+{game.rentaPorAnio} por año</div>
             </div>
             <button onClick={game.abrirTrivia}
               title={game.triviaDisponibles>0?`${game.triviaDisponibles} trivia disponible`:"Aparece en años terminados en 0"}

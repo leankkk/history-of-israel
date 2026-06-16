@@ -512,9 +512,9 @@ export function useGame() {
   const abrirTrivia = useCallback(() => {
     if (triviaActiva) return
     if (triviaDisponibles <= 0) { agregarNotif("Trivia disponible en años terminados en 0.", "info"); return }
-    const disponibles = TRIVIA.map((p, i) => ({ p, i })).filter(({ i }) => !triviaRespondidas.includes(i))
+    const disponibles = TRIVIA.filter(p => !triviaRespondidas.includes(p.pregunta as any))
     if (!disponibles.length) { agregarNotif("Ya respondiste todas las trivias.", "info"); return }
-    const { p } = disponibles[Math.floor(Math.random() * disponibles.length)]
+    const p = disponibles[Math.floor(Math.random() * disponibles.length)]
     setTriviaActual(p); setTriviaRespuesta(null); setTriviaResultado(null); setTriviaActiva(true)
     setMostrarAvisoTrivia(false)
   }, [triviaActiva, triviaDisponibles, triviaRespondidas, agregarNotif])
@@ -524,8 +524,12 @@ export function useGame() {
   const responderTrivia = useCallback((idx: number) => {
     if (!triviaActual || triviaRespuesta !== null) return
     setTriviaRespuesta(idx)
-    const idxPool = TRIVIA.findIndex(p => p.pregunta === triviaActual.pregunta)
-    setTriviaRespondidas(prev => [...prev, idxPool])
+    // Usar el texto de la pregunta como clave única (no el índice que puede variar)
+    const preguntaKey = triviaActual.pregunta
+    setTriviaRespondidas(prev => {
+      if (prev.includes(preguntaKey as any)) return prev
+      return [...prev, preguntaKey as any]
+    })
     setTriviaContador(c => c + 1)
     setTriviaDisponibles(prev => Math.max(0, prev - 1))
     if (idx === triviaActual.correcta) {
