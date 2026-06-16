@@ -9,7 +9,7 @@ import {
 } from "@/lib/game-data"
 
 export type FaseJuego = "intro" | "jugando" | "fin"
-export type MiniJuegoTipo = "misil" | "entebbe" | "laberinto_8200" | "camp_david" | "startup_pitch" | null
+export type MiniJuegoTipo = "misil" | "entebbe" | "laberinto_8200" | "camp_david" | "startup_pitch" | "yom_kipur" | "mossad" | null
 
 export interface Notificacion {
   id: string; texto: string
@@ -68,6 +68,8 @@ export function useGame() {
   const [mejoras, setMejoras]       = useState<Mejora[]>([])
   const [regionesAtacadas, setRegionesAtacadas] = useState<Record<string, { evento: Evento; hasta: number }>>({})
   const [ultimaCompra, setUltimaCompra] = useState<string | null>(null)
+  // Jerusalem: oscura hasta ganar guerra 6 días
+  const [jerusalemLibre, setJerusalemLibre] = useState(false)
 
   // ─── SISTEMA POLÍTICO ─────────────────────────────────────
   // Apoyo: 0-100. Empieza en 55.
@@ -187,6 +189,15 @@ export function useGame() {
     // Laberinto 8200 — 2012, una sola vez
     if (anioActual >= 2012 && !miniJuegosOcurridos.current.has("laberinto_8200") && comp.includes("mil_ciber")) {
       return "laberinto_8200"
+    }
+    // Yom Kipur — mapa de defensa, solo si la guerra de Yom Kipur está en esta partida
+    if (anioActual >= 1973 && !miniJuegosOcurridos.current.has("yom_kipur") &&
+        guerrasDePartida.current.some(g => g.id === "yom_kipur")) {
+      return "yom_kipur"
+    }
+    // Mossad Papers Please — aparece en 2010
+    if (anioActual >= 2010 && !miniJuegosOcurridos.current.has("mossad")) {
+      return "mossad"
     }
     // Startup pitch — 2000, una sola vez (sin requisito de mejora)
     if (anioActual >= 2000 && !miniJuegosOcurridos.current.has("startup_pitch")) {
@@ -341,8 +352,22 @@ export function useGame() {
           break
         case "startup_pitch":
           const gpAnio = datos?.gananciaPorAnio ?? 20
-          setStartupResultadoPendiente({ anioRevela: anio + 4, gananciaPorAnio: gpAnio })
-          agregarNotif(`📊 Inversión realizada. Resultados en 4 años: +${gpAnio * 4}🪙 estimados`, "info")
+          if (gpAnio > 0) {
+            setStartupResultadoPendiente({ anioRevela: anio + 4, gananciaPorAnio: gpAnio })
+            agregarNotif(`📊 Inversión: resultado en 4 años. +${gpAnio * 4}🪙 estimados`, "info")
+          } else {
+            agregarNotif("📉 Mala inversión. Sin retornos.", "derrota")
+          }
+          break
+        case "yom_kipur":
+          setApoyo(prev => Math.min(100, prev + 18))
+          setStats(s => ({...s, militar: s.militar + 16, sociedad: s.sociedad - 8}))
+          agregarNotif("✊ Yom Kipur: los frentes resistieron. +16 Militar +18% apoyo", "victoria")
+          break
+        case "mossad":
+          setStats(s => ({...s, militar: s.militar + 10, diplomacia: s.diplomacia + 8}))
+          setApoyo(prev => Math.min(100, prev + 12))
+          agregarNotif("🕵️ Terrorista identificado. +10 Militar +8 Diplomacia +12% apoyo", "victoria")
           break
       }
     } else {
@@ -369,10 +394,21 @@ export function useGame() {
         case "startup_pitch":
           agregarNotif("📉 Mala inversión. No hubo retornos significativos.", "derrota")
           break
+        case "yom_kipur":
+          setApoyo(prev => Math.max(0, prev - 20))
+          setStats(s => ({...s, militar: Math.max(0, s.militar - 8)}))
+          agregarNotif("💔 Los frentes cedieron. −20% apoyo −8 Militar", "derrota")
+          break
+        case "mossad":
+          setApoyo(prev => Math.max(0, prev - 8))
+          setStats(s => ({...s, militar: Math.max(0, s.militar - 5)}))
+          agregarNotif("⚠️ El terrorista ingresó al país. −8% apoyo −5 Militar", "derrota")
+          break
       }
     }
 
     setMiniJuegoActivo(null)
+    setJerusalemLibre(false)
   }, [anio, agregarNotif])
 
   // ─── RESOLVER EVENTO DE GUERRA ────────────────────────────
@@ -406,7 +442,7 @@ export function useGame() {
         if (k !== "monedas") next[k as keyof Stats] = Math.max(0, next[k as keyof Stats] + (v as number))
       return next
     })
-    if (efectos.monedas) setInfluencia(inf => Math.max(0, inf + efectos.monedas!))
+    // Guerras no dan plata — solo stats y apoyo político
 
     // Efectos en apoyo por guerra
     if (es7Oct) {
@@ -433,6 +469,11 @@ export function useGame() {
       agregarNotif(tieneReqs ? `✊ ${ev.titulo} — Victoria` : `💔 ${ev.titulo} — Derrota`, tieneReqs ? "victoria" : "derrota")
     } else {
       agregarNotif("🖤 7 de Octubre — Israel nunca olvidará", "derrota")
+    }
+
+    // Jerusalén se libera si ganás la Guerra de los 6 Días
+    if (ev.id === "guerra_6_dias" && tieneReqs) {
+      setJerusalemLibre(true)
     }
 
     eventosOcurridos.current.add(ev.id)
@@ -520,7 +561,7 @@ export function useGame() {
     setMejoras(nuevoArbol)
     setFase("jugando")
     setAnio(ANIO_INICIAL)
-    setInfluencia(40)
+    setInfluencia(77 + Math.floor(Math.random() * 11)) // 77-87 aleatório
     setStats(ESTADO_INICIAL_STATS)
     setCompradas([NODO_RAIZ.id])
     setTipoFinal(null)
@@ -539,6 +580,7 @@ export function useGame() {
     setMostrarPopupGolpe(false)
     setAniosGolpe(0)
     setMiniJuegoActivo(null)
+    setJerusalemLibre(false)
     setStartupResultadoPendiente(null)
   }, [])
 
@@ -567,5 +609,7 @@ export function useGame() {
     golpeActivo, mostrarPopupGolpe, aniosGolpe, avanzarDuranteGolpe,
     // Mini-juegos
     miniJuegoActivo, resolverMiniJuego,
+    // Mapa
+    jerusalemLibre,
   }
 }

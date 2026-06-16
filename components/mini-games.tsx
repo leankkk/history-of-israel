@@ -1230,6 +1230,34 @@ export function MiniJuegoCampDavid({ onResultado }: CampDavidProps) {
 // ============================================================
 interface StartupPitchProps { onResultado: (exito: boolean, datos: { gananciaPorAnio: number }) => void }
 
+// Probabilidades de ganancia según riesgo — completamente aleatorio
+// Alto riesgo: puede ganar MUCHO o perder TODO
+// Bajo riesgo: siempre gana poco, nunca pierde
+function calcularGananciaStartup(riesgo: string): { ganancia: number; descripcion: string } {
+  const r = Math.random()
+  if (riesgo === "Muy alto") {
+    if (r < 0.25) return { ganancia: 200, descripcion: "💎 Éxito extraordinario. La FDA aprobó. Valuación x40." }
+    if (r < 0.55) return { ganancia: 80,  descripcion: "✅ Buen resultado. Socio estratégico adquirió el 30%." }
+    if (r < 0.80) return { ganancia: 0,   descripcion: "⚠️ Sin retorno. La aprobación se demoró indefinidamente." }
+    return { ganancia: -30, descripcion: "❌ Pérdida. La empresa cerró antes de llegar al mercado." }
+  }
+  if (riesgo === "Alto") {
+    if (r < 0.35) return { ganancia: 120, descripcion: "💎 Gran éxito. Contrato con 3 gobiernos de la OTAN." }
+    if (r < 0.65) return { ganancia: 45,  descripcion: "✅ Resultado positivo. Clientes en Europa y Asia." }
+    if (r < 0.85) return { ganancia: 10,  descripcion: "😐 Resultado modesto. El mercado creció más lento." }
+    return { ganancia: -15, descripcion: "❌ Pérdida parcial. Competidor más grande entró al mercado." }
+  }
+  if (riesgo === "Medio") {
+    if (r < 0.20) return { ganancia: 70, descripcion: "🚀 Mejor de lo esperado. Expansión a 20 nuevos países." }
+    if (r < 0.75) return { ganancia: 35, descripcion: "✅ Según lo previsto. Crecimiento constante." }
+    return { ganancia: 8, descripcion: "😐 Por debajo de lo esperado. Mercado más competitivo." }
+  }
+  // Bajo riesgo
+  if (r < 0.10) return { ganancia: 30, descripcion: "🎉 Sorpresa positiva. Fusión con empresa mayor." }
+  if (r < 0.85) return { ganancia: 18, descripcion: "✅ Estable y predecible. Exactamente lo esperado." }
+  return { ganancia: 10, descripcion: "😐 Crecimiento más lento pero sin pérdidas." }
+}
+
 const STARTUPS = [
   {
     id:"irontech",
@@ -1240,7 +1268,6 @@ const STARTUPS = [
     producto:"IA para detección de amenazas en tiempo real — mercado pequeño pero urgente",
     metricas:{crecimiento:"340%",margen:"65%",clientes:12},
     riesgo:"Alto",
-    gananciaBase:35,
     color:"#e05050",
     icon:"🛡️"
   },
@@ -1253,7 +1280,6 @@ const STARTUPS = [
     producto:"Optimización de cultivos con IA en desiertos — 60 países interesados",
     metricas:{crecimiento:"180%",margen:"42%",clientes:89},
     riesgo:"Medio",
-    gananciaBase:25,
     color:"#e0b030",
     icon:"🌱"
   },
@@ -1266,7 +1292,6 @@ const STARTUPS = [
     producto:"Plataforma de supply chain para mercado mediterráneo — ingresos estables",
     metricas:{crecimiento:"85%",margen:"28%",clientes:340},
     riesgo:"Bajo",
-    gananciaBase:15,
     color:"#40c080",
     icon:"🚢"
   },
@@ -1279,7 +1304,6 @@ const STARTUPS = [
     producto:"Tratamiento experimental para enfermedades raras — pendiente aprobación FDA",
     metricas:{crecimiento:"50%",margen:"−15%",clientes:3},
     riesgo:"Muy alto",
-    gananciaBase:55,
     color:"#6090e0",
     icon:"🧬"
   },
@@ -1289,14 +1313,15 @@ export function MiniJuegoStartupPitch({ onResultado }: StartupPitchProps) {
   const [seleccion, setSeleccion] = useState<string|null>(null)
   const [confirmado, setConfirmado] = useState(false)
 
+  const [resultadoStartup, setResultadoStartup] = useState<{ganancia:number,descripcion:string}|null>(null)
+
   const confirmar = () => {
     if (!seleccion) return
     const startup = STARTUPS.find(s => s.id === seleccion)!
+    const resultado = calcularGananciaStartup(startup.riesgo)
+    setResultadoStartup(resultado)
     setConfirmado(true)
-    // Variación aleatoria ±30% del rendimiento base
-    const variacion = 0.7 + Math.random() * 0.6
-    const ganancia = Math.round(startup.gananciaBase * variacion)
-    setTimeout(() => onResultado(true, { gananciaPorAnio: ganancia }), 2000)
+    setTimeout(() => onResultado(resultado.ganancia > 0, { gananciaPorAnio: Math.max(0, resultado.ganancia) }), 3000)
   }
 
   return (
@@ -1359,10 +1384,14 @@ export function MiniJuegoStartupPitch({ onResultado }: StartupPitchProps) {
         ) : (
           <div style={{padding:"40px 24px",textAlign:"center"}}>
             <div style={{fontSize:48,marginBottom:12}}>📊</div>
-            <p style={{color:"#40c080",fontSize:16,fontWeight:700,marginBottom:8}}>Inversión confirmada</p>
-            <p style={{color:"#7a8fa6",fontSize:13}}>
-              Los resultados de tu inversión en {STARTUPS.find(s=>s.id===seleccion)?.nombre} serán visibles en 4 años.
-            </p>
+            <p style={{color:"#40c080",fontSize:16,fontWeight:700,marginBottom:8}}>Inversión en {STARTUPS.find(s=>s.id===seleccion)?.nombre}</p>
+            {resultadoStartup && <div style={{background:"#0d1525",border:"1px solid #1e3050",borderRadius:8,padding:"14px",marginBottom:12}}>
+              <p style={{color:"#f0c030",fontSize:14,fontWeight:700,marginBottom:6}}>{resultadoStartup.descripcion}</p>
+              <p style={{color:resultadoStartup.ganancia>0?"#40c080":"#e05050",fontSize:18,fontWeight:700}}>
+                {resultadoStartup.ganancia>0?`+${resultadoStartup.ganancia*4} 🪙 en 4 años`:`${resultadoStartup.ganancia*4} 🪙 de pérdida`}
+              </p>
+            </div>}
+            {!resultadoStartup && <p style={{color:"#7a8fa6",fontSize:13}}>Calculando resultado...</p>}
           </div>
         )}
       </div>

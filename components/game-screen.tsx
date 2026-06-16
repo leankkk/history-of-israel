@@ -4,6 +4,8 @@ import { useState, useCallback, useEffect } from "react"
 import { useGame } from "@/hooks/use-game"
 import { BarraApoyoPolitico, PopupGolpeEstado } from "@/components/political-bar"
 import { MiniJuegoMisil, MiniJuegoLaberinto, MiniJuegoCampDavid, MiniJuegoStartupPitch, MiniJuegoEntebbe } from "@/components/mini-games"
+import { MiniJuegoYomKipur } from "@/components/yom-kipur-map"
+import { MiniJuegoMossad } from "@/components/mossad-papers"
 import {
   ANIO_FINAL, ANIO_INICIAL, ERAS, MEJORA_A_FOCO,
   CATEGORIA_INFO, FINALES, NODO_RAIZ, FOCOS_MAPA,
@@ -29,10 +31,121 @@ const CAT: Record<Categoria, string> = {
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');`
 
 // ─── INTRO ───────────────────────────────────────────────────
-function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
+function TutorialModal({ onCerrar }: { onCerrar: () => void }) {
+  const [seccion, setSeccion] = useState(0)
+  const secciones = [
+    {
+      titulo:"🎮 Mecánica básica",
+      contenido:[
+        "Arrancás en 1948 con la declaración de independencia. Avanzás años manualmente con los botones +1, +2, +5 o un número personalizado.",
+        "Cada año ganás influencia 🪙 (monedas). Con esa influencia comprás mejoras en el árbol nacional.",
+        "Las mejoras mejoran tus 4 estadísticas: Militar 🛡️, Economía 💰, Diplomacia 🤝, Sociedad 🌆.",
+        "El árbol de mejoras es diferente cada partida — no todas las mejoras estarán disponibles.",
+      ]
+    },
+    {
+      titulo:"⚔️ Guerras y eventos",
+      contenido:[
+        "Cada partida incluye 5 guerras históricas (2 del pool A + 2 del pool B + el 7 de Octubre obligatorio).",
+        "Cuando llegás al año de una guerra, el juego se detiene. El resultado depende de las mejoras que tengas.",
+        "No necesitás tener TODAS las mejoras requeridas — con una alcanza (sistema OR).",
+        "El 7 de Octubre de 2023 siempre ocurre. No hay forma de evitarlo. La diferencia es cuánto daño recibís.",
+      ]
+    },
+    {
+      titulo:"🕹️ Mini-juegos",
+      contenido:[
+        "🚀 Cúpula de Hierro: interceptá misiles con WASD. El interceptor sale desde abajo.",
+        "⚔️ Operación Entebbe (1976): coordinar 3 grupos de comandos. G1 → Torre de control, G2+G3 → Terminal. Solo G3 necesita llegar a los rehenes.",
+        "🗼 Tower: dentro de la torre, esquivá el guardia y resolvé el puzzle Lights Out (encendé todos los switches).",
+        "🔯 Yom Kipur: distribuí unidades entre 3 frentes. Necesitás defender 2 de 3 para ganar.",
+        "🕊️ Camp David: negociá el tratado con Egipto. Balance ≥ 1 punto a favor de Egipto = acuerdo.",
+        "🕵️ Mossad (2010): interrogá 3 viajeros, elegí 3 preguntas por persona, identificá al terrorista.",
+        "📊 Startup Pitch (2000): invertí en una de 4 startups. El resultado es aleatorio según el riesgo.",
+      ]
+    },
+    {
+      titulo:"🗳️ Sistema político",
+      contenido:[
+        "Hay una barra de apoyo político (izquierda de la pantalla). Empieza en 55%.",
+        "Sube con mejoras sociales, de salud, culturales y la Cúpula de Hierro.",
+        "Baja si ponés demasiadas mejoras militares sin balance social, perdés guerras o llega el 7 de Octubre.",
+        "Si cae a 0% antes de 2018 → golpe de estado. El juego avanza 4 años sin control y volvés con 90% de apoyo pero sin plata.",
+        "Post-2018 no puede haber golpe de estado.",
+      ]
+    },
+    {
+      titulo:"❓ Trivia y finales",
+      contenido:[
+        "La trivia aparece automáticamente cada 10 años (1950, 1960, 1970...). Se acumula si no respondés.",
+        "65 preguntas sobre historia de Israel. Correcta = +monedas, incorrecta = -monedas.",
+        "Hay 5 finales según tus estadísticas al llegar a 2026: Fortaleza, Milagro Tecnológico, Puente entre Naciones, Nación Completa o Equilibrio Precario.",
+        "Jerusalén se ilumina en el mapa solo si ganás la Guerra de los 6 Días.",
+        "Cada partida el árbol de mejoras es diferente. ¡No hay dos partidas iguales!",
+      ]
+    },
+  ]
+  const s = secciones[seccion]
   return (
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"48px 24px",background:"#050810"}}>
+    <div style={{position:"fixed",inset:0,zIndex:500,background:"rgba(0,0,0,0.95)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
       <style>{FONTS}</style>
+      <div style={{maxWidth:580,width:"100%",background:"#070f1c",border:"1px solid #1e3a60",borderRadius:12,overflow:"hidden"}}>
+        <div style={{background:"#07101f",borderBottom:"1px solid #1e3050",padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:13,fontWeight:700}}>📖 Cómo jugar — Génesis: La Nación</p>
+          <button onClick={onCerrar} style={{background:"none",border:"none",color:"#556677",cursor:"pointer",fontSize:20}}>✕</button>
+        </div>
+        {/* Tabs */}
+        <div style={{display:"flex",borderBottom:"1px solid #1e3050",overflowX:"auto"}}>
+          {secciones.map((s,i)=>(
+            <button key={i} onClick={()=>setSeccion(i)}
+              style={{padding:"10px 14px",background:"none",border:"none",cursor:"pointer",
+                borderBottom:`2px solid ${seccion===i?"#f0c030":"transparent"}`,
+                color:seccion===i?"#f0c030":"#556677",fontSize:11,fontWeight:600,whiteSpace:"nowrap"}}>
+              {s.titulo.split(" ")[0]}
+            </button>
+          ))}
+        </div>
+        {/* Contenido */}
+        <div style={{padding:"20px 24px"}}>
+          <h3 style={{fontFamily:"'Cinzel',serif",color:"#e8dcc8",fontSize:16,fontWeight:700,marginBottom:16}}>{s.titulo}</h3>
+          <ul style={{display:"flex",flexDirection:"column",gap:10,listStyle:"none",padding:0}}>
+            {s.contenido.map((item,i)=>(
+              <li key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+                <span style={{color:"#f0c030",flexShrink:0,marginTop:2}}>→</span>
+                <p style={{color:"#8898aa",fontSize:13,lineHeight:1.65}}>{item}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* Nav */}
+        <div style={{padding:"12px 20px",borderTop:"1px solid #1e3050",display:"flex",justifyContent:"space-between"}}>
+          <button onClick={()=>setSeccion(Math.max(0,seccion-1))} disabled={seccion===0}
+            style={{background:"#0d1525",border:"1px solid #1e3050",borderRadius:6,padding:"7px 14px",color:seccion===0?"#33485e":"#8898aa",cursor:seccion===0?"not-allowed":"pointer",fontSize:13}}>
+            ← Anterior
+          </button>
+          <span style={{color:"#33485e",fontSize:12,alignSelf:"center"}}>{seccion+1}/{secciones.length}</span>
+          {seccion < secciones.length-1
+            ? <button onClick={()=>setSeccion(seccion+1)}
+                style={{background:"#1a4b8c",border:"1px solid #3a7bd5",borderRadius:6,padding:"7px 14px",color:"#fff",cursor:"pointer",fontSize:13}}>
+                Siguiente →
+              </button>
+            : <button onClick={onCerrar}
+                style={{background:"#1a3a10",border:"1px solid #40c08055",borderRadius:6,padding:"7px 14px",color:"#40c080",cursor:"pointer",fontSize:13}}>
+                ✓ Entendido
+              </button>
+          }
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
+  const [showTutorial, setShowTutorial] = useState(false)
+  return (
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"48px 24px",background:"#050810",position:"relative"}}>
+      <style>{FONTS}</style>
+      {showTutorial && <TutorialModal onCerrar={()=>setShowTutorial(false)}/>}
       <div style={{maxWidth:520,width:"100%",textAlign:"center"}}>
         <div style={{fontSize:64,marginBottom:8}}>🇮🇱</div>
         <p style={{fontFamily:"'Cinzel',serif",color:"#f0c030",fontSize:11,letterSpacing:4,textTransform:"uppercase",marginBottom:10}}>14 de mayo de 1948</p>
@@ -48,12 +161,20 @@ function IntroScreen({ onIniciar }: { onIniciar: () => void }) {
             </div>
           ))}
         </div>
-        <button onClick={onIniciar}
-          style={{background:"linear-gradient(135deg,#1a4b8c,#2a6bc8)",color:"#fff",border:"1px solid #3a7bd5",borderRadius:6,padding:"14px 48px",fontSize:15,fontWeight:600,cursor:"pointer"}}
-          onMouseEnter={e=>(e.currentTarget.style.background="linear-gradient(135deg,#2a5b9c,#3a7bd5)")}
-          onMouseLeave={e=>(e.currentTarget.style.background="linear-gradient(135deg,#1a4b8c,#2a6bc8)")}>
-          Fundar el Estado
-        </button>
+        <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
+          <button onClick={onIniciar}
+            style={{background:"linear-gradient(135deg,#1a4b8c,#2a6bc8)",color:"#fff",border:"1px solid #3a7bd5",borderRadius:6,padding:"14px 40px",fontSize:15,fontWeight:600,cursor:"pointer"}}
+            onMouseEnter={e=>(e.currentTarget.style.background="linear-gradient(135deg,#2a5b9c,#3a7bd5)")}
+            onMouseLeave={e=>(e.currentTarget.style.background="linear-gradient(135deg,#1a4b8c,#2a6bc8)")}>
+            Fundar el Estado
+          </button>
+          <button onClick={()=>setShowTutorial(true)}
+            style={{background:"#0d1525",color:"#8898aa",border:"1px solid #1e3050",borderRadius:6,padding:"14px 24px",fontSize:15,fontWeight:600,cursor:"pointer"}}
+            onMouseEnter={e=>(e.currentTarget.style.borderColor="#f0c030",e.currentTarget.style.color="#f0c030")}
+            onMouseLeave={e=>(e.currentTarget.style.borderColor="#1e3050",e.currentTarget.style.color="#8898aa")}>
+            📖 Tutorial
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -721,8 +842,8 @@ export function GameScreen() {
   const [openTree, setOpenTree] = useState(false)
   const [anosInput, setAnosInput] = useState(1)
 
-  const jerusalemExpandida = game.compradas.includes("mil_aviacion") &&
-    game.compradas.includes("mil_inteligencia") && game.anio >= 1968
+  // Jerusalén: oscura hasta 1967, se ilumina solo si ganás la Guerra de los 6 Días
+  const jerusalemExpandida = game.jerusalemLibre && game.anio >= 1967
 
   if (game.fase==="intro") return <IntroScreen onIniciar={game.iniciarJuego}/>
   if (game.fase==="fin"&&game.tipoFinal) return (
@@ -779,6 +900,12 @@ export function GameScreen() {
       )}
       {game.miniJuegoActivo === "startup_pitch" && (
         <MiniJuegoStartupPitch onResultado={(e,d)=>game.resolverMiniJuego("startup_pitch",e,d)}/>
+      )}
+      {game.miniJuegoActivo === "yom_kipur" && (
+        <MiniJuegoYomKipur onResultado={(e)=>game.resolverMiniJuego("yom_kipur",e)}/>
+      )}
+      {game.miniJuegoActivo === "mossad" && (
+        <MiniJuegoMossad onResultado={(e)=>game.resolverMiniJuego("mossad",e)}/>
       )}
 
       {/* Banner trivia disponible */}
@@ -845,7 +972,7 @@ export function GameScreen() {
           <div style={{width:"100%",maxWidth:340,height:"calc(100% - 64px)"}}>
             <IsraelMap compradas={game.compradas} mejoras={game.mejoras}
               influencia={game.influencia} anio={game.anio}
-              regionesAtacadas={game.regionesAtacadas}
+              regionesAtacadas={{}}
               jerusalemExpandida={jerusalemExpandida}/>
           </div>
           {/* Panel avance */}
